@@ -1,0 +1,46 @@
+/* --- CSS UNTUK SECTION 2 (FORM) --- */
+.section-input {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-top: 3px solid #dee2e6;
+}
+
+.card-input-data {
+  border-radius: 0;
+  box-shadow: none !important;
+  border: 1px solid #dee2e6;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label-custom {
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 3px;
+}
+
+/* Console Styling */
+#consoleStatus {
+  font-family: "Courier New", Courier, monospace;
+  background-color: #212529;
+  color: #28a745;
+  border: 1px solid #444;
+  padding: 10px;
+  height: 180px;
+  overflow-y: auto;
+  font-size: 11px;
+  width: 100%;
+}
+
+/* Responsivitas Button */
+#btnKirim {
+  transition: all 0.3s ease;
+}
+#btnKirim:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

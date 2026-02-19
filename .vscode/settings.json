@@ -1,0 +1,12 @@
+{
+  "vsmqtt.brokerProfiles": [
+    {
+      "name": "monitoring panel listrik sound",
+      "host": "monitoring-panel-listrik-sound.cloud.shiftr.io",
+      "port": 1883,
+      "username": "monitoring-panel-listrik-sound",
+      "password": "QlpPWck275IIjTxu",
+      "clientId": "vsmqtt_client_4e85"
+    }
+  ]
+}

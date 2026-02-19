@@ -1,0 +1,220 @@
+/* --- Tambahkan/Update Bagian Ini --- */
+.section-tabel {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Mencegah double scrollbar di section */
+}
+
+.table-responsive-custom {
+  flex: 1; /* Membuat area tabel mengambil sisa ruang 100vh */
+  overflow-y: auto;
+  background: white;
+}
+
+/* Tetap gunakan CSS yang sudah Anda miliki di bawah ini */
+.dataTables_wrapper .row:first-child {
+  padding: 10px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+}
+
+/* --- SETUP GLOBAL --- */
+.content-wrapper {
+  background-color: #f4f6f9 !important;
+}
+.content-header {
+  display: none;
+}
+.main-header {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/* --- LAYOUT TOOLBAR --- */
+.dataTables_wrapper .row:first-child {
+  padding: 10px;
+  background-color: white;
+  border-bottom: none !important;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* --- ELEMEN TOOLBAR --- */
+.dataTables_length,
+.dataTables_filter,
+.dt-buttons {
+  display: inline-block !important;
+  margin-bottom: 0 !important;
+  vertical-align: middle;
+}
+.dataTables_filter {
+  margin-right: 10px !important;
+}
+.dataTables_length {
+  margin-right: 10px !important;
+}
+
+.form-control-sm,
+.btn-sm,
+.custom-select-sm,
+.dataTables_filter input,
+.dataTables_length select {
+  height: 32px !important;
+  line-height: 1.5;
+  font-size: 14px !important;
+}
+
+/* DROPDOWN TETAP BESAR (15px Bold) */
+#pilihUnit,
+#pilihMotor {
+  font-weight: bold !important;
+  color: #000 !important;
+  font-size: 15px !important;
+  height: 34px !important;
+}
+
+/* --- RESET CSS DATATABLES --- */
+table.dataTable {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  border-collapse: collapse !important;
+}
+.dataTables_scrollHeadInner {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* --- HEADER ABU-ABU & GARIS TEGAS --- */
+.table-bordered {
+  border: 1px solid #888 !important;
+}
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #888 !important;
+}
+
+.table thead th {
+  vertical-align: middle !important;
+  background-color: #b2b2b2 !important;
+  color: #000 !important;
+  font-weight: bold !important;
+  text-align: center;
+  padding: 0px 15px !important;
+  font-size: 14px !important;
+  white-space: nowrap !important;
+}
+
+/* --- ISI TABEL & EFEK HOVER --- */
+.table tbody td {
+  vertical-align: middle !important;
+  padding: 4px 10px !important;
+  color: #333;
+  font-size: 14px !important;
+}
+
+/* [KUNCI PERBAIKAN] KOLOM ACTIONS TIDAK MELEBAR */
+/* Target kolom terakhir agar bisa pindah baris (wrapping) */
+#example1 td:last-child,
+#example1 th:last-child {
+  white-space: normal !important; /* Batalkan text-nowrap */
+  min-width: 400px !important; /* Lebar minimal kolom */
+  max-width: 550px !important; /* Batasan lebar maksimal sebelum pindah baris */
+  word-break: break-word; /* Potong kata jika terlalu panjang */
+  line-height: 1.4 !important; /* Beri jarak antar baris teks */
+}
+
+/* HOVER ABU KEBIRUAN */
+.table-hover tbody tr:hover {
+  background-color: #d1dbe5 !important;
+  transition: background-color 0.1s ease-in-out;
+}
+
+/* Kolom No Rata Kiri */
+table.dataTable tbody td:first-child {
+  text-align: left !important;
+  padding-left: 20px !important;
+}
+
+/* Label Entries & Search */
+.dataTables_length label,
+.dataTables_filter label {
+  font-weight: normal !important;
+  margin-bottom: 0 !important;
+  font-size: 14px !important;
+}
+
+/* Pastikan area filter tidak tertutup elemen lain */
+#my-filter-placeholder {
+  position: relative;
+  z-index: 10;
+}
+
+#btnRefresh {
+  position: relative;
+  z-index: 11;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Memastikan toolbar DataTables tidak saling tumpang tindih */
+.dataTables_wrapper .row {
+  width: 100%;
+  margin: 0;
+}
+
+.dynamic-title {
+  animation: highlightFade 0.5s ease-out;
+}
+
+@keyframes highlightFade {
+  0% {
+    color: #007bff;
+    transform: scale(1.05);
+  }
+  100% {
+    color: #333;
+    transform: scale(1);
+  }
+}
+
+#label-title {
+  font-size: 1.4rem !important;
+  font-weight: 900 !important;
+  color: #000000 !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.2;
+  display: inline-block;
+
+  /* Efek Shadow: Membuat tulisan lebih tegas dan berdimensi */
+  /* Parameter: x-offset y-offset blur-radius warna */
+  text-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.2),
+    0px 0px 1px rgba(0, 0, 0, 0.1);
+
+  transition: all 0.3s ease;
+}
+
+/* Class Animasi (Dipicu via JS saat ganti Unit/Motor) */
+.title-animate {
+  animation: slideFadeShadow 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* Keyframes Animasi */
+@keyframes slideFadeShadow {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+    filter: blur(3px);
+    text-shadow: none;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}

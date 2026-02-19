@@ -1,0 +1,590 @@
+/* Ensure right-side navbar items (indikator, fullscreen, kunci) always visible on small screens */
+@media (max-width: 600px) {
+  .main-header .navbar-nav.ml-auto {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    margin-right: 8px !important;
+  }
+  .main-header .navbar-nav.ml-auto .nav-item {
+    display: inline-block !important;
+  }
+}
+:root {
+  /* Softer dark / faded black (dark gray) */
+  --dark-bg: #252d3a; /* main page background, slightly faded black */
+  --dark-surface: #212b41cd; /* cards, surface panels */
+  --muted-text: #ebc20b; /* slightly softer text color */
+  --link: #8e9bad; /* slightly softer link blue */
+}
+
+/* Target only wheOUTPUT An AdminLTE dark-mode is enabled */
+.dark-mode {
+  background-color: var(--dark-bg) !important;
+  color: var(--muted-text) !important;
+}
+
+.dark-mode .content-wrapper,
+.dark-mode .main-footer,
+.dark-mode .card,
+.dark-mode .card-body,
+.dark-mode .card-header,
+.dark-mode .sidebar,
+.dark-mode .control-sidebar,
+.dark-mode .navbar {
+  background-color: var(--dark-surface) !important;
+  color: var(--muted-text) !important;
+}
+
+.dark-mode a,
+.dark-mode .nav-link,
+.dark-mode .breadcrumb a {
+  color: var(--link) !important;
+}
+
+.dark-mode .table td,
+.dark-mode .table th {
+  border-color: #2a2d30 !important;
+}
+
+.dark-mode .form-control,
+.dark-mode .select2-container--default .select2-selection--single,
+.dark-mode .dataTables_wrapper .dataTables_filter input {
+  background-color: var(--dark-surface) !important;
+  color: var(--muted-text) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Ensure cards and panels use subtle shadows on dark background */
+.dark-mode .card {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* Buttons contrast */
+.dark-mode .btn-primary {
+  background-color: #1e6fb8 !important;
+  border-color: #1e6fb8 !important;
+}
+
+/* Small helper to improve footer contrast */
+.dark-mode .main-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Fix chart and widget white panels: make canvases and svg transparent */
+.dark-mode .card,
+.dark-mode .card-body,
+.dark-mode .card .card-body *,
+.dark-mode .content,
+.dark-mode .content-wrapper {
+  background-color: transparent !important;
+}
+
+.dark-mode .card-header {
+  background-color: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+  color: var(--muted-text) !important;
+}
+
+/* Ensure canvas/chart backgrounds don't stay white */
+.dark-mode canvas,
+.dark-mode svg,
+.dark-mode .chartjs-render-monitor,
+.dark-mode .flot-placeholder,
+.dark-mode .jqplot-target {
+  background: transparent !important;
+}
+
+/* DataTables and chart grid areas */
+.dark-mode .dataTables_wrapper .dataTables_scrollBody,
+.dark-mode .chart-area,
+.dark-mode .chart-container,
+.dark-mode .flot-chart {
+  background: transparent !important;
+}
+
+/* Table headers and cells */
+.dark-mode .table thead th,
+.dark-mode .table tbody td {
+  background: transparent !important;
+  color: var(--muted-text) !important;
+}
+
+/* Info boxes and small boxes */
+.dark-mode .info-box,
+.dark-mode .small-box {
+  background-color: #16181a !important;
+  color: var(--muted-text) !important;
+  border: 1px solid rgba(255, 255, 255, 0.03) !important;
+}
+
+.dark-mode .main-sidebar,
+.dark-mode .main-sidebar .brand-link,
+.dark-mode .sidebar {
+  background-color: var(--dark-surface) !important;
+}
+.dark-mode .nav-sidebar .nav-link {
+  color: #bfc7cc !important;
+}
+.dark-mode .nav-sidebar .nav-link.active {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  color: #fff !important;
+}
+
+/* Small helpers for controls */
+.dark-mode .btn,
+.dark-mode .form-control,
+.dark-mode .input-group-text {
+  background-color: #17191b !important;
+  color: var(--muted-text) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Make card borders subtle */
+.dark-mode .card {
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Prevent charts' plugin-created legend boxes from being white */
+.dark-mode .legend,
+.dark-mode .chart-legend {
+  background: transparent !important;
+  color: var(--muted-text) !important;
+}
+
+/* Stronger contrast for headings */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5 {
+  color: #e6e6e6 !important;
+}
+
+/* Match knob input text and label color to the gauge fgColor */
+.knob-max-380.knob-input,
+.knob-max-380.knob-input + .knob-label {
+  color: #007bff !important; /* Voltage - blue */
+}
+
+.knob-max-100.knob-input,
+.knob-max-100.knob-input + .knob-label {
+  color: #66cc66 !important; /* Frequency - green */
+}
+
+.knob-max-50.knob-input,
+.knob-max-50.knob-input + .knob-label {
+  color: #dc3545 !important; /* Current - red */
+}
+
+.knob-max-2000.knob-input,
+.knob-max-2000.knob-input + .knob-label {
+  color: #ffc107 !important; /* Power - yellow */
+}
+
+/* Slightly increase label font-weight for readability */
+.knob-label {
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+/* Center titles for small output cards (OUTPUT A/B/C/D) */
+.card.card-secondary .card-header {
+  text-align: center !important;
+}
+.card.card-secondary .card-header .card-title {
+  display: inline-block;
+  float: none !important;
+  margin: 0 auto !important;
+}
+
+/* Stronger ID-based rules to ensure knob values use the gauge colors */
+#voltvalue {
+  color: #007bff !important; /* Voltage */
+}
+#voltvalue + .knob-label {
+  color: #ffc107 !important; /* label uses yellow like other labels */
+}
+
+#hzvalue {
+  color: #66cc66 !important; /* Frequency */
+}
+#hzvalue + .knob-label {
+  color: #ffc107 !important;
+}
+
+#arusvalue {
+  color: #dc3545 !important; /* Current */
+}
+#arusvalue + .knob-label {
+  color: #ffc107 !important;
+}
+
+#powervalue {
+  color: #ffc107 !important; /* Power */
+}
+#powervalue + .knob-label {
+  color: #ffc107 !important;
+}
+
+/* Small-screen spacing: bring labels closer to knobs (berdempetan) */
+@media (max-width: 420px) {
+  .knob-label {
+    margin-top: 2px !important;
+    font-size: 13px !important;
+    display: block;
+    text-align: center;
+  }
+
+  /* ensure voltage label specifically is close too */
+  #voltvalue + .knob-label {
+    margin-top: 2px !important;
+  }
+}
+
+/* Ensure each gauge and its label stay grouped and label is right under its own gauge */
+.card .card-body .col-6.col-md-3.text-center {
+  position: relative;
+  padding-bottom: 8px; /* keep small space for absolute label */
+}
+
+/* position the label absolutely so it stays beneath its own knob */
+.card .card-body .col-6.col-md-3.text-center .knob-label {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 70%;
+  margin: 0 !important;
+  z-index: 3;
+}
+
+@media (max-width: 420px) {
+  .card .card-body .col-6.col-md-3.text-center .knob-label {
+    top: 70%;
+    font-size: 13px !important;
+  }
+}
+
+/* Perimeter border for output cards: static, single-color by default */
+.output-card {
+  position: relative;
+}
+
+/* outer static band (single color) - subtle by default */
+.output-card::before {
+  content: "";
+  position: absolute;
+  inset: -6px; /* extend outside card so border surrounds it */
+  z-index: 1;
+  border-radius: calc(0.25rem + 6px);
+  background: rgba(255, 193, 7, 0.12); /* subtle single-color band */
+  box-shadow: 0 0 8px rgba(255, 193, 7, 0.05);
+  pointer-events: none;
+}
+
+/* inner mask to hide the center so only the border band shows */
+.output-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 0.25rem;
+  background: var(
+    --dark-surface
+  ) !important; /* cover center so only outer band shows */
+  pointer-events: none;
+}
+
+.output-card .card-header,
+.output-card .card-body {
+  position: relative;
+  z-index: 3; /* content sits above the mask */
+}
+
+/* Non-rotating pulse for ON state (simple, professional, single color) */
+.output-card.output-on::before {
+  /* base pulse + color cycling (red -> yellow -> green) */
+  background: rgba(255, 193, 7, 0.2);
+  box-shadow: 0 0 12px rgba(255, 193, 7, 0.1);
+  animation: outputBorderPulse 1.8s ease-in-out infinite,
+    outputBorderColorCycle 4s linear infinite;
+}
+
+@keyframes outputBorderPulse {
+  0% {
+    box-shadow: 0 0 6px rgba(255, 193, 7, 0.04);
+    opacity: 0.9;
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(255, 193, 7, 0.14);
+    opacity: 1;
+  }
+  100% {
+    box-shadow: 0 0 6px rgba(255, 193, 7, 0.04);
+    opacity: 0.9;
+  }
+}
+
+/* small intermittent sparks along the top edge */
+.output-card.output-on .card-header::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 14px;
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 240, 160, 1);
+  border-radius: 50%;
+  z-index: 5;
+  opacity: 0;
+  /* combine flicker (movement/opacity) with a slower color cycle */
+  animation: sparkFlicker 2.2s infinite ease-in-out,
+    sparkColorCycle 4s linear infinite;
+  pointer-events: none;
+  box-shadow: 0 0 6px rgba(255, 200, 60, 0.85);
+}
+
+@keyframes sparkFlicker {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1);
+  }
+  30% {
+    opacity: 0.6;
+    transform: translateY(0) scale(0.9);
+  }
+  60% {
+    opacity: 0.2;
+    transform: translateY(-1px) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+}
+
+/* cycle the outer band color through red -> yellow -> green */
+@keyframes outputBorderColorCycle {
+  0% {
+    background: rgba(220, 53, 69, 0.2); /* red */
+    box-shadow: 0 0 12px rgba(220, 53, 69, 0.1);
+  }
+  33% {
+    background: rgba(255, 193, 7, 0.2); /* yellow */
+    box-shadow: 0 0 12px rgba(255, 193, 7, 0.1);
+  }
+  66% {
+    background: rgba(102, 204, 102, 0.2); /* green */
+    box-shadow: 0 0 12px rgba(102, 204, 102, 0.1);
+  }
+  100% {
+    background: rgba(220, 53, 69, 0.2); /* back to red */
+    box-shadow: 0 0 12px rgba(220, 53, 69, 0.1);
+  }
+}
+
+/* small spark color cycle to match the border */
+@keyframes sparkColorCycle {
+  0% {
+    background: rgba(220, 53, 69, 1);
+    box-shadow: 0 0 8px rgba(220, 53, 69, 0.85);
+  }
+  33% {
+    background: rgba(255, 193, 7, 1);
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.85);
+  }
+  66% {
+    background: rgba(102, 204, 102, 1);
+    box-shadow: 0 0 8px rgba(102, 204, 102, 0.85);
+  }
+  100% {
+    background: rgba(220, 53, 69, 1);
+    box-shadow: 0 0 8px rgba(220, 53, 69, 0.85);
+  }
+}
+
+/* subtle electric pulse inside the card when ON */
+.output-card.output-on .card-body {
+  box-shadow: inset 0 0 24px rgba(255, 193, 7, 0.03);
+  transition: box-shadow 300ms ease-in-out;
+}
+
+/* make the ON-state visually distinct for the toggle buttons */
+.output-card.output-on .btn.btn-secondary.active {
+  background-color: rgba(255, 193, 7, 0.14) !important;
+  border-color: rgba(255, 193, 7, 0.22) !important;
+  color: #ffd873 !important;
+}
+
+/* On/Off pill switch styling (matches provided mockup) */
+.onoff-pill {
+  display: inline-flex;
+  position: relative;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 6px;
+  border-radius: 999px;
+  gap: 6px;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.onoff-pill .switch-option {
+  border-radius: 999px;
+  padding: 8px 22px;
+  min-width: 68px;
+  text-align: center;
+  color: var(--muted-text) !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.onoff-pill .switch-option input {
+  display: none;
+}
+
+/* Active option appearance */
+.onoff-pill .switch-option.active {
+  background: rgba(0, 0, 0, 0.28) !important;
+  color: #e8f6ff !important;
+  box-shadow: none !important;
+}
+
+/* Outer glow when the output is ON -- single-color blue like the mockup */
+.output-card.output-on .onoff-pill {
+  border-color: rgba(0, 140, 255, 0.45);
+  box-shadow: 0 0 18px rgba(0, 140, 255, 0.22);
+}
+
+/* a stronger rim glow around the pill (subtle) */
+.output-card.output-on .onoff-pill::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  pointer-events: none;
+  box-shadow: 0 0 18px rgba(0, 140, 255, 0.28);
+  z-index: 1;
+}
+
+/* ensure internal labels sit above the glow */
+.onoff-pill .switch-option {
+  z-index: 2;
+}
+
+/* Always keep right-side navbar items (indikator, fullscreen, kunci) at the edge of the screen */
+.main-header {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1200;
+  box-sizing: border-box;
+  height: 36px;
+  min-height: 36px;
+  padding-top: 0;
+  padding-bottom: 0;
+  font-size: 15px;
+}
+.main-header .navbar-nav.ml-auto {
+  position: absolute;
+  top: 0;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  z-index: 1300;
+  right: 64px;
+}
+@media (min-width: 992px) {
+  body:not(.sidebar-collapse) .main-header .navbar-nav.ml-auto {
+    right: 260px;
+  }
+  body.sidebar-collapse .main-header .navbar-nav.ml-auto {
+    right: 80px;
+  }
+}
+@media (max-width: 991px) {
+  .main-header .navbar-nav.ml-auto {
+    right: 8px;
+  }
+}
+
+/* Keep the navbar fixed at the top on desktop so it stays visible while scrolling. */
+/* Make navbar fixed at top for all screen sizes */
+.main-header {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1200; /* ensure navbar is always above content */
+  box-sizing: border-box;
+  padding-right: 32px; /* shift navbar content to the right, adjust as needed */
+}
+.content-wrapper {
+  margin-top: 33px !important; /* match navbar height */
+}
+
+/* Keep the left sidebar fixed on desktop so menu items stay visible while scrolling. */
+@media (min-width: 992px) {
+  .main-sidebar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    height: 100vh !important;
+    overflow-y: auto;
+    width: 250px; /* AdminLTE default sidebar width */
+    z-index: 1030;
+  }
+  .content-wrapper {
+    margin-left: 250px !important;
+  }
+  body.sidebar-collapse .main-sidebar {
+    width: 80px !important;
+  }
+  body.sidebar-collapse .content-wrapper {
+    margin-left: 80px !important;
+  }
+}
+
+/* Perluas dan animasi chart area VOLTAGE, CURRENT, FREQUENCY, DAYA */
+.card .chart-area,
+.card .chartjs-render-monitor,
+.card .flot-chart {
+  width: 95% !important;
+  margin: 0 auto;
+  transition: box-shadow 0.4s, transform 0.4s;
+  animation: chartFadeIn 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  box-shadow: 0 2px 16px rgba(0, 123, 255, 0.1);
+  border-radius: 8px;
+}
+.card .chart-area:hover,
+.card .chartjs-render-monitor:hover,
+.card .flot-chart:hover {
+  box-shadow: 0 8px 32px rgba(0, 123, 255, 0.18),
+    0 1.5px 8px rgba(255, 193, 7, 0.12);
+  transform: scale(1.03);
+  z-index: 10;
+}
+@keyframes chartFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@media (max-width: 768px) {
+  .card .chart-area,
+  .card .chartjs-render-monitor,
+  .card .flot-chart {
+    width: 99% !important;
+    min-width: 0;
+  }
+}
