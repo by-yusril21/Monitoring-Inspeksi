@@ -14,13 +14,24 @@ $columns = [
 ?>
 
 <style>
+    /* VARIABEL WARNA TEMA TERANG (MENYESUAIKAN ADMINLTE) */
+    :root {
+        --bg-color: #f4f6f9; 
+        --card-bg: #ffffff;
+        --text-main: #495057; 
+        --text-muted: #6c757d;
+        --border-color: #dee2e6;
+        --accent-color: #007bff;
+    }
+
     html { scroll-behavior: smooth; }
-    .content-wrapper { background-color: #f4f6f9 !important; overflow-x: hidden; }
+    .content-wrapper { background-color: var(--bg-color) !important; overflow-x: hidden; }
     .section-full { height: 100vh; display: flex; flex-direction: column; padding-top: 10px; padding-bottom: 10px; }
     .px-custom-5 { padding-left: 7px !important; padding-right: 7px !important; }
-    .table-responsive-vh { flex: 1; overflow-y: auto; border: 1px solid #dee2e6; background-color: white; }
-    .card-custom { border-radius: 0; box-shadow: none !important; border: 1px solid #dee2e6 !important; display: flex; flex-direction: column; height: 100%; margin-bottom: 0; }
-    .form-label-custom { font-size: 12px; font-weight: 600; color: #495057; margin-bottom: 3px; display: block; }
+    
+    .table-responsive-vh { flex: 1; overflow-y: auto; border: 1px solid var(--border-color); background-color: var(--card-bg); }
+    .card-custom { border-radius: 0; box-shadow: none !important; border: 1px solid var(--border-color) !important; display: flex; flex-direction: column; height: 100%; margin-bottom: 0; background-color: var(--card-bg); }
+    .form-label-custom { font-size: 12px; font-weight: 600; color: var(--text-main); margin-bottom: 3px; display: block; }
     
     #consoleStatus {
         font-family: 'Courier New', Courier, monospace;
@@ -36,11 +47,10 @@ $columns = [
 
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #b3b3b3; }
     html, body { -ms-overflow-style: none; scrollbar-width: none; }
     body::-webkit-scrollbar { display: none; }
-    
-    /* Tambahkan ID section baru ke scroll-margin agar rapi saat link di klik */
-    #section-tabel, #section-tengah, #section-input { scroll-margin-top: 25px; }
+    #section-tabel, #section-gauge, #section-input { scroll-margin-top: 25px; }
 </style>
 
 <div class="content-wrapper">
@@ -90,16 +100,52 @@ $columns = [
     </section>
 
     <section id="section-gauge" class="section-full">
-        <div class="container-fluid px-custom-5 h-100 py-3">
-            <div class="card card-custom bg-white shadow-sm d-flex justify-content-center align-items-center">
-                
-                <div class="text-center text-muted">
-                    <i class="fas fa-chart-line fa-4x mb-3 text-light"></i>
-                    <h4>Ruang Kosong untuk Fitur Baru</h4>
-                    <p>Silakan isi halaman ini dengan grafik (Gauge/Chart) atau informasi lainnya.</p>
+        <div class="container-fluid px-custom-5 h-100 py-3" style="overflow-y: auto;">
+            
+            <div class="card card-custom p-3" style="border: none !important; background-color: transparent;">
+                <div class="gauge-dashboard-title">
+                    <i class="fas fa-tachometer-alt mr-2 text-primary"></i> Live Parameter Status: <span id="label-motor-gauge" class="text-danger">Menunggu Pilihan Motor...</span>
                 </div>
 
+                <div class="gauge-grid">
+                    <div class="gauge-card">
+                        <div class="gauge-header">Vibrasi / Getaran</div>
+                        <div id="gauge-vibrasi" class="gauge-chart-container"></div>
+                        <div id="time-vibrasi" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                    </div>
+                    <div class="gauge-card">
+                        <div class="gauge-header">Temp. Bearing DE</div>
+                        <div id="gauge-temp-de" class="gauge-chart-container"></div>
+                        <div id="time-temp-de" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                    </div>
+                    <div class="gauge-card">
+                        <div class="gauge-header">Temp. Bearing NDE</div>
+                        <div id="gauge-temp-nde" class="gauge-chart-container"></div>
+                        <div id="time-temp-nde" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                    </div>
+                    <div class="gauge-card">
+                        <div class="gauge-header">Suhu Ruangan</div>
+                        <div id="gauge-suhu-ruang" class="gauge-chart-container"></div>
+                        <div id="time-suhu-ruang" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                    </div>
+                    <div class="gauge-card">
+                        <div class="gauge-header">Beban Generator</div>
+                        <div id="gauge-beban-gen" class="gauge-chart-container"></div>
+                        <div id="time-beban-gen" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                    </div>
+                    <div class="gauge-card">
+                        <div class="gauge-header">Opening Damper</div>
+                        <div id="gauge-damper" class="gauge-chart-container"></div>
+                        <div id="time-damper" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                    </div>
+                    <div class="gauge-card">
+                        <div class="gauge-header">Load Current</div>
+                        <div id="gauge-load-current" class="gauge-chart-container"></div>
+                        <div id="time-load-current" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                    </div>
+                </div>
             </div>
+
         </div>
     </section>
 
@@ -113,7 +159,6 @@ $columns = [
                 </div>
 
                 <form id="formInputMotor" class="p-3">
-                    
                     <input type="hidden" id="userLoggedIn" value="<?php 
                         $user = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
                         $role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
