@@ -35,7 +35,7 @@ if (isset($_POST['username'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>panel_Sound_IoT-Login</title>
+  <title>Electrical_Maintenance</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet"
@@ -51,7 +51,7 @@ if (isset($_POST['username'])) {
 <body class="hold-transition login-page">
   <div class="login-box">
     <div class="login-logo">
-      <b>Project</b>Tugas Akhir
+      <b>Monitoring</b> Inspeksi Motor
     </div>
     <!-- /.login-logo -->
     <div class="card">

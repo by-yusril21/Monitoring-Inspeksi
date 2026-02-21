@@ -99,50 +99,58 @@ $columns = [
         </div>
     </section>
 
-    <section id="section-gauge" class="section-full">
+   <section id="section-gauge" class="section-full">
         <div class="container-fluid px-custom-5 h-100 py-3" style="overflow-y: auto;">
             
-            <div class="card card-custom p-3" style="border: none !important; background-color: transparent;">
+            <div class="gauge-main-container bg-white">
                 <div class="gauge-dashboard-title">
-                    <i class="fas fa-tachometer-alt mr-2 text-primary"></i> Live Parameter Status: <span id="label-motor-gauge" class="text-danger">Menunggu Pilihan Motor...</span>
+                    <i class="fas fa-tachometer-alt mr-2 text-primary"></i><span id="label-motor-gauge" class="text-danger">Menunggu Pilihan Motor...</span>
                 </div>
 
                 <div class="gauge-grid">
+                    
+                    <div class="thermo-wrapper unified-wrapper">
+                        <div class="thermo-item">
+                            <div class="thermo-title">Bearing DE</div>
+                            <div id="thermo-de"></div>
+                            <div class="data-display" id="val-de">-- °C</div>
+                        </div>
+
+                        <div class="thermo-item">
+                            <div class="thermo-title">Bearing NDE</div>
+                            <div id="thermo-nde"></div>
+                            <div class="data-display" id="val-nde">-- °C</div>
+                        </div>
+
+                        <div class="thermo-item">
+                            <div class="thermo-title">Suhu Ruangan</div>
+                            <div id="thermo-winding"></div>
+                            <div class="data-display" id="val-winding">-- °C</div>
+                        </div>
+                    </div>
                     <div class="gauge-card">
                         <div class="gauge-header">Vibrasi / Getaran</div>
                         <div id="gauge-vibrasi" class="gauge-chart-container"></div>
                         <div id="time-vibrasi" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
                     </div>
                     <div class="gauge-card">
-                        <div class="gauge-header">Temp. Bearing DE</div>
-                        <div id="gauge-temp-de" class="gauge-chart-container"></div>
-                        <div id="time-temp-de" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
-                    </div>
-                    <div class="gauge-card">
-                        <div class="gauge-header">Temp. Bearing NDE</div>
-                        <div id="gauge-temp-nde" class="gauge-chart-container"></div>
-                        <div id="time-temp-nde" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
-                    </div>
-                    <div class="gauge-card">
-                        <div class="gauge-header">Suhu Ruangan</div>
-                        <div id="gauge-suhu-ruang" class="gauge-chart-container"></div>
-                        <div id="time-suhu-ruang" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
-                    </div>
-                    <div class="gauge-card">
                         <div class="gauge-header">Beban Generator</div>
                         <div id="gauge-beban-gen" class="gauge-chart-container"></div>
                         <div id="time-beban-gen" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
                     </div>
+                    
                     <div class="gauge-card">
                         <div class="gauge-header">Opening Damper</div>
                         <div id="gauge-damper" class="gauge-chart-container"></div>
                         <div id="time-damper" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
                     </div>
+                    
                     <div class="gauge-card">
                         <div class="gauge-header">Load Current</div>
                         <div id="gauge-load-current" class="gauge-chart-container"></div>
                         <div id="time-load-current" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
                     </div>
+
                 </div>
             </div>
 

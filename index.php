@@ -15,6 +15,7 @@ include "inc/navbar.php";
 include "inc/sidebar.php";
 include "inc/alerts.php";
 
+
 if (isset($_GET['page']) && file_exists("page/" . $_GET['page'] . ".php")) {
   include "page/" . $_GET['page'] . ".php";
 } else {
@@ -37,12 +38,14 @@ if (isset($_GET['page']) && file_exists("page/" . $_GET['page'] . ".php")) {
 <script src="plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <script src="plugins/toastr/toastr.min.js"></script>
+<script src="plugins/d3-min/d3.min.js"></script>
 
 <script src="dist/js/adminlte.min.js"></script>
 <script src="dist/js/tabel-motor.js"></script>
 <script src="dist/js/inputData-motor.js"></script>
 <script src="dist/js/echarts.min.js"></script>
 <script src="dist/js/gauge-motor.js"></script>
+<script src="dist/js/termometer-motor.js"></script>
 
 <?php if ($delete)
   echo "<script>toastr.success('Data berhasil dihapus.');</script>"; ?>

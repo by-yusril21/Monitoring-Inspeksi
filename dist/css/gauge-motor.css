@@ -1,94 +1,83 @@
 /* =========================================================================
-   STYLE KHUSUS SECTION GAUGE (HALAMAN TENGAH TEMA TERANG)
+   STYLE KHUSUS SECTION GAUGE (TEMA TERANG - SUPER EKSTREM DEMPET)
    ========================================================================= */
 
 .gauge-dashboard-title {
   color: var(--text-main);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   text-transform: uppercase;
   border-bottom: 2px solid var(--border-color);
-  padding-bottom: 8px;
+  padding-bottom: 5px;
 }
 
-.gauge-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-  width: 100%;
-}
-
-/* Penyesuaian agar item ke-5 mulai baris baru jika 4 kolom */
-.gauge-grid .gauge-card:nth-child(5) {
-  grid-column: 1 / span 1;
-}
-
-.gauge-card {
+.gauge-main-container {
   background-color: var(--card-bg);
-  border-radius: 6px;
-  padding: 10px 15px; /* Padding sedikit dikurangi */
+  border-radius: 8px;
+  padding: 10px 5px; /* Padding kontainer luar ditarik habis */
   box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.12),
     0 1px 2px rgba(0, 0, 0, 0.24);
   border: 1px solid var(--border-color);
+}
+
+.gauge-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  /* KUNCI 1: Jarak Atas-Bawah 10px, Kanan-Kiri 0px (Nempel) */
+  gap: 20px 0px;
+  width: 100%;
+}
+
+.gauge-card {
+  background-color: transparent;
+  padding: 0;
+  box-shadow: none;
+  border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 200px; /* DIPERKECIL dari 250px */
+  /* KUNCI 2: Lebar dipaksa sempit (165px) agar jarumnya saling mendekat */
+  width: 165px;
+  min-height: 120px;
 }
 
 .gauge-header {
-  font-size: 0.85rem; /* Ukuran font judul sedikit diperkecil */
+  font-size: 0.75rem; /* Font sedikit dikecilkan agar tidak turun 2 baris */
   font-weight: 600;
   color: var(--text-main);
-  margin-bottom: 5px;
+  margin-bottom: 0;
   text-align: center;
-  width: 100%;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 5px;
+  width: 85%;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 3px;
+  white-space: nowrap; /* Mencegah judul patah ke bawah */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Judul kepanjangan jadi "..." */
 }
 
 .gauge-chart-container {
   width: 100%;
-  height: 140px; /* DIPERKECIL dari 180px */
+  height: 110px;
   position: relative;
 }
 
-/* Styling untuk Teks Timestamp di bawah Gauge */
 .gauge-timestamp {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   color: var(--text-muted);
-  margin-top: 5px;
-  padding-top: 5px;
+  margin-top: 2px;
+  padding-top: 2px;
   border-top: 1px dotted var(--border-color);
-  width: 100%;
+  width: 85%;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.gauge-timestamp i {
-  margin-right: 4px;
-}
 
-/* --- Responsif Layout --- */
-@media (max-width: 1200px) {
-  .gauge-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-@media (max-width: 900px) {
-  .gauge-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (max-width: 600px) {
-  .gauge-grid {
-    grid-template-columns: 1fr;
-  }
-  .gauge-card {
-    min-height: 180px;
-  }
+.gauge-timestamp i {
+  margin-right: 3px;
 }

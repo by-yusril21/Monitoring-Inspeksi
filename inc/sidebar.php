@@ -73,9 +73,9 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
         </li>
 
         <li class="nav-item">
-          <a href="" class="nav-link <?php echo ($current_page == 'halaman2') ? 'active' : ''; ?>">
-            <i class="nav-icon fas fa-database"></i>
-            <p>Halaman 2</p>
+          <a href="?page=termometer" class="nav-link <?php echo ($current_page == 'termometer') ? 'active' : ''; ?>">
+            <i class="nav-icon fas fa-thermometer-half"></i>
+            <p>Termometer</p>
           </a>
         </li>
 

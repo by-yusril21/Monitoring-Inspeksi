@@ -27,6 +27,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="dist/css/tabel-motor.css">
   <link rel="stylesheet" href="dist/css/form-input.css">
   <link rel="stylesheet" href="dist/css/gauge-motor.css">
+  <link rel="stylesheet" href="dist/css/termometer-motor.css">
 </head>
 
 <body class="hold-transition sidebar-mini">

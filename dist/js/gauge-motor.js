@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const myChart = echarts.init(chartDom, null, { renderer: "svg" });
 
     const width = window.innerWidth;
-    let radius = width < 768 ? "75%" : "80%";
-    let detailFontSize = width < 768 ? 14 : 16;
+    let radius = width < 768 ? "65%" : "75%";
+    let detailFontSize = width < 768 ? 10 : 12;
 
     const option = {
       backgroundColor: "transparent",
@@ -43,8 +43,8 @@ document.addEventListener("DOMContentLoaded", function () {
             lineStyle: { width: 10, color: standardColorStops },
           },
           pointer: {
-            length: "60%",
-            width: 4,
+            length: "80%",
+            width: 3.5,
             itemStyle: { color: "#495057" },
           },
           axisTick: {
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
             length: 8,
             lineStyle: { color: "#adb5bd", width: 2 },
           },
-          axisLabel: { distance: -20, color: "#6c757d", fontSize: 9 },
+          axisLabel: { distance: -17, color: "#6c757d", fontSize: 8 },
           detail: {
             valueAnimation: true,
             formatter: "{value} " + unit,
@@ -76,13 +76,13 @@ document.addEventListener("DOMContentLoaded", function () {
     gaugeInstances[domId] = myChart;
   }
 
-  initMotorGauge("gauge-vibrasi", "Vibrasi", "mm/s", 0, 20);
+  initMotorGauge("gauge-vibrasi", "Vibrasi", "mm/s", 0, 15);
   initMotorGauge("gauge-temp-de", "Temp DE", "°C", 0, 100);
   initMotorGauge("gauge-temp-nde", "Temp NDE", "°C", 0, 100);
   initMotorGauge("gauge-suhu-ruang", "Suhu Ruang", "°C", 0, 60);
   initMotorGauge("gauge-beban-gen", "Beban", "MW", 0, 100);
   initMotorGauge("gauge-damper", "Damper", "%", 0, 100);
-  initMotorGauge("gauge-load-current", "Arus", "A", 0, 500);
+  initMotorGauge("gauge-load-current", "Arus", "A", 0, 300);
 
   window.addEventListener("resize", function () {
     Object.values(gaugeInstances).forEach((chart) => {

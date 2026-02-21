@@ -1,0 +1,41 @@
+/* Hanya fokus pada kotak termometer */
+.thermo-panel {
+  background: transparent;
+  padding: 0;
+  width: fit-content;
+  text-align: center;
+  margin: 0;
+}
+
+.thermo-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px; /* Padding dikurangi */
+  border: 1px solid #e9ecef;
+  gap: 2px; /* Jarak antar termometer dirapatkan */
+}
+
+.thermo-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80px; /* Diperkecil dari 110px */
+}
+
+.thermo-title {
+  font-weight: bold;
+  color: #34495e;
+  margin-bottom: 1px;
+  font-size: 0.75rem; /* Ukuran font judul diperkecil */
+  text-align: center;
+  height: 18px;
+}
+
+.data-display {
+  font-size: 0.9rem; /* Angka suhu di bawah diperkecil */
+  font-weight: bold;
+  margin-top: 5px;
+}
