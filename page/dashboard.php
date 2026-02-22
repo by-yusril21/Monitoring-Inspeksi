@@ -192,31 +192,31 @@ $columns = [
                                 <td class="cond-label">Bunyi Motor</td>
                                 <td id="date-bunyi" class="cond-date">--/--/----</td>
                                 <td id="updater-bunyi" class="cond-name">--</td>
-                                <td style="text-align: center;"><span id="stat-bunyi" class="status-badge status-good">GOOD</span></td>
+                                <td style="text-align: center;"><span id="stat-bunyi" class="status-badge status-good"></span></td>
                             </tr>
                             <tr>
                                 <td class="cond-label">Panel Local</td>
                                 <td id="date-panel" class="cond-date">--/--/----</td>
                                 <td id="updater-panel" class="cond-name">--</td>
-                                <td style="text-align: center;"><span id="stat-panel" class="status-badge status-fair">FAIR</span></td>
+                                <td style="text-align: center;"><span id="stat-panel" class="status-badge status-fair"></span></td>
                             </tr>
                             <tr>
                                 <td class="cond-label">Kelengkapan</td>
                                 <td id="date-lengkap" class="cond-date">--/--/----</td>
                                 <td id="updater-lengkap" class="cond-name">--</td>
-                                <td style="text-align: center;"><span id="stat-lengkap" class="status-badge status-good">GOOD</span></td>
+                                <td style="text-align: center;"><span id="stat-lengkap" class="status-badge status-good"></span></td>
                             </tr>
                             <tr>
                                 <td class="cond-label">Kebersihan</td>
                                 <td id="date-bersih" class="cond-date">--/--/----</td>
                                 <td id="updater-bersih" class="cond-name">--</td>
-                                <td style="text-align: center;"><span id="stat-bersih" class="status-badge status-poor">POOR</span></td>
+                                <td style="text-align: center;"><span id="stat-bersih" class="status-badge status-poor"></span></td>
                             </tr>
                             <tr>
                                 <td class="cond-label">Grounding</td>
                                 <td id="date-ground" class="cond-date">--/--/----</td>
                                 <td id="updater-ground" class="cond-name">--</td>
-                                <td style="text-align: center;"><span id="stat-ground" class="status-badge status-good">GOOD</span></td>
+                                <td style="text-align: center;"><span id="stat-ground" class="status-badge status-good"></span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -243,7 +243,7 @@ $columns = [
                                 <td id="date-regrease-last" class="cond-date">--/--/----</td>
                                 <td id="date-regrease-next" class="cond-date">--/--/----</td>
                                 <td id="time-left-regrease" class="cond-date" style="font-weight: bold; color: #d9534f;">-- Hari</td>
-                                <td style="text-align: center;"><span id="stat-regrease" class="status-badge status-done">SELESAI</span></td>
+                                <td style="text-align: center;"><span id="stat-regrease" class="status-badge status-done">-</span></td>
                             </tr>
                         </tbody>
                     </table>

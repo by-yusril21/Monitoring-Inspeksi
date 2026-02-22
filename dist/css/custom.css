@@ -306,7 +306,8 @@
   /* base pulse + color cycling (red -> yellow -> green) */
   background: rgba(255, 193, 7, 0.2);
   box-shadow: 0 0 12px rgba(255, 193, 7, 0.1);
-  animation: outputBorderPulse 1.8s ease-in-out infinite,
+  animation:
+    outputBorderPulse 1.8s ease-in-out infinite,
     outputBorderColorCycle 4s linear infinite;
 }
 
@@ -338,7 +339,8 @@
   z-index: 5;
   opacity: 0;
   /* combine flicker (movement/opacity) with a slower color cycle */
-  animation: sparkFlicker 2.2s infinite ease-in-out,
+  animation:
+    sparkFlicker 2.2s infinite ease-in-out,
     sparkColorCycle 4s linear infinite;
   pointer-events: none;
   box-shadow: 0 0 6px rgba(255, 200, 60, 0.85);
@@ -557,7 +559,9 @@
 .card .flot-chart {
   width: 95% !important;
   margin: 0 auto;
-  transition: box-shadow 0.4s, transform 0.4s;
+  transition:
+    box-shadow 0.4s,
+    transform 0.4s;
   animation: chartFadeIn 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
   box-shadow: 0 2px 16px rgba(0, 123, 255, 0.1);
   border-radius: 8px;
@@ -565,7 +569,8 @@
 .card .chart-area:hover,
 .card .chartjs-render-monitor:hover,
 .card .flot-chart:hover {
-  box-shadow: 0 8px 32px rgba(0, 123, 255, 0.18),
+  box-shadow:
+    0 8px 32px rgba(0, 123, 255, 0.18),
     0 1.5px 8px rgba(255, 193, 7, 0.12);
   transform: scale(1.03);
   z-index: 10;
