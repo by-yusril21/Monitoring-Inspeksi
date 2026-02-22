@@ -1,4 +1,99 @@
-/* Hanya fokus pada kotak termometer */
+/* =========================================================================
+   STYLE GAUGE & THERMOMETER (GABUNGAN - VERSI TERMOMETER ORI)
+   ========================================================================= */
+
+/* --- 1. PENGATURAN KOTAK UTAMA & JUDUL --- */
+.gauge-dashboard-title {
+  color: var(--text-main);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 5px;
+  text-align: center;
+}
+
+.gauge-main-container {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  padding: 10px 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--border-color);
+}
+
+/* --- 2. LAYOUT VERTIKAL (SUSUNAN BARIS) --- */
+.gauge-layout-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.gauge-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px 0px;
+  width: 100%;
+}
+
+/* --- 3. STYLE GAUGE (SUPER DEMPET) --- */
+.gauge-card {
+  background-color: transparent;
+  padding: 0;
+  box-shadow: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 165px;
+  min-height: 120px;
+}
+
+.gauge-header {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 0;
+  text-align: center;
+  width: 85%;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gauge-chart-container {
+  width: 100%;
+  height: 110px;
+  position: relative;
+}
+
+.gauge-timestamp {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  padding-top: 2px;
+  border-top: 1px dotted var(--border-color);
+  width: 85%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gauge-timestamp i {
+  margin-right: 3px;
+}
+
+/* =========================================================================
+   4. KODE TERMOMETER (VERSI ASLI ANDA - TIDAK DIRUBAH)
+   ========================================================================= */
 .thermo-panel {
   background: transparent;
   padding: 0;
@@ -13,16 +108,16 @@
   align-items: flex-end;
   background: #f8f9fa;
   border-radius: 8px;
-  padding: 10px; /* Padding dikurangi */
+  padding: 5px; /* Padding dikurangi */
   border: 1px solid #e9ecef;
-  gap: 2px; /* Jarak antar termometer dirapatkan */
+  gap: 1px; /* Jarak antar termometer dirapatkan */
 }
 
 .thermo-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 80px; /* Diperkecil dari 110px */
+  width: 100px; /* Diperkecil dari 110px */
 }
 
 .thermo-title {
@@ -38,4 +133,12 @@
   font-size: 0.9rem; /* Angka suhu di bawah diperkecil */
   font-weight: bold;
   margin-top: 5px;
+}
+
+/* --- Tambahan Wajib untuk ECharts agar bisa muncul --- */
+#thermo-de,
+#thermo-nde,
+#thermo-winding {
+  width: 100%;
+  height: 120px; /* Menentukan tinggi agar grafik tidak hilang */
 }

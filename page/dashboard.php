@@ -98,62 +98,162 @@ $columns = [
             </div>
         </div>
     </section>
-
-   <section id="section-gauge" class="section-full">
+    
+    <section id="section-gauge" class="section-full">
         <div class="container-fluid px-custom-5 h-100 py-3" style="overflow-y: auto;">
             
-            <div class="gauge-main-container bg-white">
-                <div class="gauge-dashboard-title">
-                    <i class="fas fa-tachometer-alt mr-2 text-primary"></i><span id="label-motor-gauge" class="text-danger">Menunggu Pilihan Motor...</span>
+            <div class="dashboard-horizontal-split">
+
+                <div class="gauge-main-container bg-white">
+                    <div class="gauge-dashboard-title">
+                        <i class="fas fa-industry mr-2 text-primary"></i> 
+                        Live Parameter Status: <span id="label-motor-gauge" class="text-danger">Pilih Motor...</span>
+                    </div>
+
+                    <div class="gauge-layout-vertical">
+
+                        <div class="gauge-row">
+
+                            <div class="thermo-wrapper">
+
+                                <div class="thermo-item">
+                                    <div class="thermo-title">Bearing DE</div>
+                                    <div id="thermo-de"></div>
+                                    <div class="data-display" id="val-de">-- °C</div>
+                                    <div id="time-temp-de" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                                </div>
+
+                                <div class="thermo-item">
+                                    <div class="thermo-title">Bearing NDE</div>
+                                    <div id="thermo-nde"></div>
+                                    <div class="data-display" id="val-nde">-- °C</div>
+                                    <div id="time-temp-nde" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                                </div>
+
+                                <div class="thermo-item">
+                                    <div class="thermo-title">Suhu Ruangan</div>
+                                    <div id="thermo-winding"></div>
+                                    <div class="data-display" id="val-winding">-- °C</div>
+                                    <div id="time-suhu-ruang" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gauge-row">
+                            <div class="gauge-card">
+                                <div class="gauge-header">Vibrasi / Getaran</div>
+                                <div id="gauge-vibrasi" class="gauge-chart-container"></div>
+                                <div id="time-vibrasi" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                            </div>
+                            
+                            <div class="gauge-card">
+                                <div class="gauge-header">Beban Generator</div>
+                                <div id="gauge-beban-gen" class="gauge-chart-container"></div>
+                                <div id="time-beban-gen" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                            </div>
+
+                        </div>
+
+                        <div class="gauge-row">
+
+                            <div class="gauge-card">
+                                <div class="gauge-header">Opening Damper</div>
+                                <div id="gauge-damper" class="gauge-chart-container"></div>
+                                <div id="time-damper" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                            </div>
+                            
+                            <div class="gauge-card">
+                                <div class="gauge-header">Load Current</div>
+                                <div id="gauge-load-current" class="gauge-chart-container"></div>
+                                <div id="time-load-current" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                            </div>
+
+                        </div>
+
+                    </div> 
+
                 </div>
 
-                <div class="gauge-grid">
-                    
-                    <div class="thermo-wrapper unified-wrapper">
-                        <div class="thermo-item">
-                            <div class="thermo-title">Bearing DE</div>
-                            <div id="thermo-de"></div>
-                            <div class="data-display" id="val-de">-- °C</div>
-                        </div>
-
-                        <div class="thermo-item">
-                            <div class="thermo-title">Bearing NDE</div>
-                            <div id="thermo-nde"></div>
-                            <div class="data-display" id="val-nde">-- °C</div>
-                        </div>
-
-                        <div class="thermo-item">
-                            <div class="thermo-title">Suhu Ruangan</div>
-                            <div id="thermo-winding"></div>
-                            <div class="data-display" id="val-winding">-- °C</div>
-                        </div>
-                    </div>
-                    <div class="gauge-card">
-                        <div class="gauge-header">Vibrasi / Getaran</div>
-                        <div id="gauge-vibrasi" class="gauge-chart-container"></div>
-                        <div id="time-vibrasi" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
-                    </div>
-                    <div class="gauge-card">
-                        <div class="gauge-header">Beban Generator</div>
-                        <div id="gauge-beban-gen" class="gauge-chart-container"></div>
-                        <div id="time-beban-gen" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
-                    </div>
-                    
-                    <div class="gauge-card">
-                        <div class="gauge-header">Opening Damper</div>
-                        <div id="gauge-damper" class="gauge-chart-container"></div>
-                        <div id="time-damper" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
-                    </div>
-                    
-                    <div class="gauge-card">
-                        <div class="gauge-header">Load Current</div>
-                        <div id="gauge-load-current" class="gauge-chart-container"></div>
-                        <div id="time-load-current" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                <div class="condition-main-container bg-white">
+                    <div class="gauge-dashboard-title">
+                        <i class="fas fa-clipboard-check mr-2 text-success"></i> Kondisi Motor
                     </div>
 
+                    <table class="condition-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Tanggal Update</th>
+                                <th>Diupdate Oleh</th>
+                                <th style="text-align: center;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="cond-label">Bunyi Motor</td>
+                                <td id="date-bunyi" class="cond-date">--/--/----</td>
+                                <td id="updater-bunyi" class="cond-name">--</td>
+                                <td style="text-align: center;"><span id="stat-bunyi" class="status-badge status-good">GOOD</span></td>
+                            </tr>
+                            <tr>
+                                <td class="cond-label">Panel Local</td>
+                                <td id="date-panel" class="cond-date">--/--/----</td>
+                                <td id="updater-panel" class="cond-name">--</td>
+                                <td style="text-align: center;"><span id="stat-panel" class="status-badge status-fair">FAIR</span></td>
+                            </tr>
+                            <tr>
+                                <td class="cond-label">Kelengkapan</td>
+                                <td id="date-lengkap" class="cond-date">--/--/----</td>
+                                <td id="updater-lengkap" class="cond-name">--</td>
+                                <td style="text-align: center;"><span id="stat-lengkap" class="status-badge status-good">GOOD</span></td>
+                            </tr>
+                            <tr>
+                                <td class="cond-label">Kebersihan</td>
+                                <td id="date-bersih" class="cond-date">--/--/----</td>
+                                <td id="updater-bersih" class="cond-name">--</td>
+                                <td style="text-align: center;"><span id="stat-bersih" class="status-badge status-poor">POOR</span></td>
+                            </tr>
+                            <tr>
+                                <td class="cond-label">Grounding</td>
+                                <td id="date-ground" class="cond-date">--/--/----</td>
+                                <td id="updater-ground" class="cond-name">--</td>
+                                <td style="text-align: center;"><span id="stat-ground" class="status-badge status-good">GOOD</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                <div class="condition-divider" style="margin: 15px 0 10px 0;"></div>
+
+                    <div class="gauge-dashboard-title" style="font-size: 0.85rem; border: none; text-align: left; margin-bottom: 5px;">
+                        <i class="fas fa-oil-can mr-2 text-info"></i> Jadwal Pemeliharaan
+                    </div>
+
+                    <table class="condition-table regreasing-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Tgl Terakhir</th>
+                                <th>Jadwal Next</th>
+                                <th>Sisa Waktu</th>
+                                <th style="text-align: center;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="cond-label">Regreasing</td>
+                                <td id="date-regrease-last" class="cond-date">--/--/----</td>
+                                <td id="date-regrease-next" class="cond-date">--/--/----</td>
+                                <td id="time-left-regrease" class="cond-date" style="font-weight: bold; color: #d9534f;">-- Hari</td>
+                                <td style="text-align: center;"><span id="stat-regrease" class="status-badge status-done">SELESAI</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="gauge-timestamp mt-auto">
+                        <i class="far fa-clock"></i> Last Inspection: <span id="time-kondisi">-</span>
+                    </div>
                 </div>
-            </div>
 
+            </div> 
         </div>
     </section>
 

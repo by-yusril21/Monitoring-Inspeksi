@@ -1,83 +1,275 @@
-/* =========================================================================
-   STYLE KHUSUS SECTION GAUGE (TEMA TERANG - SUPER EKSTREM DEMPET)
-   ========================================================================= */
+/* --- A. PROGRAM TAMBAHAN (LAYOUT SEJAJAR 40:60 & 100vh RATA ATAS) --- */
+.dashboard-horizontal-split {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  align-items: stretch;
+  min-height: calc(100vh - 35px); /* Mempertahankan layar penuh 100vh */
+}
+
+/* Kolom Kiri (Data Sensor) - 40% */
+.gauge-main-container {
+  flex: 4;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  padding: 3px 10px; /* ORIGINAL PADDING TETAP AMAN */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* MENGUNCI KONTEN RATA ATAS */
+}
+
+/* Memastikan baris gauge rata atas dan jarak 7px terkunci */
+.gauge-layout-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px; /* ORIGINAL GAP TETAP AMAN */
+  width: 100%;
+  justify-content: flex-start; /* MENGUNCI KONTEN RATA ATAS */
+}
+
+/* Kolom Kanan (Kondisi Motor) - 60% */
+.condition-main-container {
+  flex: 6;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  padding: 3px 10px; /* ORIGINAL PADDING TETAP AMAN */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--border-color);
+
+  /* PENGATURAN ALIGNMENT BARU */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* MENGUNCI TABEL RATA ATAS */
+  align-items: stretch; /* MENGUNCI KONTEN RATA KANAN KIRI (PENUH) */
+  width: 100%; /* Memastikan kontainer mengambil ruang maksimal */
+}
+
+/* --- STYLE TABEL KONDISI MOTOR & REGREASING --- */
+.condition-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 5px;
+  font-size: 0.8rem;
+}
+
+.condition-table th {
+  background-color: #f8fafa;
+  color: var(--text-main);
+  font-weight: 700;
+  text-align: left;
+  padding: 6px 4px;
+  border-bottom: 2px solid var(--border-color);
+  font-size: 0.75rem;
+}
+
+.condition-table td {
+  padding: 6px 4px;
+  border-bottom: 1px dotted var(--border-color);
+  vertical-align: middle;
+}
+
+.cond-label {
+  font-weight: 600;
+  color: #444;
+}
+
+.cond-date {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-family: monospace;
+}
+
+/* Gaya teks untuk nama updater (agar sedikit berbeda dari tanggal) */
+.cond-name {
+  color: #555;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* Penyesuaian lebar kolom Tabel Kondisi (Sekarang 4 Kolom) */
+.condition-table th:nth-child(1) {
+  width: 25%;
+} /* Parameter */
+.condition-table th:nth-child(2) {
+  width: 25%;
+} /* Tanggal Update */
+.condition-table th:nth-child(3) {
+  width: 30%;
+} /* Diupdate Oleh */
+.condition-table th:nth-child(4) {
+  width: 20%;
+} /* Status */
+
+/* Penyesuaian lebar kolom Tabel Regreasing (Tetap 5 Kolom - Tidak Berubah) */
+.regreasing-table th:nth-child(1) {
+  width: 20%;
+}
+.regreasing-table th:nth-child(2) {
+  width: 22%;
+}
+.regreasing-table th:nth-child(3) {
+  width: 22%;
+}
+.regreasing-table th:nth-child(4) {
+  width: 18%;
+}
+.regreasing-table th:nth-child(5) {
+  width: 18%;
+}
+/* Status Badges (Good/Fair/Poor) */
+.status-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  min-width: 60px;
+  text-align: center;
+  display: inline-block; /* Memastikan badge rapi di tengah sel tabel */
+}
+.status-good {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+.status-fair {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+.status-poor {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+.status-done {
+  background: #cce5ff;
+  color: #004085;
+  border: 1px solid #b8daff;
+}
+
+.condition-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 5px 0;
+}
+
+/* --- B. PROGRAM ORIGINAL (TIDAK DIRUBAH) --- */
 
 .gauge-dashboard-title {
   color: var(--text-main);
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
   margin-bottom: 10px;
   text-transform: uppercase;
   border-bottom: 2px solid var(--border-color);
-  padding-bottom: 5px;
+  padding-bottom: 3px;
+  text-align: left;
 }
 
 .gauge-main-container {
   background-color: var(--card-bg);
   border-radius: 8px;
-  padding: 10px 5px; /* Padding kontainer luar ditarik habis */
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 1px 2px rgba(0, 0, 0, 0.24);
+  padding: 3px 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   border: 1px solid var(--border-color);
 }
 
-.gauge-grid {
+.gauge-layout-vertical {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+}
+
+.gauge-row {
+  display: flex;
   justify-content: center;
-  /* KUNCI 1: Jarak Atas-Bawah 10px, Kanan-Kiri 0px (Nempel) */
-  gap: 20px 0px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  background: #f8fafa;
   width: 100%;
 }
 
 .gauge-card {
-  background-color: transparent;
-  padding: 0;
-  box-shadow: none;
-  border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* KUNCI 2: Lebar dipaksa sempit (165px) agar jarumnya saling mendekat */
-  width: 165px;
-  min-height: 120px;
+  width: 140px;
+  min-height: 100px;
 }
 
 .gauge-header {
-  font-size: 0.75rem; /* Font sedikit dikecilkan agar tidak turun 2 baris */
-  font-weight: 600;
   color: var(--text-main);
-  margin-bottom: 0;
-  text-align: center;
-  width: 85%;
-  border-bottom: 1px dashed var(--border-color);
-  padding-bottom: 3px;
-  white-space: nowrap; /* Mencegah judul patah ke bawah */
-  overflow: hidden;
-  text-overflow: ellipsis; /* Judul kepanjangan jadi "..." */
-}
-
-.gauge-chart-container {
-  width: 100%;
-  height: 110px;
-  position: relative;
-}
-
-.gauge-timestamp {
-  font-size: 0.65rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-  padding-top: 2px;
-  border-top: 1px dotted var(--border-color);
-  width: 85%;
+  font-size: 0.75rem;
+  font-weight: 600;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding-bottom: 2px;
+  width: 120%;
+  border-bottom: 1px dashed var(--border-color);
 }
 
-.gauge-timestamp i {
-  margin-right: 3px;
+.gauge-chart-container {
+  background: #f8fafa;
+  width: 118%;
+  height: 120px;
+}
+
+.thermo-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  background: #f8fafa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  gap: 1px;
+}
+
+.thermo-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+}
+
+.thermo-title {
+  color: #34495e;
+  font-weight: bold;
+  font-size: 0.75rem;
+  text-align: center;
+  height: 20px;
+}
+
+#thermo-de,
+#thermo-nde,
+#thermo-winding {
+  display: flex;
+  justify-content: center;
+  width: 82%;
+  height: 145px;
+}
+
+.data-display {
+  color: #333;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  margin-top: 3px;
+  margin-bottom: 5px;
+  z-index: 10;
+}
+
+.gauge-timestamp {
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  text-align: center;
+  width: 100%;
 }

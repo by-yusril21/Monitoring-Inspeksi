@@ -46,6 +46,8 @@ if (isset($_GET['page']) && file_exists("page/" . $_GET['page'] . ".php")) {
 <script src="dist/js/echarts.min.js"></script>
 <script src="dist/js/gauge-motor.js"></script>
 <script src="dist/js/termometer-motor.js"></script>
+<script src="dist/js/kondisi-motor.js"></script>
+<script src="dist/js/regreasing-motor.js"></script>
 
 <?php if ($delete)
   echo "<script>toastr.success('Data berhasil dihapus.');</script>"; ?>
