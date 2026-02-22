@@ -1,4 +1,4 @@
-/* --- Tambahkan/Update Bagian Ini --- */
+/* --- SECTION & LAYOUT TABEL --- */
 .section-tabel {
   height: 100vh;
   display: flex;
@@ -12,24 +12,13 @@
   background: white;
 }
 
-/* Tetap gunakan CSS yang sudah Anda miliki di bawah ini */
-.dataTables_wrapper .row:first-child {
-  padding: 10px;
-  background-color: white;
-  display: flex;
-  align-items: center;
-}
-
 /* --- SETUP GLOBAL --- */
 .content-wrapper {
   background-color: #f4f6f9 !important;
 }
+
 .content-header {
   display: none;
-}
-.main-header {
-  border-bottom: none !important;
-  box-shadow: none !important;
 }
 
 /* --- LAYOUT TOOLBAR --- */
@@ -50,9 +39,11 @@
   margin-bottom: 0 !important;
   vertical-align: middle;
 }
+
 .dataTables_filter {
   margin-right: 10px !important;
 }
+
 .dataTables_length {
   margin-right: 10px !important;
 }
@@ -82,6 +73,7 @@ table.dataTable {
   margin-bottom: 0 !important;
   border-collapse: collapse !important;
 }
+
 .dataTables_scrollHeadInner {
   padding-left: 0 !important;
   padding-right: 0 !important;
@@ -91,6 +83,7 @@ table.dataTable {
 .table-bordered {
   border: 1px solid #888 !important;
 }
+
 .table-bordered th,
 .table-bordered td {
   border: 1px solid #888 !important;
@@ -163,58 +156,4 @@ table.dataTable tbody td:first-child {
 .dataTables_wrapper .row {
   width: 100%;
   margin: 0;
-}
-
-.dynamic-title {
-  animation: highlightFade 0.5s ease-out;
-}
-
-@keyframes highlightFade {
-  0% {
-    color: #007bff;
-    transform: scale(1.05);
-  }
-  100% {
-    color: #333;
-    transform: scale(1);
-  }
-}
-
-#label-title {
-  font-size: 1.4rem !important;
-  font-weight: 900 !important;
-  color: #000000 !important;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  line-height: 1.2;
-  display: inline-block;
-
-  /* Efek Shadow: Membuat tulisan lebih tegas dan berdimensi */
-  /* Parameter: x-offset y-offset blur-radius warna */
-  text-shadow:
-    2px 2px 4px rgba(0, 0, 0, 0.2),
-    0px 0px 1px rgba(0, 0, 0, 0.1);
-
-  transition: all 0.3s ease;
-}
-
-/* Class Animasi (Dipicu via JS saat ganti Unit/Motor) */
-.title-animate {
-  animation: slideFadeShadow 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
-}
-
-/* Keyframes Animasi */
-@keyframes slideFadeShadow {
-  0% {
-    opacity: 0;
-    transform: translateY(15px);
-    filter: blur(3px);
-    text-shadow: none;
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  }
 }

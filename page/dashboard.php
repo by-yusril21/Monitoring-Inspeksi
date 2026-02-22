@@ -54,7 +54,7 @@ $columns = [
 </style>
 
 <div class="content-wrapper">
-
+    
     <section id="section-tabel" class="section-full">
         <div id="my-filter-source" class="d-none">
             <div class="d-inline-flex align-items-center">
@@ -75,9 +75,9 @@ $columns = [
 
         <div class="container-fluid px-custom-5 h-100">
             <div class="card card-custom">
-                <div class="card-header py-2 bg-white d-flex justify-content-between align-items-center">
+                <!-- <div class="card-header py-2 bg-white d-flex justify-content-between align-items-center">
                     <h3 id="label-title" class="m-0">DATABASE MONITORING MOTOR</h3>
-                </div>
+                </div> -->
                 <div class="card-body p-0 flex-fill d-flex flex-column">
                     <div class="table-responsive-vh">
                         <table id="example1" class="table table-bordered table-striped table-hover table-sm text-nowrap m-0">

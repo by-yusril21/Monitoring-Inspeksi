@@ -1,48 +1,60 @@
 <style>
+  /* 1. Sidebar Container Utama */
   .main-sidebar-custom {
     background-color: #efefef !important;
-    /* background-color: #ededed !important; */
     transition: all 0.3s ease;
-    /* box-shadow: none !important; */
-    overflow-y: hidden !important;
-    height: 100vh;
-    /* Memastikan tinggi sidebar setinggi layar */
+    
+    /* FITUR FIXED: Mengunci sidebar agar tidak bergerak */
+    position: fixed !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 100vh !important;
+    overflow-y: auto !important; /* Menu tetap bisa di-scroll jika kepanjangan */
+    z-index: 1038;
   }
 
-  /* Brand Logo area */
+  /* Sembunyikan scrollbar sidebar agar tetap bersih */
+  .main-sidebar-custom::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+
+  /* 2. Brand Logo Area */
   .brand-link-custom {
     border-bottom: 2px solid rgb(220, 220, 220) !important;
     color: #000000 !important;
+    display: flex;
+    align-items: center;
+    height: 45px; /* Sesuaikan dengan tinggi navbar tipis kita sebelumnya */
   }
 
-  /* Teks menu di sidebar */
+  /* 3. Styling Menu Navigasi */
   .nav-sidebar .nav-link {
     color: #000000 !important;
-    /* Warna abu-abu soft agar tidak terlalu kontras */
+    font-size: 14px;
+    margin-bottom: 2px;
   }
 
-  /* Efek Hover Menu (sedikit lebih terang dari Navy) */
+  /* Efek Hover */
   .nav-sidebar .nav-link:hover {
-    background-color: rgb(187, 186, 186) !important;
+    background-color: rgba(0, 0, 0, 0.05) !important;
     color: #156ada !important;
   }
 
-  /* Warna menu saat aktif */
+  /* Warna Menu Aktif */
   .nav-sidebar .nav-link.active {
     background-color: #799dc4 !important;
-    /* Biru cerah sebagai aksen */
-    color: #141517 !important;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: #ffffff !important; /* Putih agar lebih kontras di atas biru */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  /* Sembunyikan Scrollbar */
-  html,
-  body {
+  /* 4. Global Body Scrollbar (Sembunyikan scrollbar utama) */
+  html, body {
     scrollbar-width: none;
     -ms-overflow-style: none;
     scroll-behavior: smooth;
   }
-
   body::-webkit-scrollbar {
     display: none;
   }
@@ -55,16 +67,15 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 
 <aside class="main-sidebar main-sidebar-custom elevation-4">
   <a class="brand-link brand-link-custom">
-    <span class="brand-text font-weight-light" style="font-size: 17px">
-      <b>MONITORING INSPEKSI MOTOR</b>
+    <span class="brand-text font-weight-bold" style="font-size: 14px; padding-left: 10px;">
+      MONITORING INSPEKSI MOTOR
     </span>
   </a>
 
   <div class="sidebar">
-
-    <nav class="mt-2">
+    <nav class="mt-3">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
+        
         <li class="nav-item">
           <a href="?page=dashboard" class="nav-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">
             <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -82,9 +93,11 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
         <li class="nav-item">
           <a href="?page=datasensor" class="nav-link <?php echo ($current_page == 'datasensor') ? 'active' : ''; ?>">
             <i class="nav-icon fas fa-database"></i>
-            <p>Data</p>
+            <p>Data Sensor</p>
           </a>
         </li>
+
+        <li class="nav-header" style="padding: 10px 1rem 5px; color: #888; font-size: 10px;">AKUN</li>
 
         <li class="nav-item">
           <a href="logout.php" class="nav-link">
