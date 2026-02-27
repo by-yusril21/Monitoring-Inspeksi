@@ -40,6 +40,8 @@ if (isset($_GET['page']) && file_exists("page/" . $_GET['page'] . ".php")) {
 <script src="plugins/toastr/toastr.min.js"></script>
 <script src="plugins/d3-min/d3.min.js"></script>
 
+<script src="config/config.js"></script>
+
 <script src="dist/js/adminlte.min.js"></script>
 <script src="dist/js/tabel-motor.js"></script>
 <script src="dist/js/inputData-motor.js"></script>
@@ -48,6 +50,10 @@ if (isset($_GET['page']) && file_exists("page/" . $_GET['page'] . ".php")) {
 <script src="dist/js/termometer-motor.js"></script>
 <script src="dist/js/kondisi-motor.js"></script>
 <script src="dist/js/regreasing-motor.js"></script>
+<script src="dist/js/navbar-motor.js"></script>
+<!-- <script src="dist/js/action-motor.js"></script> -->
+
+
 
 <?php if ($delete)
   echo "<script>toastr.success('Data berhasil dihapus.');</script>"; ?>

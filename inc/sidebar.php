@@ -3,14 +3,15 @@
   .main-sidebar-custom {
     background-color: #efefef !important;
     transition: all 0.3s ease;
-    
+
     /* FITUR FIXED: Mengunci sidebar agar tidak bergerak */
     position: fixed !important;
     top: 0;
     bottom: 0;
     left: 0;
     height: 100vh !important;
-    overflow-y: auto !important; /* Menu tetap bisa di-scroll jika kepanjangan */
+    overflow-y: auto !important;
+    /* Menu tetap bisa di-scroll jika kepanjangan */
     z-index: 1038;
   }
 
@@ -26,7 +27,8 @@
     color: #000000 !important;
     display: flex;
     align-items: center;
-    height: 45px; /* Sesuaikan dengan tinggi navbar tipis kita sebelumnya */
+    height: 45px;
+    /* Sesuaikan dengan tinggi navbar tipis kita sebelumnya */
   }
 
   /* 3. Styling Menu Navigasi */
@@ -45,16 +47,19 @@
   /* Warna Menu Aktif */
   .nav-sidebar .nav-link.active {
     background-color: #799dc4 !important;
-    color: #ffffff !important; /* Putih agar lebih kontras di atas biru */
+    color: #ffffff !important;
+    /* Putih agar lebih kontras di atas biru */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   /* 4. Global Body Scrollbar (Sembunyikan scrollbar utama) */
-  html, body {
+  html,
+  body {
     scrollbar-width: none;
     -ms-overflow-style: none;
     scroll-behavior: smooth;
   }
+
   body::-webkit-scrollbar {
     display: none;
   }
@@ -75,7 +80,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
   <div class="sidebar">
     <nav class="mt-3">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        
+
         <li class="nav-item">
           <a href="?page=dashboard" class="nav-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">
             <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -84,9 +89,9 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
         </li>
 
         <li class="nav-item">
-          <a href="?page=termometer" class="nav-link <?php echo ($current_page == 'termometer') ? 'active' : ''; ?>">
-            <i class="nav-icon fas fa-thermometer-half"></i>
-            <p>Termometer</p>
+          <a href="?page=chart" class="nav-link <?php echo ($current_page == 'chart') ? 'active' : ''; ?>">
+            <i class="nav-icon fas fa-chart-line"></i>
+            <p>Chart</p>
           </a>
         </li>
 

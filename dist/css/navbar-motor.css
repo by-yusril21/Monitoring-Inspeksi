@@ -1,0 +1,139 @@
+.main-header.navbar {
+  border-bottom: 1px solid #dee2e6; /* Garis batas bawah standar profesional */
+  background-color: #ffffff !important;
+  min-height: 56px; /* Standar tinggi navbar AdminLTE */
+}
+
+/* 2. Styling Elemen Form (Select & Button) - Desktop */
+.main-header .form-control-sm {
+  height: 34px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  color: #495057;
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+.main-header .form-control-sm:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Efek cincin biru saat fokus */
+}
+
+.main-header .btn-primary {
+  height: 34px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2); /* Bayangan tipis pada tombol */
+  transition: all 0.2s ease;
+}
+
+.main-header .btn-primary:hover {
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+  transform: translateY(-1px); /* Efek timbul saat di-hover */
+}
+
+/* 3. Navigation Links (Menu Utama) */
+.nav-menu-link {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #495057 !important; /* Warna abu-abu gelap profesional */
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  padding: 6px 12px !important;
+  margin: 0 2px;
+}
+
+.nav-menu-link i {
+  font-size: 1.05rem;
+  color: #6c757d; /* Warna ikon sedikit lebih redup dari teks */
+  transition: color 0.2s ease;
+}
+
+/* Hover Effect Menu */
+.nav-menu-link:hover {
+  background-color: rgba(
+    0,
+    123,
+    255,
+    0.08
+  ); /* Latar belakang biru transparan */
+  color: #007bff !important;
+}
+
+.nav-menu-link:hover i {
+  color: #007bff;
+}
+
+/* Active State (Gunakan class .active dari JS saat diklik) */
+.nav-menu-link.active,
+.nav-menu-link.text-primary {
+  /* Mencakup class text-primary bawaan Anda */
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #007bff !important;
+}
+
+.nav-menu-link.active i,
+.nav-menu-link.text-primary i {
+  color: #007bff;
+}
+
+/* 4. Ikon Hamburger & Ikon Kanan (Fullscreen/Filter) */
+.main-header .nav-link[data-widget="pushmenu"],
+.main-header .nav-link[data-widget="fullscreen"],
+.main-header .nav-link[data-toggle="collapse"] {
+  color: #6c757d;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+  border-radius: 4px;
+}
+
+.main-header .nav-link[data-widget="pushmenu"]:hover,
+.main-header .nav-link[data-widget="fullscreen"]:hover,
+.main-header .nav-link[data-toggle="collapse"]:hover {
+  color: #343a40;
+  background-color: rgba(0, 0, 0, 0.05); /* Latar abu-abu tipis saat di-hover */
+}
+
+/* 5. Area Filter Mobile (Collapse Area) */
+#filterCollapse .bg-light {
+  background-color: #f8f9fa !important;
+  border-top: 2px solid #007bff !important; /* Garis aksen biru di atas filter */
+  box-shadow: inset 0px 4px 6px -4px rgba(0, 0, 0, 0.1); /* Bayangan ke dalam agar terlihat terpisah */
+}
+
+/* 6. Penyesuaian Mobile (Responsive Tweaks) */
+@media (max-width: 767.98px) {
+  .main-header.navbar {
+    min-height: 50px; /* Sedikit lebih ramping di HP */
+  }
+
+  /* Menu Text & Icon Resize */
+  .nav-menu-link {
+    font-size: 0.8rem;
+    padding: 6px 8px !important;
+  }
+
+  .nav-menu-link i {
+    font-size: 0.95rem;
+  }
+
+  /* Form & Button Filter di Mobile (Lebih besar agar mudah disentuh/tapped) */
+  #filterCollapse .form-control-sm {
+    height: 38px;
+    font-size: 0.95rem;
+  }
+
+  #filterCollapse .btn-block {
+    height: 40px;
+    font-size: 0.95rem;
+  }
+}

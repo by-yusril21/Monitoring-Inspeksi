@@ -54,25 +54,7 @@ $columns = [
 </style>
 
 <div class="content-wrapper">
-    
     <section id="section-tabel" class="section-full">
-        <div id="my-filter-source" class="d-none">
-            <div class="d-inline-flex align-items-center">
-                <select id="pilihUnit" class="form-control form-control-sm mr-2" style="width: 160px;">
-                    <option value="">-- Pilih Unit --</option>
-                    <option value="C6KV">PLTU UNIT C 6KV</option>
-                    <option value="C380">PLTU UNIT C 380</option>
-                    <option value="D6KV">PLTU UNIT D 6KV</option>
-                    <option value="D380">PLTU UNIT D 380</option>
-                    <option value="UTILITY">PLTU UNIT UTILITY</option>
-                </select>
-                <select id="pilihMotor" class="form-control form-control-sm mr-2" style="width: 230px;" disabled>
-                    <option value="">-- Pilih Motor --</option>
-                </select>
-                <button type="button" id="btnRefresh" class="btn btn-info btn-sm">Update</button>
-            </div>
-        </div>
-
         <div class="container-fluid px-custom-5 h-100">
             <div class="card card-custom">
                 <!-- <div class="card-header py-2 bg-white d-flex justify-content-between align-items-center">
@@ -221,7 +203,7 @@ $columns = [
                         </tbody>
                     </table>
 
-                <div class="condition-divider" style="margin: 15px 0 10px 0;"></div>
+                    <div class="condition-divider" style="margin: 15px 0 10px 0;"></div>
 
                     <div class="gauge-dashboard-title" style="font-size: 0.85rem; border: none; text-align: left; margin-bottom: 5px;">
                         <i class="fas fa-oil-can mr-2 text-info"></i> Jadwal Pemeliharaan
@@ -248,11 +230,26 @@ $columns = [
                         </tbody>
                     </table>
 
+                    <div class="condition-divider" style="margin: 15px 0 10px 0;"></div>
+
+                    <div class="gauge-dashboard-title" style="font-size: 0.85rem; border: none; text-align: left; margin-bottom: 5px;">
+                        <i class="fas fa-clipboard-list mr-2 text-warning"></i> Action Terakhir
+                    </div>
+
+                    <div class="action-box" style="background-color: #f8f9fa; border-left: 4px solid #ffc107; padding: 10px; border-radius: 4px; margin-bottom: 15px; max-height: 120px; overflow-y: auto; overflow-x: hidden;">
+                        <p id="teks-action" style="margin: 0 0 8px 0; font-size: 0.85rem; color: #333; line-height: 1.4; font-style: italic; word-wrap: break-word;">
+                            "Belum ada data action yang direkam."
+                        </p>
+                        
+                        <div style="font-size: 0.75rem; color: #6c757d; text-align: right; margin-top: auto;">
+                            <i class="far fa-calendar-alt mr-1"></i> <span id="tanggal-action">--/--/----</span>
+                        </div>
+                    </div>
+
                     <div class="gauge-timestamp mt-auto">
                         <i class="far fa-clock"></i> Last Inspection: <span id="time-kondisi">-</span>
                     </div>
                 </div>
-
             </div> 
         </div>
     </section>
