@@ -1,6 +1,6 @@
 /**
  * File: kondisi-motor.js
- * Deskripsi: Mensinkronkan Tabel Kondisi Fisik Motor dengan Data Terakhir di DataTables
+ * Deskripsi: Mensinkronkan Tabel Kondisi Fisik Motor & Action dengan Data Terakhir di DataTables
  */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -18,15 +18,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let dateText = String(valDate || "--/--/----").trim();
     let nameText = String(valName || "--").trim();
 
-    // 1. Update Tanggal dan Nama
     dateDom.innerText = dateText !== "" ? dateText : "--/--/----";
     nameDom.innerText = nameText !== "" ? nameText : "--";
 
-    // 2. KUNCI PERBAIKAN: Hapus style inline lama agar tidak menimpa warna class
     statDom.removeAttribute("style");
-    statDom.className = "status-badge"; // Reset ke class dasar
+    statDom.className = "status-badge";
 
-    // 3. Terapkan warna sesuai keyword dari Google Sheets
     if (
       statusText === "GOOD" ||
       statusText === "BAIK" ||
@@ -55,11 +52,8 @@ document.addEventListener("DOMContentLoaded", function () {
     ) {
       statDom.innerText = statusText;
       statDom.classList.add("status-done");
-    }
-    // Jika data tidak ditemukan (kosong atau "--")
-    else {
+    } else {
       statDom.innerText = "--";
-      // Gunakan style inline kembali hanya untuk status kosong ini
       statDom.style.backgroundColor = "#e2e3e5";
       statDom.style.color = "#383d41";
       statDom.style.border = "1px solid #d6d8db";
@@ -71,17 +65,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const colIndexTime = 1; // Timestamp
     const colIndexEmail = 2; // Email/Nama
 
-    // Looping mundur dari baris paling bawah tabel
     for (let i = allData.length - 1; i >= 0; i--) {
       let valStatus = allData[i][colIndexStatus];
 
       if (valStatus !== null && valStatus !== undefined) {
-        // Hapus tag HTML jika ada bawaan dari datatables, lalu hilangkan spasi
         let strVal = String(valStatus)
           .replace(/(<([^>]+)>)/gi, "")
           .trim();
 
-        // Abaikan baris jika isinya kosong, "-", "--", atau "---"
         if (
           strVal !== "" &&
           strVal !== "-" &&
@@ -107,7 +98,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
     }
-    // Jika dicari sampai baris paling atas tetap tidak ketemu
     return { status: "--", timestamp: "--/--/----", updater: "--" };
   }
 
@@ -119,14 +109,17 @@ document.addEventListener("DOMContentLoaded", function () {
       if (table.data().any()) {
         const allData = table.rows().data();
 
-        // Mengambil index kolom yang sesuai dengan DataTables Anda
+        // Mengambil index kolom (berdasarkan permintaan Anda)
         let dataBunyi = getLastValidCondition(allData, 12);
         let dataPanel = getLastValidCondition(allData, 13);
         let dataLengkap = getLastValidCondition(allData, 14);
         let dataBersih = getLastValidCondition(allData, 15);
         let dataGround = getLastValidCondition(allData, 16);
 
-        // Eksekusi pembaruan elemen UI di tabel kanan
+        // --- TAMBAHAN BARU: Mengambil data Action dari Kolom 19 ---
+        let dataAction = getLastValidCondition(allData, 18);
+
+        // Eksekusi pembaruan elemen UI tabel kondisi (Fitur Lama)
         updateConditionItem(
           "bunyi",
           dataBunyi.status,
@@ -158,7 +151,14 @@ document.addEventListener("DOMContentLoaded", function () {
           dataGround.updater,
         );
 
-        // Update waktu inspeksi terakhir secara global di bawah kotak
+        // --- TAMBAHAN BARU: Update tampilan Dashboard Action ---
+        const teksActionDom = document.getElementById("teks-action");
+        const tanggalActionDom = document.getElementById("tanggal-action");
+
+        if (teksActionDom) teksActionDom.innerText = dataAction.status;
+        if (tanggalActionDom) tanggalActionDom.innerText = dataAction.timestamp;
+
+        // Update waktu inspeksi terakhir secara global (Fitur Lama)
         const timeGlobalDom = document.getElementById("time-kondisi");
         if (timeGlobalDom) {
           let lastRowTime = allData[allData.length - 1][1];
@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function () {
             : "-";
         }
       } else {
-        // Default jika tabel kosong
+        // Default jika tabel kosong (Tetap dipertahankan)
         const emptyData = {
           status: "--",
           timestamp: "--/--/----",
@@ -205,6 +205,12 @@ document.addEventListener("DOMContentLoaded", function () {
           emptyData.timestamp,
           emptyData.updater,
         );
+
+        // Reset data Action jika kosong
+        if (document.getElementById("teks-action"))
+          document.getElementById("teks-action").innerText = "--";
+        if (document.getElementById("tanggal-action"))
+          document.getElementById("tanggal-action").innerText = "--/--/----";
 
         const timeGlobalDom = document.getElementById("time-kondisi");
         if (timeGlobalDom) timeGlobalDom.innerText = "-";

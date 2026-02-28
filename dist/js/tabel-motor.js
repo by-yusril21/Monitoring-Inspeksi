@@ -163,8 +163,8 @@ $(document).ready(function () {
     columnDefs: [{ defaultContent: "-", targets: "_all" }],
 
     lengthMenu: [
-      [5, 10, 25, 50, -1],
-      [5, 10, 25, 50, "Semua"],
+      [10, 25, 50, 100, -1],
+      [10, 25, 50, 100, "Semua"],
     ],
 
     buttons: [

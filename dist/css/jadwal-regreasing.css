@@ -1,0 +1,23 @@
+/* Pengaturan default kolom tabel: rata tengah */
+.table-jadwal th,
+.table-jadwal td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* KHUSUS ISI KOLOM PERTAMA (NAMA MOTOR) DIBUAT RATA KIRI */
+.table-jadwal td:first-child {
+    text-align: left !important;
+    padding-left: 15px;
+    /* Memberikan sedikit jarak dari garis tepi agar lebih rapi */
+}
+
+.table-jadwal th {
+    background-color: #f4f6f9;
+}
+
+/* Memastikan teks email tidak terlalu panjang dan merusak layout tabel */
+.status-updater {
+    word-break: break-all;
+    font-size: 0.9em;
+}

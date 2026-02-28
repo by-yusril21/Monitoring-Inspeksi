@@ -51,7 +51,8 @@ if (isset($_GET['page']) && file_exists("page/" . $_GET['page'] . ".php")) {
 <script src="dist/js/kondisi-motor.js"></script>
 <script src="dist/js/regreasing-motor.js"></script>
 <script src="dist/js/navbar-motor.js"></script>
-<!-- <script src="dist/js/action-motor.js"></script> -->
+<script src="dist/js/action-motor.js"></script>
+<script src="dist/js/jadwal-regreasing.js"></script>
 
 
 

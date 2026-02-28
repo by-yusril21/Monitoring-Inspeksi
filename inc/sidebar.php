@@ -96,6 +96,14 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
         </li>
 
         <li class="nav-item">
+          <a href="?page=jadwal-regreasing"
+            class="nav-link <?php echo ($current_page == 'jadwal-regreasing') ? 'active' : ''; ?>">
+            <i class="nav-icon fas fa-calendar-alt"></i>
+            <p>Jadwal Regreasing</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
           <a href="?page=datasensor" class="nav-link <?php echo ($current_page == 'datasensor') ? 'active' : ''; ?>">
             <i class="nav-icon fas fa-database"></i>
             <p>Data Sensor</p>

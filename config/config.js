@@ -5,7 +5,7 @@
    ======================================================= */
 
 window.SCRIPT_URLS = {
-  C6KV: "https://script.google.com/macros/s/AKfycbwc72bVBL0w12SYeD_oYeyA9GFI2e4nA2PgiIcald9gb7KyuekfzkOD_EhvystikAc/exec",
+  C6KV: "https://script.google.com/macros/s/AKfycbzkvL27aT9n2tFcgSZlXlDN5yMaPHxUHpWIHCCg0kfNPWG0UXbXaJTaDhMsfjaUOUpJ/exec",
   C380: "https://script.google.com/macros/s/AKfycbw3Jw1GMtoIHeePHQv_hy6oeY7TkIPjdI4n9VI2m6T91WeztL5WDpA8VBbbQCr_OKVO/exec",
   D6KV: "",
   D380: "",
