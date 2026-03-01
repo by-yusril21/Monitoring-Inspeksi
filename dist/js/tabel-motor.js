@@ -32,18 +32,14 @@ function safeGet(row, index) {
 window.loadDataFromSheet = function (unit, sheetName) {
   if (!unit || !sheetName) return;
 
-  const targetURL = window.SCRIPT_URLS[unit];
-  if (!targetURL) {
-    toastr.error("Link Database belum tersedia untuk unit ini.");
-    return;
-  }
-
   const dt = $("#example1").DataTable();
   const limitData = dt.page.len();
 
   dt.clear().draw();
 
-  const url = `${targetURL}?token=${window.API_TOKEN}&sheet=${encodeURIComponent(sheetName)}`;
+  // PENTING: Arahkan URL ke file PHP Proxy di folder api
+  // Kita mengirimkan 'unit' dan 'sheet' (nama motor) ke server proxy
+  const url = `api/api_proxy.php?unit=${unit}&sheet=${encodeURIComponent(sheetName)}`;
 
   fetch(url)
     .then((response) => response.json())

@@ -3,7 +3,7 @@
 
 
 <nav class="main-header navbar navbar-expand navbar-white navbar-light sticky-top px-0 py-0"
-     style="box-shadow:0 2px 8px rgba(0,0,0,0.1); flex-wrap:wrap;">
+  style="box-shadow:0 2px 8px rgba(0,0,0,0.1); flex-wrap:wrap;">
 
   <!-- ── Baris 1: Hamburger | Menu | Ikon Filter ── -->
   <div class="d-flex align-items-center w-100">
@@ -23,7 +23,7 @@
         <option value="D380">PLTU UNIT D 380</option>
         <option value="UTILITY">PLTU UNIT UTILITY</option>
       </select>
-     <select id="pilihMotor" class="form-control form-control-sm mr-1" style="width: 270px;" disabled>
+      <select id="pilihMotor" class="form-control form-control-sm mr-1" style="width: 270px;" disabled>
         <option value="">-- Pilih Motor --</option>
       </select>
       <button type="button" id="btnRefresh" class="btn btn-primary btn-sm text-nowrap">
@@ -35,10 +35,8 @@
     <ul class="navbar-nav d-flex flex-row align-items-center ml-auto mb-0">
 
       <li class="nav-item">
-        <a href="javascript:void(0)"
-           class="nav-link nav-menu-link text-primary px-2"
-           data-target-id="section-tabel"
-           onclick="scrollToSection('section-tabel')">
+        <a href="javascript:void(0)" class="nav-link nav-menu-link text-primary px-2" data-target-id="section-tabel"
+          onclick="scrollToSection('section-tabel')">
           <i class="fas fa-table"></i>
           <span class="d-none d-md-inline ml-1">Tabel Data</span>
           <span class="d-inline d-md-none ml-1">Tabel</span>
@@ -46,10 +44,8 @@
       </li>
 
       <li class="nav-item">
-        <a href="javascript:void(0)"
-           class="nav-link nav-menu-link text-dark px-2"
-           data-target-id="section-gauge"
-           onclick="scrollToSection('section-gauge')">
+        <a href="javascript:void(0)" class="nav-link nav-menu-link text-dark px-2" data-target-id="section-gauge"
+          onclick="scrollToSection('section-gauge')">
           <i class="fas fa-tachometer-alt"></i>
           <span class="d-none d-md-inline ml-1">Gauge Data</span>
           <span class="d-inline d-md-none ml-1">Gauge</span>
@@ -57,10 +53,8 @@
       </li>
 
       <li class="nav-item">
-        <a href="javascript:void(0)"
-           class="nav-link nav-menu-link text-dark px-2"
-           data-target-id="section-input"
-           onclick="scrollToSection('section-input')">
+        <a href="javascript:void(0)" class="nav-link nav-menu-link text-dark px-2" data-target-id="section-input"
+          onclick="scrollToSection('section-input')">
           <i class="fas fa-edit"></i>
           <span class="d-none d-md-inline ml-1">Input Data</span>
           <span class="d-inline d-md-none ml-1">Input</span>
@@ -76,8 +70,8 @@
 
       <!-- Tombol buka/tutup filter — mobile saja -->
       <li class="nav-item d-md-none">
-        <a class="nav-link px-2" data-toggle="collapse" href="#filterCollapse"
-           role="button" aria-expanded="false" aria-controls="filterCollapse">
+        <a class="nav-link px-2" data-toggle="collapse" href="#filterCollapse" role="button" aria-expanded="false"
+          aria-controls="filterCollapse">
           <i class="fas fa-filter text-primary"></i>
         </a>
       </li>

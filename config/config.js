@@ -1,19 +1,3 @@
-/* =======================================================
-   config.js
-   Konfigurasi global — URL API, Token, dan Data Motor
-   Dimuat PERTAMA sebelum tabel.js dan navbar.js
-   ======================================================= */
-
-window.SCRIPT_URLS = {
-  C6KV: "https://script.google.com/macros/s/AKfycbzkvL27aT9n2tFcgSZlXlDN5yMaPHxUHpWIHCCg0kfNPWG0UXbXaJTaDhMsfjaUOUpJ/exec",
-  C380: "https://script.google.com/macros/s/AKfycbzS2uoWxzS3k6sCUBFl-nzgmnaOzXoSf_jIEcjJ_0EZDkult0ECnijJTSiT0eUm54xl/exec",
-  D6KV: "https://script.google.com/macros/s/AKfycbzcaUlMVwdvefqH68AsoDeKvtQAe0uJ7TItNqv7LBA3iPBhk1b-QjKa5aH9fYi-b1glGg/exec",
-  D380: "https://script.google.com/macros/s/AKfycbyO7pg3l3fCyn-biovFENyK8O-DxIUAoUt6fco1_klLfZT0BTSUOYaph4l-30ykGXtg/exec",
-  UTILITY: "",
-};
-
-window.API_TOKEN = "SemenTonasa2026";
-
 window.dataMotor = {
   C6KV: [
     "BOILER FEED WATER PUMP A",

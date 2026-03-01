@@ -7,15 +7,17 @@ function scrollToSection(id) {
   const el = document.getElementById(id);
   if (!el) return;
   window.scrollTo({
-    top     : el.getBoundingClientRect().top + window.scrollY - 56,
-    behavior: "smooth"
+    top: el.getBoundingClientRect().top + window.scrollY - 56,
+    behavior: "smooth",
   });
 }
 
 /* ── populateMotor: isi kedua pasang select Motor ── */
 function populateMotor(unit, selectedMotor) {
-  const opts = (unit && window.dataMotor && window.dataMotor[unit])
-    ? window.dataMotor[unit] : [];
+  const opts =
+    unit && window.dataMotor && window.dataMotor[unit]
+      ? window.dataMotor[unit]
+      : [];
 
   ["#pilihMotor", "#pilihMotorMobile"].forEach(function (sel) {
     const $el = $(sel);
@@ -24,7 +26,7 @@ function populateMotor(unit, selectedMotor) {
       $el.prop("disabled", false);
       opts.forEach(function (name) {
         $el.append(
-          `<option value="${name}" ${selectedMotor === name ? "selected" : ""}>${name}</option>`
+          `<option value="${name}" ${selectedMotor === name ? "selected" : ""}>${name}</option>`,
         );
       });
     } else {
@@ -35,7 +37,7 @@ function populateMotor(unit, selectedMotor) {
 
 /* ── loadData: ambil data dari unit+motor aktif ── */
 function loadData() {
-  const unit  = $("#pilihUnit").val() || $("#pilihUnitMobile").val();
+  const unit = $("#pilihUnit").val() || $("#pilihUnitMobile").val();
   const motor = $("#pilihMotor").val() || $("#pilihMotorMobile").val();
   if (unit && motor && typeof window.loadDataFromSheet === "function") {
     window.loadDataFromSheet(unit, motor);
@@ -51,9 +53,9 @@ function clearTable() {
 
 /* ── bindFilterEvents ── */
 function bindFilterEvents() {
-
-  $("#pilihUnit,#pilihUnitMobile,#pilihMotor,#pilihMotorMobile")
-    .off("change.navbar");
+  $("#pilihUnit,#pilihUnitMobile,#pilihMotor,#pilihMotorMobile").off(
+    "change.navbar",
+  );
   $(document).off("click.navbar", "#btnRefresh,#btnRefreshMobile");
 
   /* Pilih Unit Desktop */
@@ -96,7 +98,7 @@ function bindFilterEvents() {
   $(document).on("click.navbar", "#btnRefresh,#btnRefreshMobile", function (e) {
     e.preventDefault();
     e.stopPropagation();
-    const unit  = $("#pilihUnit").val() || $("#pilihUnitMobile").val();
+    const unit = $("#pilihUnit").val() || $("#pilihUnitMobile").val();
     const motor = $("#pilihMotor").val() || $("#pilihMotorMobile").val();
     if (unit && motor) {
       if (typeof window.loadDataFromSheet === "function") {
@@ -110,7 +112,7 @@ function bindFilterEvents() {
   });
 
   /* Restore localStorage */
-  const savedUnit  = localStorage.getItem("mon_selectedUnit");
+  const savedUnit = localStorage.getItem("mon_selectedUnit");
   const savedMotor = localStorage.getItem("mon_selectedMotor");
   if (savedUnit) {
     $("#pilihUnit,#pilihUnitMobile").val(savedUnit);
@@ -123,7 +125,6 @@ function bindFilterEvents() {
    DOM READY
    ======================================================= */
 $(document).ready(function () {
-
   /* ScrollSpy */
   const navLinks = document.querySelectorAll(".nav-menu-link");
 
@@ -157,9 +158,13 @@ $(document).ready(function () {
     const obs = new MutationObserver(function (m, o) {
       if (tryBind()) o.disconnect();
     });
-    obs.observe(document.getElementById("example1_wrapper") || document.body,
-      { childList: true, subtree: true });
-    setTimeout(function () { obs.disconnect(); tryBind(); }, 1500);
+    obs.observe(document.getElementById("example1_wrapper") || document.body, {
+      childList: true,
+      subtree: true,
+    });
+    setTimeout(function () {
+      obs.disconnect();
+      tryBind();
+    }, 1500);
   }
-
 });

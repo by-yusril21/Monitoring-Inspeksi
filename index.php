@@ -16,7 +16,7 @@ include "inc/sidebar.php";
 include "inc/alerts.php";
 
 
-if (isset($_GET['page']) && file_exists("page/" . $_GET['page'] . ".php")) {
+if (isset($_GET['page']) && file_exists(filename: "page/" . $_GET['page'] . ".php")) {
   include "page/" . $_GET['page'] . ".php";
 } else {
   include "page/dashboard.php";
@@ -50,7 +50,7 @@ if (isset($_GET['page']) && file_exists("page/" . $_GET['page'] . ".php")) {
 <script src="dist/js/termometer-motor.js"></script>
 <script src="dist/js/kondisi-motor.js"></script>
 <script src="dist/js/regreasing-motor.js"></script>
-<script src="dist/js/navbar-motor.js"></script>
+<script src="dist/js/navbar.js"></script>
 <script src="dist/js/action-motor.js"></script>
 <script src="dist/js/jadwal-regreasing.js"></script>
 

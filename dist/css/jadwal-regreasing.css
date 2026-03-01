@@ -2,9 +2,9 @@
    KUNCI LEBAR KOLOM AGAR GARIS KONSISTEN DI SEMUA TABEL
    ======================================================== */
 .table-jadwal {
-  table-layout: fixed; /* Mencegah tabel melar mengikuti panjang teks */
+  table-layout: fixed;
   width: 100%;
-  min-width: 800px; /* PENTING: Memaksa tabel memiliki lebar minimal agar bisa digeser (scroll) di HP */
+  min-width: 800px !important; /* WAJIB ADA: Memaksa tabel tetap lebar agar bisa di-scroll di HP */
 }
 
 /* Pembagian persentase lebar kolom (Total harus 100%) */

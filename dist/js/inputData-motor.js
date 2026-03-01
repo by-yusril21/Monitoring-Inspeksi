@@ -1,15 +1,13 @@
 /**
  * File: inputData-motor.js
  * Fitur:
- * - AUTH: Mengirim username login secara otomatis (Email Address).
+ * - AUTH: Mengirim username login secara otomatis.
  * - SYNC TABLE: Section No diambil otomatis dari Baris Terakhir Tabel.
  * - TRIGGER: Button Click (Anti Auto-Submit).
- * - LOGIC: Strict Validation & Auto Refresh.
+ * - LOGIC: Strict Validation & Auto Refresh via PROXY PHP.
  */
 
 document.addEventListener("DOMContentLoaded", function () {
-  const PASSWORD_RAHASIA = "SemenTonasa2026";
-
   const formInput = document.getElementById("formInputMotor");
   const logOutput = document.getElementById("log-output");
   const btnKirim = document.getElementById("btnKirim");
@@ -17,8 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const parameterSection = document.getElementById("parameterSection");
   const dividerBawah = document.getElementById("dividerBawah");
   const inputSectionNo = document.getElementById("inputSectionNo");
-  
-  // Element Login User (Hidden Input dari PHP)
+
   const userLoggedIn = document.getElementById("userLoggedIn");
 
   // --- 1. Fungsi Log UI ---
@@ -73,22 +70,25 @@ document.addEventListener("DOMContentLoaded", function () {
         // Index 4 adalah Kolom SECTION NO pada tabel
         let lastSectionVal = lastRow[4];
 
-        if (lastSectionVal === null || lastSectionVal === undefined || lastSectionVal === "") {
+        if (
+          lastSectionVal === null ||
+          lastSectionVal === undefined ||
+          lastSectionVal === ""
+        ) {
           lastSectionVal = "0";
         }
 
         inputSectionNo.value = lastSectionVal;
-        inputSectionNo.style.backgroundColor = "#e9ecef"; 
+        inputSectionNo.style.backgroundColor = "#e9ecef";
       } else {
         inputSectionNo.value = "0";
-        inputSectionNo.style.backgroundColor = "#fff3cd"; 
+        inputSectionNo.style.backgroundColor = "#fff3cd";
       }
     } else {
       inputSectionNo.placeholder = "Menunggu Tabel...";
     }
   }
 
-  // Mata-mata Tabel (Jalan setiap tabel refresh/draw)
   if (typeof $ !== "undefined") {
     $("#example1").on("draw.dt", function () {
       syncSectionFromTable();
@@ -106,10 +106,9 @@ document.addEventListener("DOMContentLoaded", function () {
       };
     }
 
-    btnKirim.onclick = function (e) {
+    btnKirim.onclick = async function (e) {
       e.preventDefault();
 
-      // Ambil value terbaru
       const elUnit = document.getElementById("pilihUnit");
       const elMotor = document.getElementById("pilihMotor");
 
@@ -124,11 +123,8 @@ document.addEventListener("DOMContentLoaded", function () {
       let pesanError = "";
 
       if (!valUnit || valUnit === "") pesanError = "Unit belum dipilih!";
-      else if (!valMotor || valMotor === "") pesanError = "Motor belum dipilih!";
-      else {
-        const targetURL = window.SCRIPT_URLS && valUnit ? window.SCRIPT_URLS[valUnit] : undefined;
-        if (!targetURL) pesanError = "URL Script Unit ini tidak ditemukan!";
-      }
+      else if (!valMotor || valMotor === "")
+        pesanError = "Motor belum dipilih!";
 
       if (!pesanError) {
         const formData = new FormData(formInput);
@@ -140,7 +136,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!pesanError && isPreventive) {
         const formData = new FormData(formInput);
-        const numericFields = ["vibrasi", "temp_de", "temp_nde", "suhu_ruang", "beban_gen", "damper", "load_current"];
+        const numericFields = [
+          "vibrasi",
+          "temp_de",
+          "temp_nde",
+          "suhu_ruang",
+          "beban_gen",
+          "damper",
+          "load_current",
+        ];
         for (let name of numericFields) {
           let val = formData.get(name);
           if (val === null || val.trim() === "") {
@@ -150,7 +154,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (!pesanError) {
-          const dropdownFields = ["bunyi", "panel", "lengkap", "bersih", "ground", "regrease"];
+          const dropdownFields = [
+            "bunyi",
+            "panel",
+            "lengkap",
+            "bersih",
+            "ground",
+            "regrease",
+          ];
           for (let name of dropdownFields) {
             let val = formData.get(name);
             if (val === null || val === "") {
@@ -161,14 +172,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      // --- TAHAP 2: EKSEKUSI ---
+      // --- TAHAP 2: EKSEKUSI (Kirim ke Proxy) ---
       if (pesanError !== "") {
         toastr.warning(pesanError);
         writeLog("GAGAL: " + pesanError, "WARNING");
         return false;
       } else {
         const formData = new FormData(formInput);
-        const targetURL = window.SCRIPT_URLS[valUnit];
 
         const getGeneral = (name) => {
           let val = formData.get(name);
@@ -184,18 +194,15 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         };
 
-        // AMBIL USERNAME (AUTH)
         const currentUser = userLoggedIn ? userLoggedIn.value : "Guest";
 
+        // Susun payload yang akan dikirim ke server proxy kita
         const payload = {
-          token: PASSWORD_RAHASIA,
+          unit: valUnit, // Menambahkan info unit untuk dibaca proxy
           targetSheet: valMotor,
           maintenanceType: tipeMain,
-
-          // DATA PENTING
-          email: currentUser, // Username dikirim sebagai Email Address
+          email: currentUser,
           sectionNo: inputSectionNo ? inputSectionNo.value || "-" : "-",
-
           actions: getGeneral("action"),
           vibrasi: getTeknis("vibrasi"),
           tempDE: getTeknis("temp_de"),
@@ -214,40 +221,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
         writeLog(`Mengirim data (User: ${currentUser})...`, "WAIT");
         btnKirim.disabled = true;
-        btnKirim.innerHTML = '<i class="fas fa-spinner fa-spin"></i> MENGIRIM...';
+        btnKirim.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> MENGIRIM...';
 
-        fetch(targetURL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        })
-          .then(() => {
+        try {
+          // PENTING: Arahkan fetch ke file PHP pengirim data yang baru
+          const response = await fetch("api/submit_proxy.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          // Mengambil respon dari server
+          const result = await response.json();
+
+          if (result.status === "success") {
             writeLog("SUKSES: Tersimpan di Database.", "SUCCESS");
             toastr.success("Data monitoring berhasil disimpan.");
 
             formInput.reset();
             updateFormLayout();
 
-            // Auto Refresh Tabel
             const btnRefresh = document.getElementById("btnRefresh");
             if (btnRefresh) btnRefresh.click();
             else if (window.jQuery) $("#btnRefresh").trigger("click");
 
-            // Reset input Section No
             if (inputSectionNo) {
               inputSectionNo.value = "Updating...";
               inputSectionNo.style.backgroundColor = "#fff3cd";
             }
-          })
-          .catch((err) => {
-            writeLog("ERROR FETCH: " + err.message, "ERROR");
-            toastr.error("Gagal koneksi: " + err.message);
-          })
-          .finally(() => {
-            btnKirim.disabled = false;
-            btnKirim.innerHTML = '<i class="fas fa-paper-plane mr-1"></i> KIRIM DATA MONITORING';
-          });
+          } else {
+            throw new Error(result.message || "Gagal menyimpan data.");
+          }
+        } catch (err) {
+          writeLog("ERROR FETCH: " + err.message, "ERROR");
+          toastr.error("Gagal koneksi: " + err.message);
+        } finally {
+          btnKirim.disabled = false;
+          btnKirim.innerHTML =
+            '<i class="fas fa-paper-plane mr-1"></i> KIRIM DATA MONITORING';
+        }
       }
     };
   }

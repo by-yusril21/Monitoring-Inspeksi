@@ -4,7 +4,6 @@
 function exportToExcel(tableID, filename = "") {
   const tableSelect = document.getElementById(tableID);
 
-  // Membungkus HTML tabel ke format standar excel
   const html = `
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
     <head>
@@ -12,7 +11,7 @@ function exportToExcel(tableID, filename = "") {
         <style>
             table, th, td { border: 1px solid black; border-collapse: collapse; text-align: center; vertical-align: middle; }
             th { background-color: #f4f6f9; font-weight: bold; }
-            th:first-child { text-align: left; } /* Memastikan Excel juga rata kiri di kolom pertama */
+            th:first-child { text-align: left; } 
         </style>
     </head>
     <body>
@@ -20,10 +19,7 @@ function exportToExcel(tableID, filename = "") {
     </body>
     </html>`;
 
-  // Buat Blob file
   const blob = new Blob([html], { type: "application/vnd.ms-excel" });
-
-  // Buat link download otomatis
   const downloadLink = document.createElement("a");
   const url = URL.createObjectURL(blob);
   downloadLink.href = url;
@@ -35,50 +31,28 @@ function exportToExcel(tableID, filename = "") {
 }
 
 // =========================================================================
-// Fungsi Tarik Data API Utama
+// Fungsi Tarik Data dari PROXY SERVER (Bukan Google Langsung)
 // =========================================================================
 document.addEventListener("DOMContentLoaded", function () {
-  // 1. Cek apakah config.js sudah dimuat
-  if (
-    typeof window.SCRIPT_URLS === "undefined" ||
-    typeof window.API_TOKEN === "undefined"
-  ) {
-    console.error(
-      "Konfigurasi API tidak ditemukan. Pastikan config.js sudah di-load.",
-    );
-    return;
-  }
-
-  const token = window.API_TOKEN;
-
-  // 2. Buat Fungsi Reusable untuk memuat data berdasarkan URL API dan ID Tabel
-  async function loadDataMotor(apiUrl, tableId) {
+  // Fungsi Reusable yang menembak api_proxy.php lokal
+  async function loadDataMotor(kodeUnit, tableId) {
     const tableRows = document.querySelectorAll(`#${tableId} tbody tr`);
 
-    // Jika tabel tidak ada di HTML atau URL API masih kosong di config.js, hentikan eksekusi
-    if (tableRows.length === 0 || !apiUrl || apiUrl === "") {
-      console.warn(
-        `Melewati ${tableId}: URL API belum diatur atau tabel tidak ditemukan.`,
-      );
-      return;
-    }
+    if (tableRows.length === 0) return;
 
     try {
-      // Ambil data dari Apps Script
-      const response = await fetch(
-        `${apiUrl}?token=${token}&sheet=REKAP_REGREASING`,
-      );
+      // PENTING: Menembak file PHP di server sendiri
+      const response = await fetch(`api/api_proxy.php?unit=${kodeUnit}`);
       const dataRekap = await response.json();
 
       if (dataRekap.error || dataRekap.status === "error") {
         throw new Error(
           dataRekap.message ||
             dataRekap.error ||
-            "Gagal memuat sheet REKAP_REGREASING",
+            "Gagal memuat data dari server proxy",
         );
       }
 
-      // Mapping data agar mudah dicari berdasarkan nama motor
       const dataMotorMap = {};
       for (let i = 1; i < dataRekap.length; i++) {
         const row = dataRekap[i];
@@ -92,7 +66,6 @@ document.addEventListener("DOMContentLoaded", function () {
         };
       }
 
-      // Masukkan data ke dalam masing-masing baris tabel HTML
       tableRows.forEach((tr) => {
         const motorName = tr.getAttribute("data-motor");
         const colTerakhir = tr.querySelector(".terakhir-regreasing");
@@ -145,18 +118,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // =========================================================================
-  // 3. JALANKAN FUNGSI UNTUK MASING-MASING UNIT DI SINI
+  // JALANKAN FUNGSI (Hanya mengirim kode unit saja)
   // =========================================================================
-
-  // Eksekusi untuk MOTOR UNIT C 6KV
-  loadDataMotor(window.SCRIPT_URLS.C6KV, "table-unit-c-6kv");
-
-  // Eksekusi untuk MOTOR UNIT D 6KV
-  loadDataMotor(window.SCRIPT_URLS.D6KV, "table-unit-d-6kv");
-
-  // Eksekusi untuk MOTOR UNIT C 380V
-  loadDataMotor(window.SCRIPT_URLS.C380, "table-unit-c-380v");
-
-  // Eksekusi untuk MOTOR UNIT D 380V
-  loadDataMotor(window.SCRIPT_URLS.D380, "table-unit-d-380v");
+  loadDataMotor("C6KV", "table-unit-c-6kv");
+  loadDataMotor("D6KV", "table-unit-d-6kv");
+  loadDataMotor("C380", "table-unit-c-380v");
+  loadDataMotor("D380", "table-unit-d-380v");
 });
