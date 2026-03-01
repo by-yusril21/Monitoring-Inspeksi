@@ -1,7 +1,7 @@
 <style>
   /* 1. Sidebar Container Utama */
   .main-sidebar-custom {
-    background-color: #efefef !important;
+    background-color: #e0e0e0 !important;
     transition: all 0.3s ease;
 
     /* FITUR FIXED: Mengunci sidebar agar tidak bergerak */
@@ -46,7 +46,7 @@
 
   /* Warna Menu Aktif */
   .nav-sidebar .nav-link.active {
-    background-color: #799dc4 !important;
+    background-color: #0046f7a2 !important;
     color: #ffffff !important;
     /* Putih agar lebih kontras di atas biru */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

@@ -23,7 +23,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
   <!-- Custom overrides (dark-mode tweaks) -->
-  <link rel="stylesheet" href="dist/css/custom.css">
   <link rel="stylesheet" href="dist/css/tabel-motor.css">
   <link rel="stylesheet" href="dist/css/form-input.css">
   <link rel="stylesheet" href="dist/css/gauge-motor.css">

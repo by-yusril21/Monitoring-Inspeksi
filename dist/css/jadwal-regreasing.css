@@ -1,23 +1,67 @@
+/* ========================================================
+   KUNCI LEBAR KOLOM AGAR GARIS KONSISTEN DI SEMUA TABEL
+   ======================================================== */
+.table-jadwal {
+  table-layout: fixed; /* Mencegah tabel melar mengikuti panjang teks */
+  width: 100%;
+  min-width: 800px; /* PENTING: Memaksa tabel memiliki lebar minimal agar bisa digeser (scroll) di HP */
+}
+
+/* Pembagian persentase lebar kolom (Total harus 100%) */
+.table-jadwal th:nth-child(1) {
+  width: 23.5%;
+} /* NAMA MOTOR */
+.table-jadwal th:nth-child(2) {
+  width: 23.5%;
+} /* UPDATED BY */
+.table-jadwal th:nth-child(3) {
+  width: 20%;
+} /* TERAKHIR REGREASING */
+.table-jadwal th:nth-child(4) {
+  width: 20%;
+} /* JADWAL SELANJUTNYA */
+.table-jadwal th:nth-child(5) {
+  width: 13%;
+} /* SISA WAKTU */
+
+/* ========================================================
+   PENGATURAN TEKS DAN WARNA (KODE LAMA ANDA)
+   ======================================================== */
 /* Pengaturan default kolom tabel: rata tengah */
 .table-jadwal th,
 .table-jadwal td {
-    text-align: center;
-    vertical-align: middle;
+  text-align: center;
+  vertical-align: middle;
+  word-wrap: break-word; /* Memastikan teks yang panjang turun ke bawah */
 }
 
 /* KHUSUS ISI KOLOM PERTAMA (NAMA MOTOR) DIBUAT RATA KIRI */
 .table-jadwal td:first-child {
-    text-align: left !important;
-    padding-left: 15px;
-    /* Memberikan sedikit jarak dari garis tepi agar lebih rapi */
+  text-align: left !important;
+  padding-left: 15px;
 }
 
 .table-jadwal th {
-    background-color: #f4f6f9;
+  background-color: #f4f6f9;
 }
 
 /* Memastikan teks email tidak terlalu panjang dan merusak layout tabel */
 .status-updater {
-    word-break: break-all;
-    font-size: 0.9em;
+  word-break: break-all;
+  font-size: 0.9em;
+}
+
+/* ========================================================
+   PENGATURAN KHUSUS LAYAR HP (RESPONSIVE)
+   ======================================================== */
+@media (max-width: 768px) {
+  .table-jadwal th,
+  .table-jadwal td {
+    font-size: 13px; /* Mengecilkan ukuran huruf sedikit di layar HP */
+    padding: 8px 5px; /* Mengurangi ruang kosong agar data lebih padat */
+  }
+
+  .status-updater {
+    font-size: 11px; /* Teks email dibuat lebih kecil lagi di HP */
+  }
 }
