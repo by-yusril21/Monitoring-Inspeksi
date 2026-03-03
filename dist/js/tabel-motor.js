@@ -1,5 +1,5 @@
 /* =======================================================
-   tabel.js
+   tabel-motor.js
    Inisialisasi DataTable + Fungsi Load Data dari Sheet
    Membutuhkan: config.js (dimuat lebih dulu)
    ======================================================= */
@@ -38,7 +38,6 @@ window.loadDataFromSheet = function (unit, sheetName) {
   dt.clear().draw();
 
   // PENTING: Arahkan URL ke file PHP Proxy di folder api
-  // Kita mengirimkan 'unit' dan 'sheet' (nama motor) ke server proxy
   const url = `api/api_proxy.php?unit=${unit}&sheet=${encodeURIComponent(sheetName)}`;
 
   fetch(url)
@@ -71,7 +70,17 @@ window.loadDataFromSheet = function (unit, sheetName) {
       const idxUnit = getColIndex(headers, "PILIH SALAH SATU");
       const idxSection1 = getColIndex(headers, "SECTION NO");
       const idxSection2 = getColIndex(headers, "SECTION NO 2");
-      const idxVibrasi = getColIndex(headers, "VIBRASI");
+
+      // [UPDATE]: Vibrasi dipecah menjadi 2
+      const idxVibrasiDE = getColIndex(headers, [
+        "VIBRASI BEARING DE",
+        "VIBRASI DE",
+      ]);
+      const idxVibrasiNDE = getColIndex(headers, [
+        "VIBRASI BEARING NDE",
+        "VIBRASI NDE",
+      ]);
+
       const idxTempDE = getColIndex(headers, [
         "TEMPERATURE BEARING DE",
         "TEMP. BEARING DE",
@@ -107,7 +116,8 @@ window.loadDataFromSheet = function (unit, sheetName) {
           safeGet(row, idxEmail),
           safeGet(row, idxUnit),
           valSection,
-          safeGet(row, idxVibrasi),
+          safeGet(row, idxVibrasiDE), // Memasukkan Vibrasi DE
+          safeGet(row, idxVibrasiNDE), // Memasukkan Vibrasi NDE
           safeGet(row, idxTempDE),
           safeGet(row, idxTempNDE),
           safeGet(row, idxSuhu),

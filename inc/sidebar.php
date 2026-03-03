@@ -103,12 +103,14 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
           </a>
         </li>
 
-        <li class="nav-item">
-          <a href="?page=datasensor" class="nav-link <?php echo ($current_page == 'datasensor') ? 'active' : ''; ?>">
-            <i class="nav-icon fas fa-database"></i>
-            <p>Data Sensor</p>
-          </a>
-        </li>
+        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+          <li class="nav-item">
+            <a href="?page=user" class="nav-link <?php echo ($current_page == 'user') ? 'active' : ''; ?>">
+              <i class="nav-icon fas fa-database"></i>
+              <p>Tambah Pengguna</p>
+            </a>
+          </li>
+        <?php endif; ?>
 
         <li class="nav-header" style="padding: 10px 1rem 5px; color: #888; font-size: 10px;">AKUN</li>
 
