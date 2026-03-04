@@ -1,6 +1,6 @@
 /**
  * File: gauge-motor.js
- * Deskripsi: Menangani visualisasi ECharts (Jarum) dan Sinkronisasi Tabel
+ * Deskripsi: Menangani visualisasi ECharts (Jarum), VibeTube, dan Sinkronisasi Tabel
  */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -17,6 +17,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const gaugeInstances = {};
 
+  // --- INISIALISASI VIBETUBE ---
+  const vibeDE = new VibeTube("vibe-de-container", "BEHRING DE");
+  const vibeNDE = new VibeTube("vibe-nde-container", "BEHRING NDE");
+
+  // --- FUNGSI INISIALISASI ECHARTS (Dipertahankan) ---
   function initMotorGauge(domId, title, unit, min, max) {
     const chartDom = document.getElementById(domId);
     if (!chartDom) return;
@@ -72,8 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
     gaugeInstances[domId] = myChart;
   }
 
-  // Inisialisasi khusus 4 Gauge ECharts
-  initMotorGauge("gauge-vibrasi", "Vibrasi", "mm/s", 0, 15);
+  // Hanya memanggil 3 ECharts (Karena Vibrasi sekarang pakai VibeTube)
   initMotorGauge("gauge-beban-gen", "Beban", "MW", 0, 100);
   initMotorGauge("gauge-damper", "Damper", "%", 0, 100);
   initMotorGauge("gauge-load-current", "Arus", "A", 0, 300);
@@ -128,9 +132,15 @@ document.addEventListener("DOMContentLoaded", function () {
           if (match) {
             let parsed = parseFloat(match[0]);
             if (!isNaN(parsed)) {
-              let timeVal = allData[i][1]
-                ? allData[i][1]
+              // --- [DIPERBAIKI] MEMOTONG STRING UNTUK MENGAMBIL TANGGAL SAJA ---
+              let rawTime = allData[i][1]
+                ? String(allData[i][1])
                 : "Waktu Tidak Diketahui";
+              // Jika ada spasi (pemisah antara tanggal dan jam), ambil bagian depannya saja (tanggal)
+              let timeVal = rawTime.includes(" ")
+                ? rawTime.split(" ")[0]
+                : rawTime;
+
               return { value: parsed, timestamp: timeVal };
             }
           }
@@ -147,29 +157,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (table.data().any()) {
         const allData = table.rows().data();
-        updateGaugeValue(
-          "gauge-vibrasi",
-          "time-vibrasi",
-          getLastValidData(allData, 5),
-        );
+
+        // 1. UPDATE VIBETUBE (Kolom 5 & 6)
+        const dataDE = getLastValidData(allData, 5);
+        const dataNDE = getLastValidData(allData, 6);
+
+        vibeDE.update(dataDE.value, dataDE.timestamp);
+        vibeNDE.update(dataNDE.value, dataNDE.timestamp);
+
+        // 2. UPDATE ECHARTS LAINNYA (Index disesuaikan menjadi 10, 11, 12)
         updateGaugeValue(
           "gauge-beban-gen",
           "time-beban-gen",
-          getLastValidData(allData, 9),
+          getLastValidData(allData, 10),
         );
         updateGaugeValue(
           "gauge-damper",
           "time-damper",
-          getLastValidData(allData, 10),
+          getLastValidData(allData, 11),
         );
         updateGaugeValue(
           "gauge-load-current",
           "time-load-current",
-          getLastValidData(allData, 11),
+          getLastValidData(allData, 12),
         );
       } else {
         const emptyData = { value: 0, timestamp: "-" };
-        updateGaugeValue("gauge-vibrasi", "time-vibrasi", emptyData);
+
+        vibeDE.update(0, "-");
+        vibeNDE.update(0, "-");
+
         updateGaugeValue("gauge-beban-gen", "time-beban-gen", emptyData);
         updateGaugeValue("gauge-damper", "time-damper", emptyData);
         updateGaugeValue("gauge-load-current", "time-load-current", emptyData);

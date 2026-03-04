@@ -6,13 +6,29 @@
 
 /* -------------------------------------------------------
    Helper: ambil index kolom berdasarkan keyword
+   (DIPERBAIKI: Menggunakan Exact Match terlebih dahulu, lalu Filter Kata)
    ------------------------------------------------------- */
 function getColIndex(headers, keywords) {
   if (!Array.isArray(keywords)) keywords = [keywords];
+
+  // Tahap 1: Cari Exact Match (Kecocokan Sempurna) terlebih dahulu
+  for (let i = 0; i < headers.length; i++) {
+    const h = String(headers[i]).toUpperCase().trim();
+    for (let k of keywords) {
+      if (h === k.toUpperCase().trim()) return i;
+    }
+  }
+
+  // Tahap 2: Jika Exact Match tidak ketemu, pakai Includes dengan proteksi
   for (let i = 0; i < headers.length; i++) {
     const h = String(headers[i]).toUpperCase();
     for (let k of keywords) {
-      if (h.includes(k.toUpperCase())) return i;
+      if (h.includes(k.toUpperCase())) {
+        // Proteksi agar Temp dan Vibrasi tidak bertabrakan
+        if (k.toUpperCase().includes("VIBRASI") && h.includes("TEMP")) continue;
+        if (k.toUpperCase().includes("TEMP") && h.includes("VIBRASI")) continue;
+        return i;
+      }
     }
   }
   return -1;
@@ -71,7 +87,7 @@ window.loadDataFromSheet = function (unit, sheetName) {
       const idxSection1 = getColIndex(headers, "SECTION NO");
       const idxSection2 = getColIndex(headers, "SECTION NO 2");
 
-      // [UPDATE]: Vibrasi dipecah menjadi 2
+      // Vibrasi dipecah menjadi 2
       const idxVibrasiDE = getColIndex(headers, [
         "VIBRASI BEARING DE",
         "VIBRASI DE",
@@ -116,14 +132,14 @@ window.loadDataFromSheet = function (unit, sheetName) {
           safeGet(row, idxEmail),
           safeGet(row, idxUnit),
           valSection,
-          safeGet(row, idxVibrasiDE), // Memasukkan Vibrasi DE
-          safeGet(row, idxVibrasiNDE), // Memasukkan Vibrasi NDE
-          safeGet(row, idxTempDE),
-          safeGet(row, idxTempNDE),
-          safeGet(row, idxSuhu),
-          safeGet(row, idxBeban),
-          safeGet(row, idxDamper),
-          safeGet(row, idxCurrent),
+          safeGet(row, idxVibrasiDE), // Kolom 5
+          safeGet(row, idxVibrasiNDE), // Kolom 6
+          safeGet(row, idxTempDE), // Kolom 7
+          safeGet(row, idxTempNDE), // Kolom 8
+          safeGet(row, idxSuhu), // Kolom 9
+          safeGet(row, idxBeban), // Kolom 10
+          safeGet(row, idxDamper), // Kolom 11
+          safeGet(row, idxCurrent), // Kolom 12
           safeGet(row, idxBunyi),
           safeGet(row, idxPanel),
           safeGet(row, idxKelengkapan),

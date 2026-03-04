@@ -111,9 +111,7 @@ $columns = [
                     <div class="gauge-layout-vertical">
 
                         <div class="gauge-row">
-
                             <div class="thermo-wrapper">
-
                                 <div class="thermo-item">
                                     <div class="thermo-title">Bearing DE</div>
                                     <div id="thermo-de"></div>
@@ -136,39 +134,38 @@ $columns = [
                                 </div>
                             </div>
                         </div>
-                        <div class="gauge-row">
-                            <div class="gauge-card">
-                                <div class="gauge-header">Vibrasi / Getaran</div>
-                                <div id="gauge-vibrasi" class="gauge-chart-container"></div>
-                                <div id="time-vibrasi" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
-                            </div>
-                            
-                            <div class="gauge-card">
-                                <div class="gauge-header">Beban Generator</div>
-                                <div id="gauge-beban-gen" class="gauge-chart-container"></div>
-                                <div id="time-beban-gen" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
-                            </div>
 
-                        </div>
+<div style="display: grid; grid-template-columns: 180px 140px; justify-content: center; gap: 15px 5px; width: 100%;">
+    
+    <div class="gauge-card vibrasi-card" style="margin: 0; padding: 0 1px; width: 100%;">
+        <div class="gauge-header" style="width: 100%;">Vibrasi</div>
+        <div class="w-100 d-flex flex-column align-items-center" style="margin-top: 5px;">
+            <div id="vibe-de-container" style="width: 100%; display: flex; justify-content: center; margin-bottom: 15px;"></div>
+            <div id="vibe-nde-container" style="width: 100%; display: flex; justify-content: center;"></div>
+        </div>
+    </div>
+    
+    <div class="gauge-card" style="justify-content: flex-start; padding: 0 1px; margin: 0; width: 100%;">
+        <div class="gauge-header" style="width: 100%;">Beban Generator</div>
+        <div id="gauge-beban-gen" class="gauge-chart-container" style="margin-top: 5px; width: 100%; background: transparent;"></div>
+        <div id="time-beban-gen" class="gauge-timestamp mt-auto"><i class="far fa-clock"></i> -</div>
+    </div>
 
-                        <div class="gauge-row">
+    <div class="gauge-card" style="justify-content: flex-start; padding: 0 1px; margin: 0; width: 100%;">
+        <div class="gauge-header" style="width: 100%;">Opening Damper</div>
+        <div id="gauge-damper" class="gauge-chart-container" style="margin-top: 5px; width: 100%; background: transparent;"></div>
+        <div id="time-damper" class="gauge-timestamp mt-auto"><i class="far fa-clock"></i> -</div>
+    </div>
+    
+    <div class="gauge-card" style="justify-content: flex-start; padding: 0 1px; margin: 0; width: 100%;">
+        <div class="gauge-header" style="width: 100%;">Load Current</div>
+        <div id="gauge-load-current" class="gauge-chart-container" style="margin-top: 5px; width: 100%; background: transparent;"></div>
+        <div id="time-load-current" class="gauge-timestamp mt-auto"><i class="far fa-clock"></i> -</div>
+    </div>
 
-                            <div class="gauge-card">
-                                <div class="gauge-header">Opening Damper</div>
-                                <div id="gauge-damper" class="gauge-chart-container"></div>
-                                <div id="time-damper" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
-                            </div>
-                            
-                            <div class="gauge-card">
-                                <div class="gauge-header">Load Current</div>
-                                <div id="gauge-load-current" class="gauge-chart-container"></div>
-                                <div id="time-load-current" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
-                            </div>
-
-                        </div>
+</div>                     
 
                     </div> 
-
                 </div>
 
                 <div class="condition-main-container bg-white">
@@ -374,3 +371,5 @@ $columns = [
         </div>
     </section>
 </div>
+
+<script src="plugins/VibeTube/VibeTube.js"></script>

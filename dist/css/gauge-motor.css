@@ -119,6 +119,7 @@
 .regreasing-table th:nth-child(5) {
   width: 18%;
 }
+
 /* Status Badges (Good/Fair/Poor) */
 .status-badge {
   font-size: 0.65rem;
@@ -272,4 +273,18 @@
   font-size: 0.65rem;
   text-align: center;
   width: 100%;
+}
+
+/* --- TAMBAHAN KHUSUS UNTUK CARD VIBRASI (DIPERBAIKI) --- */
+.gauge-card.vibrasi-card {
+  width: auto; /* Membatalkan batasan 140px */
+  min-width: 180px; /* Memberikan ruang agar tabung dan teks tanggal tidak terpotong */
+  padding: 0px 10px; /* PADDING ATAS 0px AGAR SEJAJAR DENGAN SEBELAHNYA */
+  justify-content: flex-start !important; /* PAKSA KONTEN UNTUK SELALU RATA ATAS */
+}
+
+/* Memastikan header vibrasi tetap rapi dan tidak melebar berlebihan */
+.gauge-card.vibrasi-card .gauge-header {
+  width: 100%;
+  margin-bottom: 0; /* Margin bawah dikosongkan karena sudah diatur jaraknya lewat HTML */
 }

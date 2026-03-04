@@ -148,6 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("x2", width / 2 + tubeWidth / 2 + 4)
       .attr("y1", scale(85))
       .attr("y2", scale(85))
+      .attr("y2", scale(85))
       .style("stroke", "#c0392b")
       .style("stroke-width", "1px")
       .style("stroke-dasharray", "3,2");
@@ -242,9 +243,15 @@ document.addEventListener("DOMContentLoaded", function () {
           if (match) {
             let parsed = parseFloat(match[0]);
             if (!isNaN(parsed)) {
-              let timeVal = allData[i][1]
-                ? allData[i][1]
+              // --- [DIPERBAIKI] MEMOTONG STRING UNTUK MENGAMBIL TANGGAL SAJA ---
+              let rawTime = allData[i][1]
+                ? String(allData[i][1])
                 : "Waktu Tidak Diketahui";
+              // Memisahkan tanggal dan jam, ambil index [0] yaitu tanggalnya
+              let timeVal = rawTime.includes(" ")
+                ? rawTime.split(" ")[0]
+                : rawTime;
+
               return { value: parsed, timestamp: timeVal };
             }
           }
@@ -260,20 +267,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (table.data().any()) {
         const allData = table.rows().data();
+
+        // --- INDEX KOLOM TELAH DISESUAIKAN (7, 8, 9) ---
         updateThermometerValue(
           "thermo-de",
           "time-temp-de",
-          getLastValidData(allData, 6),
+          getLastValidData(allData, 7),
         );
         updateThermometerValue(
           "thermo-nde",
           "time-temp-nde",
-          getLastValidData(allData, 7),
+          getLastValidData(allData, 8),
         );
         updateThermometerValue(
           "thermo-winding",
           "time-suhu-ruang",
-          getLastValidData(allData, 8),
+          getLastValidData(allData, 9),
         );
       } else {
         const emptyData = { value: 0, timestamp: "-" };
