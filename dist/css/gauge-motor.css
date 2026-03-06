@@ -1,60 +1,57 @@
-/* --- A. PROGRAM TAMBAHAN (LAYOUT SEJAJAR 40:60 & 100vh RATA ATAS) --- */
+/* =========================================================
+   A. PROGRAM TAMBAHAN (LAYOUT SEJAJAR 40:60 & 100vh)
+   ========================================================= */
 .dashboard-horizontal-split {
   display: flex;
   gap: 10px;
   width: 100%;
   align-items: stretch;
-  min-height: calc(100vh - 35px); /* Mempertahankan layar penuh 100vh */
+  min-height: calc(100vh - 35px);
 }
 
-/* Kolom Kiri (Data Sensor) - 40% */
+/* Kolom Kiri */
 .gauge-main-container {
   flex: 4;
   background-color: var(--card-bg);
   border-radius: 8px;
-  padding: 3px 10px; /* ORIGINAL PADDING TETAP AMAN */
+  padding: 3px 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* MENGUNCI KONTEN RATA ATAS */
+  justify-content: flex-start;
 }
-
-/* Memastikan baris gauge rata atas dan jarak 7px terkunci */
 .gauge-layout-vertical {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 7px; /* ORIGINAL GAP TETAP AMAN */
+  gap: 7px;
   width: 100%;
-  justify-content: flex-start; /* MENGUNCI KONTEN RATA ATAS */
+  justify-content: flex-start;
 }
 
-/* Kolom Kanan (Kondisi Motor) - 60% */
+/* Kolom Kanan */
 .condition-main-container {
   flex: 6;
   background-color: var(--card-bg);
   border-radius: 8px;
-  padding: 3px 10px; /* ORIGINAL PADDING TETAP AMAN */
+  padding: 3px 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   border: 1px solid var(--border-color);
-
-  /* PENGATURAN ALIGNMENT BARU */
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* MENGUNCI TABEL RATA ATAS */
-  align-items: stretch; /* MENGUNCI KONTEN RATA KANAN KIRI (PENUH) */
-  width: 100%; /* Memastikan kontainer mengambil ruang maksimal */
+  justify-content: flex-start;
+  align-items: stretch;
+  width: 100%;
 }
 
-/* --- STYLE TABEL KONDISI MOTOR & REGREASING --- */
+/* --- TABEL KONDISI MOTOR & REGREASING --- */
 .condition-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 5px;
   font-size: 0.8rem;
 }
-
 .condition-table th {
   background-color: #f8fafa;
   color: var(--text-main);
@@ -64,63 +61,49 @@
   border-bottom: 2px solid var(--border-color);
   font-size: 0.75rem;
 }
-
 .condition-table td {
   padding: 6px 4px;
   border-bottom: 1px dotted var(--border-color);
   vertical-align: middle;
 }
-
 .cond-label {
   font-weight: 600;
   color: #444;
 }
-
 .cond-date {
   color: var(--text-muted);
   font-size: 0.75rem;
   font-family: monospace;
 }
-
-/* Gaya teks untuk nama updater (agar sedikit berbeda dari tanggal) */
 .cond-name {
   color: #555;
   font-size: 0.75rem;
   font-style: italic;
 }
 
-/* Penyesuaian lebar kolom Tabel Kondisi (Sekarang 4 Kolom) */
-.condition-table th:nth-child(1) {
-  width: 25%;
-} /* Parameter */
+.condition-table th:nth-child(1),
 .condition-table th:nth-child(2) {
   width: 25%;
-} /* Tanggal Update */
+}
 .condition-table th:nth-child(3) {
   width: 30%;
-} /* Diupdate Oleh */
+}
 .condition-table th:nth-child(4) {
   width: 20%;
-} /* Status */
+}
 
-/* Penyesuaian lebar kolom Tabel Regreasing (Tetap 5 Kolom - Tidak Berubah) */
 .regreasing-table th:nth-child(1) {
   width: 20%;
 }
-.regreasing-table th:nth-child(2) {
-  width: 22%;
-}
+.regreasing-table th:nth-child(2),
 .regreasing-table th:nth-child(3) {
   width: 22%;
 }
-.regreasing-table th:nth-child(4) {
-  width: 18%;
-}
+.regreasing-table th:nth-child(4),
 .regreasing-table th:nth-child(5) {
   width: 18%;
 }
 
-/* Status Badges (Good/Fair/Poor) */
 .status-badge {
   font-size: 0.65rem;
   font-weight: 800;
@@ -128,7 +111,7 @@
   border-radius: 4px;
   min-width: 60px;
   text-align: center;
-  display: inline-block; /* Memastikan badge rapi di tengah sel tabel */
+  display: inline-block;
 }
 .status-good {
   background: #d4edda;
@@ -150,15 +133,15 @@
   color: #004085;
   border: 1px solid #b8daff;
 }
-
 .condition-divider {
   height: 1px;
   background: var(--border-color);
   margin: 5px 0;
 }
 
-/* --- B. PROGRAM ORIGINAL (TIDAK DIRUBAH) --- */
-
+/* =========================================================
+   B. PROGRAM ORIGINAL & GAUGE ECHARTS
+   ========================================================= */
 .gauge-dashboard-title {
   color: var(--text-main);
   font-size: 0.9rem;
@@ -169,32 +152,6 @@
   padding-bottom: 3px;
   text-align: left;
 }
-
-.gauge-main-container {
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  padding: 3px 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-  border: 1px solid var(--border-color);
-}
-
-.gauge-layout-vertical {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 7px;
-  width: 100%;
-}
-
-.gauge-row {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  background: #f8fafa;
-  width: 100%;
-}
-
 .gauge-card {
   display: flex;
   flex-direction: column;
@@ -203,7 +160,6 @@
   width: 140px;
   min-height: 100px;
 }
-
 .gauge-header {
   color: var(--text-main);
   font-size: 0.75rem;
@@ -216,58 +172,11 @@
   width: 120%;
   border-bottom: 1px dashed var(--border-color);
 }
-
 .gauge-chart-container {
   background: #f8fafa;
   width: 118%;
   height: 120px;
 }
-
-.thermo-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  background: #f8fafa;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
-  gap: 1px;
-}
-
-.thermo-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100px;
-}
-
-.thermo-title {
-  color: #34495e;
-  font-weight: bold;
-  font-size: 0.75rem;
-  text-align: center;
-  height: 20px;
-}
-
-#thermo-de,
-#thermo-nde,
-#thermo-winding {
-  display: flex;
-  justify-content: center;
-  width: 82%;
-  height: 145px;
-}
-
-.data-display {
-  color: #333;
-  font-size: 0.85rem;
-  font-weight: bold;
-  text-align: center;
-  width: 100%;
-  margin-top: 3px;
-  margin-bottom: 5px;
-  z-index: 10;
-}
-
 .gauge-timestamp {
   color: var(--text-muted);
   font-size: 0.65rem;
@@ -275,16 +184,12 @@
   width: 100%;
 }
 
-/* --- TAMBAHAN KHUSUS UNTUK CARD VIBRASI (DIPERBAIKI) --- */
-.gauge-card.vibrasi-card {
-  width: auto; /* Membatalkan batasan 140px */
-  min-width: 180px; /* Memberikan ruang agar tabung dan teks tanggal tidak terpotong */
-  padding: 0px 10px; /* PADDING ATAS 0px AGAR SEJAJAR DENGAN SEBELAHNYA */
-  justify-content: flex-start !important; /* PAKSA KONTEN UNTUK SELALU RATA ATAS */
-}
-
-/* Memastikan header vibrasi tetap rapi dan tidak melebar berlebihan */
-.gauge-card.vibrasi-card .gauge-header {
-  width: 100%;
-  margin-bottom: 0; /* Margin bawah dikosongkan karena sudah diatur jaraknya lewat HTML */
+/* =========================================================
+   C. OPTIMASI RESPONSIVE (KHUSUS LAYOUT & GAUGE)
+   ========================================================= */
+@media (max-width: 768px) {
+  /* Memastikan elemen grid (seperti 3 gauge di bawah) menyusun ke bawah di HP */
+  .gauge-layout-vertical > div[style*="display: grid"] {
+    grid-template-columns: 1fr !important;
+  }
 }

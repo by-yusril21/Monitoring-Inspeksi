@@ -1,6 +1,6 @@
 /**
  * File: termometer-motor.js
- * Deskripsi: Menangani visualisasi D3.js (Termometer) dan Sinkronisasi Tabel
+ * Deskripsi: Visualisasi D3.js Termometer Modern + Card Status Dinamis + Zona Memudar
  */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -14,10 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
       .selectAll("*")
       .remove();
 
-    var width = 80,
-      height = 150,
-      minTemp = 0,
-      maxTemp = 120;
+    var width = 95,
+      height = 150;
     var bottomY = height - 5,
       topY = 5,
       bulbRadius = 14,
@@ -25,37 +23,26 @@ document.addEventListener("DOMContentLoaded", function () {
       tubeBorderWidth = 1;
     var innerBulbColor = "rgb(230, 200, 200)",
       tubeBorderColor = "#999999";
-    var mercuryColor, displayColor;
+    var mercuryColor;
 
-    if (currentTemp < 40) {
-      mercuryColor = "rgb(52, 152, 219)";
-      displayColor = "#2980b9";
-    } else if (currentTemp >= 40 && currentTemp <= 85) {
-      mercuryColor = "rgb(46, 204, 113)";
-      displayColor = "#27ae60";
-    } else {
-      mercuryColor = "rgb(231, 76, 60)";
-      displayColor = "#c0392b";
-    }
-
-    var valElement = document.getElementById(
-      containerId.replace("thermo", "val"),
-    );
-    if (valElement) {
-      valElement.style.color = displayColor;
-      valElement.innerText = currentTemp.toFixed(1) + " °C";
-    }
+    if (currentTemp < 40) mercuryColor = "rgb(72, 235, 39)";
+    else if (currentTemp >= 40 && currentTemp < 80)
+      mercuryColor = "rgb(186, 229, 30)";
+    else mercuryColor = "rgb(231, 76, 60)";
 
     var bulb_cy = bottomY - bulbRadius,
       bulb_cx = width / 2,
       top_cy = topY + tubeWidth / 2;
+
     var svg = d3
       .select("#" + containerId)
       .append("svg")
       .attr("width", width)
       .attr("height", height);
+
     var defs = svg.append("defs");
 
+    // --- GRADIEN UNTUK BOHLAM TERMOMETER ---
     var gradientId = "bulbGradient-" + containerId;
     var bulbGradient = defs
       .append("radialGradient")
@@ -74,6 +61,62 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("offset", "90%")
       .style("stop-color", mercuryColor);
 
+    // --- [BARU] GRADIEN UNTUK ZONA (MEMUDAR KE KANAN) ---
+    // Gradien High (Merah)
+    var highGradId = "highGrad-" + containerId;
+    var highGrad = defs
+      .append("linearGradient")
+      .attr("id", highGradId)
+      .attr("x1", "0%")
+      .attr("y1", "0%")
+      .attr("x2", "100%")
+      .attr("y2", "0%");
+    highGrad
+      .append("stop")
+      .attr("offset", "0%")
+      .style("stop-color", "rgba(239, 83, 83, 0.29)");
+    highGrad
+      .append("stop")
+      .attr("offset", "100%")
+      .style("stop-color", "rgba(231, 76, 60, 0)");
+
+    // Gradien Medium (Orange)
+    var medGradId = "medGrad-" + containerId;
+    var medGrad = defs
+      .append("linearGradient")
+      .attr("id", medGradId)
+      .attr("x1", "0%")
+      .attr("y1", "0%")
+      .attr("x2", "100%")
+      .attr("y2", "0%");
+    medGrad
+      .append("stop")
+      .attr("offset", "0%")
+      .style("stop-color", "rgba(173, 171, 45, 0.37)");
+    medGrad
+      .append("stop")
+      .attr("offset", "100%")
+      .style("stop-color", "rgba(243, 156, 18, 0)");
+
+    // Gradien Low (Biru)
+    var lowGradId = "lowGrad-" + containerId;
+    var lowGrad = defs
+      .append("linearGradient")
+      .attr("id", lowGradId)
+      .attr("x1", "0%")
+      .attr("y1", "0%")
+      .attr("x2", "100%")
+      .attr("y2", "0%");
+    lowGrad
+      .append("stop")
+      .attr("offset", "0%")
+      .style("stop-color", "rgba(62, 201, 62, 0.34)");
+    lowGrad
+      .append("stop")
+      .attr("offset", "100%")
+      .style("stop-color", "rgba(52, 152, 219, 0)");
+
+    // Kaca Tabung
     svg
       .append("circle")
       .attr("r", tubeWidth / 2)
@@ -124,55 +167,99 @@ document.addEventListener("DOMContentLoaded", function () {
       .range([bulb_cy - bulbRadius / 2 - 8.5, top_cy])
       .domain(domain);
 
+    // ==========================================
+    // ZONA (LOW, MEDIUM, HIGH) DENGAN EFEK MEMUDAR
+    // ==========================================
+    // 1. ZONA HIGH (80 - 120)
+    svg
+      .append("rect")
+      .attr("x", width / 2 + tubeWidth / 2 + 5)
+      .attr("y", scale(120))
+      .attr("width", 38)
+      .attr("height", scale(80) - scale(120))
+      .style("fill", "url(#" + highGradId + ")") // Panggil Gradien
+      .style("rx", 3);
+    svg
+      .append("text")
+      .attr("x", width / 2 + tubeWidth / 2 + 20) // Geser x sedikit ke 20
+      .attr("y", scale(100))
+      .text("High")
+      .style("fill", "#c0392b")
+      .style("font-size", "8.5px")
+      .style("font-weight", "bold")
+      .style("text-anchor", "middle")
+      .style("alignment-baseline", "middle");
+
+    // 2. ZONA MEDIUM (40 - 80)
+    svg
+      .append("rect")
+      .attr("x", width / 2 + tubeWidth / 2 + 5)
+      .attr("y", scale(80))
+      .attr("width", 38)
+      .attr("height", scale(40) - scale(80))
+      .style("fill", "url(#" + medGradId + ")") // Panggil Gradien
+      .style("rx", 3);
+    svg
+      .append("text")
+      .attr("x", width / 2 + tubeWidth / 2 + 20) // Geser x sedikit ke 20
+      .attr("y", scale(60))
+      .text("Medium")
+      .style("fill", "#d35400")
+      .style("font-size", "7.5px")
+      .style("font-weight", "bold")
+      .style("text-anchor", "middle")
+      .style("alignment-baseline", "middle");
+
+    // 3. ZONA LOW (0 - 40)
+    svg
+      .append("rect")
+      .attr("x", width / 2 + tubeWidth / 2 + 5)
+      .attr("y", scale(40))
+      .attr("width", 38)
+      .attr("height", scale(0) - scale(40))
+      .style("fill", "url(#" + lowGradId + ")") // Panggil Gradien
+      .style("rx", 3);
+    svg
+      .append("text")
+      .attr("x", width / 2 + tubeWidth / 2 + 20) // Geser x sedikit ke 20
+      .attr("y", scale(20))
+      .text("Low")
+      .style("fill", "#32739f")
+      .style("font-size", "8.5px")
+      .style("font-weight", "bold")
+      .style("text-anchor", "middle")
+      .style("alignment-baseline", "middle");
+
+    // GARIS BATAS ZONA
     svg
       .append("line")
-      .attr("x1", width / 2 - tubeWidth / 2 - 4)
+      .attr("x1", width / 2 - tubeWidth / 2 - 3)
       .attr("x2", width / 2 + tubeWidth / 2 + 4)
       .attr("y1", scale(40))
       .attr("y2", scale(40))
-      .style("stroke", "#2980b9")
+      .style("stroke", "#f39c12")
       .style("stroke-width", "1px")
-      .style("stroke-dasharray", "3,2");
-    svg
-      .append("text")
-      .attr("x", width / 2 + tubeWidth / 2 + 6)
-      .attr("y", scale(40) + 2)
-      .text("Medium")
-      .style("fill", "#2980b9")
-      .style("font-size", "7px")
-      .style("font-weight", "bold");
-
+      .style("stroke-dasharray", "2,2");
     svg
       .append("line")
-      .attr("x1", width / 2 - tubeWidth / 2 - 4)
+      .attr("x1", width / 2 - tubeWidth / 2 - 3)
       .attr("x2", width / 2 + tubeWidth / 2 + 4)
-      .attr("y1", scale(85))
-      .attr("y2", scale(85))
-      .attr("y2", scale(85))
-      .style("stroke", "#c0392b")
+      .attr("y1", scale(80))
+      .attr("y2", scale(80))
+      .style("stroke", "#e74c3c")
       .style("stroke-width", "1px")
-      .style("stroke-dasharray", "3,2");
-    svg
-      .append("text")
-      .attr("x", width / 2 + tubeWidth / 2 + 6)
-      .attr("y", scale(85) + 2)
-      .text("High")
-      .style("fill", "#c0392b")
-      .style("font-size", "7px")
-      .style("font-weight", "bold");
+      .style("stroke-dasharray", "2,2");
 
+    // CAIRAN MERKURI
     var fillTopPosition = scale(currentTemp);
     if (fillTopPosition > bulb_cy) fillTopPosition = bulb_cy;
     if (fillTopPosition < top_cy) fillTopPosition = top_cy;
-    var tubeFill_bottom = bulb_cy,
-      tubeFill_top = fillTopPosition;
-
     svg
       .append("rect")
       .attr("x", width / 2 - (tubeWidth - 6) / 2)
-      .attr("y", tubeFill_top)
+      .attr("y", fillTopPosition)
       .attr("width", tubeWidth - 6)
-      .attr("height", tubeFill_bottom - tubeFill_top)
+      .attr("height", bulb_cy - fillTopPosition)
       .style("shape-rendering", "crispEdges")
       .style("fill", mercuryColor);
     svg
@@ -184,111 +271,124 @@ document.addEventListener("DOMContentLoaded", function () {
       .style("stroke", mercuryColor)
       .style("stroke-width", "1.5px");
 
-    var tickValues = d3
-      .range((domain[1] - domain[0]) / step + 1)
-      .map(function (v) {
-        return domain[0] + v * step;
-      });
+    // ANGKA PENGGARIS KIRI
     var axis = d3.svg
       .axis()
       .scale(scale)
       .innerTickSize(4)
       .outerTickSize(0)
-      .tickValues(tickValues)
+      .tickValues(
+        d3
+          .range((domain[1] - domain[0]) / step + 1)
+          .map((v) => domain[0] + v * step),
+      )
       .orient("left");
-
     var svgAxis = svg
       .append("g")
-      .attr("id", "tempScale-" + containerId)
       .attr("transform", "translate(" + (width / 2 - tubeWidth / 2) + ",0)")
       .call(axis);
     svgAxis
       .selectAll(".tick text")
       .style("fill", "#777777")
-      .style("font-size", "7px")
-      .attr("x", -6);
+      .style("font-size", "7.5px")
+      .attr("x", -5);
     svgAxis.select("path").style("stroke", "none").style("fill", "none");
     svgAxis
       .selectAll(".tick line")
       .style("stroke", tubeBorderColor)
       .style("shape-rendering", "crispEdges")
       .style("stroke-width", "1px")
-      .attr("x2", -4);
+      .attr("x2", -3);
   }
 
-  function updateThermometerValue(domId, timeDomId, dataObj) {
-    let numValue = isNaN(dataObj.value) ? 0 : dataObj.value;
-    drawThermometer(domId, numValue);
+  // UPDATE SELURUH ELEMEN DI DALAM CARD (Nilai, Warna, Status Box)
+  function updateThermometerUI(prefix, dataObj) {
+    let temp = isNaN(dataObj.value) ? 0 : dataObj.value;
 
-    const timeElem = document.getElementById(timeDomId);
+    // 1. Gambar Termometer D3.js
+    drawThermometer("thermo-" + prefix, temp);
+
+    // 2. Tentukan Warna dan Status
+    let color, bgColor, statusText, icon;
+    if (temp < 40) {
+      color = "#27ae60"; // Hijau (Normal)
+      bgColor = "#eafaf1";
+      statusText = "Normal";
+      icon = "fa-check-circle";
+    } else if (temp >= 40 && temp < 80) {
+      color = "#f39c12"; // Orange (Warning)
+      bgColor = "#fef5e7";
+      statusText = "Warning";
+      icon = "fa-exclamation-triangle";
+    } else {
+      color = "#e74c3c"; // Merah (Critical)
+      bgColor = "#fdedec";
+      statusText = "Critical";
+      icon = "fa-times-circle";
+    }
+
+    // 3. Terapkan ke HTML
+    let valElem = document.getElementById("val-" + prefix);
+    let boxElem = document.getElementById("status-box-" + prefix);
+    let txtElem = document.getElementById("status-text-" + prefix);
+    let timeElem =
+      document.getElementById("time-temp-" + prefix) ||
+      document.getElementById("time-suhu-ruang");
+
+    if (valElem) {
+      valElem.innerText = temp.toFixed(1) + " °C";
+      valElem.style.color = color;
+    }
+    if (boxElem && txtElem) {
+      boxElem.style.backgroundColor = bgColor;
+      txtElem.innerHTML = `<i class="fas ${icon}"></i> ${statusText}`;
+      txtElem.style.color = color;
+    }
     if (timeElem) {
-      if (dataObj.timestamp !== "-") {
-        timeElem.innerHTML = `<i class="far fa-clock"></i> ${dataObj.timestamp}`;
-        timeElem.classList.remove("text-danger");
-      } else {
-        timeElem.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Data Kosong`;
-        timeElem.classList.add("text-danger");
-      }
+      timeElem.innerText =
+        dataObj.timestamp !== "-" ? dataObj.timestamp : "Data Kosong";
     }
   }
 
+  // POTONG STRING WAKTU MENJADI TANGGAL SAJA
   function getLastValidData(allData, colIndex) {
     for (let i = allData.length - 1; i >= 0; i--) {
       let val = allData[i][colIndex];
-      if (val !== null && val !== undefined) {
-        let strVal = String(val).trim();
-        if (strVal !== "-" && strVal !== "--" && strVal !== "") {
-          strVal = strVal.replace(",", ".");
-          let match = strVal.match(/-?\d+(\.\d+)?/);
-          if (match) {
-            let parsed = parseFloat(match[0]);
-            if (!isNaN(parsed)) {
-              // --- [DIPERBAIKI] MEMOTONG STRING UNTUK MENGAMBIL TANGGAL SAJA ---
-              let rawTime = allData[i][1]
-                ? String(allData[i][1])
-                : "Waktu Tidak Diketahui";
-              // Memisahkan tanggal dan jam, ambil index [0] yaitu tanggalnya
-              let timeVal = rawTime.includes(" ")
-                ? rawTime.split(" ")[0]
-                : rawTime;
-
-              return { value: parsed, timestamp: timeVal };
-            }
-          }
+      if (
+        val !== null &&
+        val !== undefined &&
+        String(val).trim() !== "-" &&
+        String(val).trim() !== ""
+      ) {
+        let match = String(val)
+          .replace(",", ".")
+          .match(/-?\d+(\.\d+)?/);
+        if (match && !isNaN(parseFloat(match[0]))) {
+          let rawTime = allData[i][1] ? String(allData[i][1]) : "-";
+          return {
+            value: parseFloat(match[0]),
+            timestamp: rawTime.includes(" ") ? rawTime.split(" ")[0] : rawTime,
+          };
         }
       }
     }
     return { value: 0, timestamp: "-" };
   }
 
+  // SINKRONISASI DARI DATATABLE
   function syncThermometerFromTable() {
     if (typeof $ !== "undefined" && $.fn.DataTable.isDataTable("#example1")) {
       const table = $("#example1").DataTable();
-
       if (table.data().any()) {
         const allData = table.rows().data();
-
-        // --- INDEX KOLOM TELAH DISESUAIKAN (7, 8, 9) ---
-        updateThermometerValue(
-          "thermo-de",
-          "time-temp-de",
-          getLastValidData(allData, 7),
-        );
-        updateThermometerValue(
-          "thermo-nde",
-          "time-temp-nde",
-          getLastValidData(allData, 8),
-        );
-        updateThermometerValue(
-          "thermo-winding",
-          "time-suhu-ruang",
-          getLastValidData(allData, 9),
-        );
+        updateThermometerUI("de", getLastValidData(allData, 7));
+        updateThermometerUI("nde", getLastValidData(allData, 8));
+        updateThermometerUI("winding", getLastValidData(allData, 9));
       } else {
         const emptyData = { value: 0, timestamp: "-" };
-        updateThermometerValue("thermo-de", "time-temp-de", emptyData);
-        updateThermometerValue("thermo-nde", "time-temp-nde", emptyData);
-        updateThermometerValue("thermo-winding", "time-suhu-ruang", emptyData);
+        updateThermometerUI("de", emptyData);
+        updateThermometerUI("nde", emptyData);
+        updateThermometerUI("winding", emptyData);
       }
     }
   }

@@ -1,0 +1,134 @@
+/* =========================================================
+   STYLE KARTU VIBRASI MODERN (SANGAT RAMPING / PIPIH)
+   ========================================================= */
+.modern-vibe-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+
+  /* [DIPERBAIKI] Padding atas-bawah dikurangi ekstrem menjadi 6px saja */
+  padding: 6px 15px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.vibe-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px; /* Sedikit dikecilkan agar proporsional */
+  font-weight: 800;
+  color: #2c3e50;
+
+  /* [DIPERBAIKI] Jarak bawah judul dipangkas tajam */
+  margin-bottom: 5px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.vibe-row-container {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 0; /* Jarak bawah dihilangkan total */
+}
+
+.vibe-vertical-divider {
+  width: 1px;
+  height: 100%; /* Garis vertikal sekarang membentang penuh */
+  background-color: #e0e0e0;
+  margin: 0 auto;
+}
+
+.vibe-section {
+  display: flex;
+  gap: 12px;
+}
+
+.vibe-indicator {
+  width: 3px;
+  background: #eafaf1;
+  border-radius: 2px;
+  position: relative;
+  margin-top: 2px; /* Posisi titik disesuaikan ke atas */
+  margin-bottom: 2px;
+}
+
+.vibe-indicator::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -4.5px;
+  width: 12px;
+  height: 12px;
+  border: 3px solid #bdc3c7;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.vibe-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* Gap antar elemen teks dan tabung dihilangkan */
+}
+
+.vibe-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.vibe-label {
+  font-size: 11px; /* Dikecilkan sedikit agar rapi dan padat */
+  font-weight: 800;
+  color: #34495e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.vibe-tube-row {
+  display: flex;
+  align-items: center;
+  margin-top: 5px; /* Tabung mepet ke teks judul */
+}
+
+.vibe-tube-wrapper {
+  flex: 1;
+}
+
+/* Waktu Update Masing-masing */
+.vibe-time-individual {
+  font-size: 9px;
+  color: #95a5a6;
+  font-family: monospace;
+  margin-top: 5px; /* Waktu mepet ke bagian bawah tabung */
+  letter-spacing: 0.2px;
+}
+
+/* =========================================================
+   OPTIMASI RESPONSIVE (KHUSUS LAYAR HP)
+   ========================================================= */
+@media (max-width: 768px) {
+  .vibe-row-container {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .vibe-vertical-divider {
+    display: none;
+  }
+  .vibe-section {
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #e0e0e0;
+  }
+  .vibe-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+}

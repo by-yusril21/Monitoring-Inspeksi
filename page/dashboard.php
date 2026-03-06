@@ -110,60 +110,125 @@ $columns = [
 
                     <div class="gauge-layout-vertical">
 
-                        <div class="gauge-row">
-                            <div class="thermo-wrapper">
-                                <div class="thermo-item">
-                                    <div class="thermo-title">Bearing DE</div>
-                                    <div id="thermo-de"></div>
-                                    <div class="data-display" id="val-de">-- °C</div>
-                                    <div id="time-temp-de" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
+                        <div class="modern-thermo-container">
+                            
+                            <div class="modern-thermo-card">
+                                <div class="th-header">
+                                    <div class="th-icon"><i class="fas fa-cogs"></i></div>
+                                    <div class="th-title-group">
+                                        <div class="th-title">Bearing DE</div>
+                                        <div class="th-subtitle"><span class="th-dot green"></span> Temp</div>
+                                    </div>
+                                </div>
+                                <div class="th-body">
+                                    <div id="thermo-de" class="th-svg"></div>
+                                    <div id="val-de" class="th-value">0.0 °C</div>
+                                </div>
+                                <div id="status-box-de" class="th-footer">
+                                    <div id="status-text-de" class="th-status"><i class="fas fa-check-circle"></i> Normal</div>
+                                    <div id="time-temp-de" class="th-time">--/--/----</div>
+                                </div>
+                            </div>
+
+                            <div class="modern-thermo-card">
+                                <div class="th-header">
+                                    <div class="th-icon"><i class="fas fa-cogs"></i></div>
+                                    <div class="th-title-group">
+                                        <div class="th-title">Bearing NDE</div>
+                                        <div class="th-subtitle"><span class="th-dot green"></span> Temp</div>
+                                    </div>
+                                </div>
+                                <div class="th-body">
+                                    <div id="thermo-nde" class="th-svg"></div>
+                                    <div id="val-nde" class="th-value">0.0 °C</div>
+                                </div>
+                                <div id="status-box-nde" class="th-footer">
+                                    <div id="status-text-nde" class="th-status"><i class="fas fa-check-circle"></i> Normal</div>
+                                    <div id="time-temp-nde" class="th-time">--/--/----</div>
+                                </div>
+                            </div>
+
+                            <div class="modern-thermo-card">
+                                <div class="th-header">
+                                    <div class="th-icon" style="color: #3498db;"><i class="fas fa-thermometer-half"></i></div>
+                                    <div class="th-title-group">
+                                        <div class="th-title">Suhu Ruangan</div>
+                                        <div class="th-subtitle"><span class="th-dot blue"></span> Temp</div>
+                                    </div>
+                                </div>
+                                <div class="th-body">
+                                    <div id="thermo-winding" class="th-svg"></div>
+                                    <div id="val-winding" class="th-value">0.0 °C</div>
+                                </div>
+                                <div id="status-box-winding" class="th-footer">
+                                    <div id="status-text-winding" class="th-status"><i class="fas fa-check-circle"></i> Normal</div>
+                                    <div id="time-suhu-ruang" class="th-time">--/--/----</div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="modern-vibe-card">
+                            
+                            <div class="vibe-row-container">
+                                
+                                <div class="vibe-section">
+                                    <div class="vibe-indicator"></div>
+                                    <div class="vibe-content">
+                                        <div class="vibe-info-row">
+                                            <span class="vibe-label">BEARING DE</span>
+                                        </div>
+                                        <div class="vibe-tube-row">
+                                            <div id="vibe-de-container" class="vibe-tube-wrapper"></div>
+                                        </div>
+                                        <div class="vibe-time-individual">
+                                            <i class="far fa-clock"></i> <span id="ext-time-vibe-de-container">--/--/----</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="vibe-vertical-divider"></div>
+
+                                <div class="vibe-section">
+                                    <div class="vibe-indicator"></div>
+                                    <div class="vibe-content">
+                                        <div class="vibe-info-row">
+                                            <span class="vibe-label">BEARING NDE</span>
+                                        </div>
+                                        <div class="vibe-tube-row">
+                                            <div id="vibe-nde-container" class="vibe-tube-wrapper"></div>
+                                        </div>
+                                        <div class="vibe-time-individual">
+                                            <i class="far fa-clock"></i> <span id="ext-time-vibe-nde-container">--/--/----</span>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="thermo-item">
-                                    <div class="thermo-title">Bearing NDE</div>
-                                    <div id="thermo-nde"></div>
-                                    <div class="data-display" id="val-nde">-- °C</div>
-                                    <div id="time-temp-nde" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
-                                </div>
-
-                                <div class="thermo-item">
-                                    <div class="thermo-title">Suhu Ruangan</div>
-                                    <div id="thermo-winding"></div>
-                                    <div class="data-display" id="val-winding">-- °C</div>
-                                    <div id="time-suhu-ruang" class="gauge-timestamp"><i class="far fa-clock"></i> -</div>
-                                </div>
                             </div>
                         </div>
 
-<div style="display: grid; grid-template-columns: 180px 140px; justify-content: center; gap: 15px 5px; width: 100%;">
-    
-    <div class="gauge-card vibrasi-card" style="margin: 0; padding: 0 1px; width: 100%;">
-        <div class="gauge-header" style="width: 100%;">Vibrasi</div>
-        <div class="w-100 d-flex flex-column align-items-center" style="margin-top: 5px;">
-            <div id="vibe-de-container" style="width: 100%; display: flex; justify-content: center; margin-bottom: 15px;"></div>
-            <div id="vibe-nde-container" style="width: 100%; display: flex; justify-content: center;"></div>
-        </div>
-    </div>
-    
-    <div class="gauge-card" style="justify-content: flex-start; padding: 0 1px; margin: 0; width: 100%;">
-        <div class="gauge-header" style="width: 100%;">Beban Generator</div>
-        <div id="gauge-beban-gen" class="gauge-chart-container" style="margin-top: 5px; width: 100%; background: transparent;"></div>
-        <div id="time-beban-gen" class="gauge-timestamp mt-auto"><i class="far fa-clock"></i> -</div>
-    </div>
 
-    <div class="gauge-card" style="justify-content: flex-start; padding: 0 1px; margin: 0; width: 100%;">
-        <div class="gauge-header" style="width: 100%;">Opening Damper</div>
-        <div id="gauge-damper" class="gauge-chart-container" style="margin-top: 5px; width: 100%; background: transparent;"></div>
-        <div id="time-damper" class="gauge-timestamp mt-auto"><i class="far fa-clock"></i> -</div>
-    </div>
-    
-    <div class="gauge-card" style="justify-content: flex-start; padding: 0 1px; margin: 0; width: 100%;">
-        <div class="gauge-header" style="width: 100%;">Load Current</div>
-        <div id="gauge-load-current" class="gauge-chart-container" style="margin-top: 5px; width: 100%; background: transparent;"></div>
-        <div id="time-load-current" class="gauge-timestamp mt-auto"><i class="far fa-clock"></i> -</div>
-    </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; margin-top: 15px;">
+                            <div class="gauge-card w-100" style="justify-content: flex-start; padding: 0 1px; margin: 0;">
+                                <div class="gauge-header" style="width: 100%;">Beban Generator</div>
+                                <div id="gauge-beban-gen" class="gauge-chart-container" style="margin-top: 5px; width: 100%; background: transparent;"></div>
+                                <div id="time-beban-gen" class="gauge-timestamp mt-auto"><i class="far fa-clock"></i> -</div>
+                            </div>
 
-</div>                     
+                            <div class="gauge-card w-100" style="justify-content: flex-start; padding: 0 1px; margin: 0;">
+                                <div class="gauge-header" style="width: 100%;">Opening Damper</div>
+                                <div id="gauge-damper" class="gauge-chart-container" style="margin-top: 5px; width: 100%; background: transparent;"></div>
+                                <div id="time-damper" class="gauge-timestamp mt-auto"><i class="far fa-clock"></i> -</div>
+                            </div>
+                            
+                            <div class="gauge-card w-100" style="justify-content: flex-start; padding: 0 1px; margin: 0;">
+                                <div class="gauge-header" style="width: 100%;">Load Current</div>
+                                <div id="gauge-load-current" class="gauge-chart-container" style="margin-top: 5px; width: 100%; background: transparent;"></div>
+                                <div id="time-load-current" class="gauge-timestamp mt-auto"><i class="far fa-clock"></i> -</div>
+                            </div>
+                        </div>                   
 
                     </div> 
                 </div>

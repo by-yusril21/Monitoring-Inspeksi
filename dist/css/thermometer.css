@@ -1,0 +1,122 @@
+/* =========================================================
+   STYLE KARTU TERMOMETER MODERN (D3.JS)
+   ========================================================= */
+.modern-thermo-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.modern-thermo-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+  padding: 10px 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Card (Icon & Judul) */
+.th-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+.th-icon {
+  font-size: 24px;
+  color: #6c7a89;
+}
+.th-title-group {
+  display: flex;
+  flex-direction: column;
+}
+.th-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #2c3e50;
+}
+.th-subtitle {
+  font-size: 10px;
+  background: #f2fdf5;
+  color: #27ae60;
+  padding: 2px 8px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  margin-top: 2px;
+}
+.th-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.th-dot.green {
+  background: #2ecc71;
+}
+.th-dot.blue {
+  background: #3498db;
+}
+
+/* Body Card (Termometer SVG + Teks Suhu) */
+.th-body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin: 5px 0;
+}
+.th-svg {
+  height: 150px;
+}
+.th-value {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  margin-left: -25px;
+  white-space: nowrap;
+  line-height: 1;
+  z-index: 10;
+}
+
+/* Footer Card (Status & Tanggal) */
+.th-footer {
+  margin-top: auto;
+  background: #eafaf1;
+  border-radius: 8px;
+  padding: 4px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  transition: background 0.3s;
+}
+.th-status {
+  font-size: 14px;
+  font-weight: 800;
+  color: #27ae60;
+}
+.th-time {
+  font-size: 10px;
+  color: #7f8c8d;
+  font-family: monospace;
+  line-height: 1.2;
+}
+
+/* =========================================================
+   OPTIMASI RESPONSIVE (KHUSUS TERMOMETER)
+   ========================================================= */
+@media (max-width: 1200px) {
+  .modern-thermo-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .modern-thermo-container {
+    grid-template-columns: 1fr;
+  }
+}
