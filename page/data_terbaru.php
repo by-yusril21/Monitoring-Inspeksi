@@ -15,7 +15,30 @@ if (session_status() == PHP_SESSION_NONE) {
         scrollbar-width: none;
     }
 
-    /* 2. Sticky Column Menggunakan Class Khusus (.sticky-motor) */
+    /* 2. TEMA ABU-ABU HEADER TABEL (Sama dengan Tabel Utama) */
+    .table-sticky-first thead th {
+        color: #333333 !important;
+        /* Teks gelap */
+        border-color: #adb5bd !important;
+        /* Garis batas abu-abu */
+        vertical-align: middle !important;
+        text-align: center;
+    }
+
+    /* Baris Atas (Judul Utama) */
+    .table-sticky-first thead tr:first-child th {
+        background-color: #e6e6e6 !important;
+        font-weight: bold !important;
+    }
+
+    /* Baris Bawah (Sub-Judul DE/NDE) */
+    .table-sticky-first thead tr:nth-child(2) th {
+        background-color: #f0f0f0 !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+    }
+
+    /* 3. Sticky Column (Kolom Nama Motor) */
     .sticky-motor {
         position: sticky !important;
         left: 0;
@@ -24,30 +47,29 @@ if (session_status() == PHP_SESSION_NONE) {
         box-shadow: inset -2px 0 0 rgba(0, 0, 0, 0.1);
     }
 
+    /* Warna header kolom sticky disamakan dengan header lainnya */
     thead .sticky-motor {
-        background-color: #17a2b8 !important;
-        /* Warna cyan header */
+        background-color: #ced4da !important;
+        color: #333333 !important;
         z-index: 3;
     }
 
     .table-hover tbody tr:hover .sticky-motor {
         background-color: #f4f6f9 !important;
-        /* Warna abu-abu saat di-hover */
     }
 
-    /* 3. Memangkas Padding & Rata Tengah Vertikal */
+    /* 4. Memangkas Padding & Rata Tengah Vertikal */
     .table-sticky-first th,
     .table-sticky-first td {
-        padding-left: 1px !important;
-        padding-right: 1px !important;
-        padding-top: 2px !important;
-        padding-bottom: 2px !important;
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
         vertical-align: middle !important;
         text-align: center;
-        /* Default semua teks rata tengah */
     }
 
-    /* 4. Rata kiri khusus untuk Nama Motor & Actions */
+    /* 5. Rata kiri khusus untuk Nama Motor & Actions */
     .text-left-custom {
         text-align: left !important;
     }
@@ -58,7 +80,7 @@ if (session_status() == PHP_SESSION_NONE) {
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-bold text-primary">Rekap Data Terbaru Lengkap</h1>
+                    <h1 class="m-0 text-bold text-dark">Rekap Data Terbaru Lengkap</h1>
                     <p class="text-muted">Status ke-19 parameter aktual seluruh motor di lapangan.</p>
                 </div>
             </div>
@@ -68,7 +90,7 @@ if (session_status() == PHP_SESSION_NONE) {
     <div class="content">
         <div class="container-fluid" id="rekap-container">
             <div class="text-center py-5">
-                <i class="fas fa-circle-notch fa-spin fa-3x text-primary mb-3"></i>
+                <i class="fas fa-circle-notch fa-spin fa-3x text-info mb-3"></i>
                 <p class="font-weight-bold">Mempersiapkan Tabel Data Master...</p>
             </div>
         </div>
@@ -88,11 +110,12 @@ if (session_status() == PHP_SESSION_NONE) {
         const container = document.getElementById('rekap-container');
         container.innerHTML = "";
 
-        // 1. GENERATE TABEL KOSONG UNTUK SETIAP UNIT (DENGAN HEADER 2 TINGKAT)
+        // 1. GENERATE TABEL KOSONG UNTUK SETIAP UNIT
         units.forEach(unit => {
             const listMotor = window.dataMotor[unit];
             if (listMotor.length === 0) return;
 
+            // Tema outline card dikembalikan ke Info
             let cardHTML = `
             <div class="card card-outline card-info mb-4 shadow-sm" style="border-radius: 10px; overflow: hidden;">
                 <div class="card-header bg-white pt-3 pb-2">
@@ -114,35 +137,34 @@ if (session_status() == PHP_SESSION_NONE) {
 
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered table-striped m-0 text-sm text-nowrap table-sticky-first" id="table_${unit}">
-                            <thead class="bg-info text-white">
+                            <thead>
                                 <tr>
                                     <th rowspan="2" class="sticky-motor text-left-custom" style="min-width: 220px;">NAMA MOTOR</th>
                                     <th rowspan="2" style="min-width: 130px;">Date</th>
                                     <th rowspan="2" style="min-width: 150px;">Update By</th>
-                                    <th rowspan="2" style="min-width: 90px;">Aksi</th>
-                                    <th rowspan="2" style="min-width: 90px;">Section<br>No</th>
+                                    <th rowspan="2" style="min-width: 80px;">Aksi</th>
+                                    <th rowspan="2" style="min-width: 80px;">Section<br>No</th>
                                     
-                                    <th colspan="2" class="border-bottom-0">VIB(mm/s)</th>
-                                    
+                                    <th colspan="2" class="border-bottom-0">Vibrasi mm/s</th>
                                     <th colspan="2" class="border-bottom-0">Temp°C</th>
                                     
-                                    <th rowspan="2" style="min-width: 90px;">Load<br>Generator</th>
-                                    <th rowspan="2" style="min-width: 90px;">Opening<br>Damper</th>
+                                    <th rowspan="2" style="min-width: 80px;">Load<br>Generator</th>
+                                    <th rowspan="2" style="min-width: 80px;">Opening<br>Damper</th>
                                     <th rowspan="2" style="min-width: 80px;">Current</th>
-                                    <th rowspan="2" style="min-width: 100px;">Temp<br>Ruang</th>
-                                    <th rowspan="2" style="min-width: 100px;">Bunyi<br>Motor</th>
-                                    <th rowspan="2" style="min-width: 100px;">Kondisi<br>Panel</th>
-                                    <th rowspan="2" style="min-width: 100px;">Kelengkapan</th>
-                                    <th rowspan="2" style="min-width: 100px;">Kebersihan</th>
-                                    <th rowspan="2" style="min-width: 100px;">Grounding</th>
-                                    <th rowspan="2" style="min-width: 50px;">Regreasing</th>
-                                    <th rowspan="2" style="min-width: 500px;" class="text-left-custom">Action</th>
+                                    <th rowspan="2" style="min-width: 80px;">Temp<br>Ruang</th>
+                                    <th rowspan="2" style="min-width: 80px;">Bunyi<br>Motor</th>
+                                    <th rowspan="2" style="min-width: 80px;">Kondisi<br>Panel</th>
+                                    <th rowspan="2" style="min-width: 80px;">Kelengkapan</th>
+                                    <th rowspan="2" style="min-width: 80px;">Kebersihan</th>
+                                    <th rowspan="2" style="min-width: 80px;">Grounding</th>
+                                    <th rowspan="2" style="min-width: 80px;">Regreasing</th>
+                                    <th rowspan="2" style="min-width: 350px;" class="text-left-custom">Action</th>
                                 </tr>
                                 <tr>
-                                    <th style="min-width: 20px; font-weight: normal;">DE</th>
-                                    <th style="min-width: 20px; font-weight: normal;">NDE</th>
-                                    <th style="min-width: 20px; font-weight: normal;">DE</th>
-                                    <th style="min-width: 20px; font-weight: normal;">NDE</th>
+                                    <th style="min-width: 40px; font-weight: normal;">DE</th>
+                                    <th style="min-width: 40px; font-weight: normal;">NDE</th>
+                                    <th style="min-width: 40px; font-weight: normal;">DE</th>
+                                    <th style="min-width: 40px; font-weight: normal;">NDE</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody_${unit}">`;
@@ -151,7 +173,7 @@ if (session_status() == PHP_SESSION_NONE) {
                 const safeId = motor.replace(/[^a-zA-Z0-9]/g, '_');
                 cardHTML += `
                                 <tr id="row_${unit}_${safeId}">
-                                    <td class="font-weight-bold text-primary sticky-motor text-left-custom">${motor}</td>
+                                    <td class="font-weight-bold text-dark sticky-motor text-left-custom">${motor}</td>
                                     <td colspan="19" class="text-muted text-center">
                                         <i class="fas fa-ellipsis-h text-black-50"></i> Menunggu sinkronisasi...
                                     </td>
@@ -213,21 +235,20 @@ if (session_status() == PHP_SESSION_NONE) {
                             const regreasing = motorData['REGREASING'] || '-';
                             const actions = motorData['ACTIONS'] || '-';
 
-                            let badgeStatus = `<span class="badge badge-secondary px-2 py-1">${status}</span>`;
+                            // Menghilangkan kotak pembungkus (badge), diganti dengan teks warna biasa
+                            let badgeStatus = `<span>${status}</span>`;
                             const statusUpper = status.toUpperCase();
-                            if (statusUpper.includes('NORMAL')) badgeStatus = `<span class="badge badge-success px-2 py-1">${status}</span>`;
-                            else if (statusUpper.includes('WARNING')) badgeStatus = `<span class="badge badge-warning px-2 py-1">${status}</span>`;
-                            else if (statusUpper.includes('DANGER') || statusUpper.includes('ALARM')) badgeStatus = `<span class="badge badge-danger px-2 py-1">${status}</span>`;
-
-                            // Suntikkan 20 Kolom HTML dengan class yang disesuaikan
+                            if (statusUpper.includes('NORMAL')) badgeStatus = `<span class="text-success font-weight-bold">${status}</span>`;
+                            else if (statusUpper.includes('WARNING')) badgeStatus = `<span class="text-warning font-weight-bold">${status}</span>`;
+                            else if (statusUpper.includes('DANGER') || statusUpper.includes('ALARM')) badgeStatus = `<span class="text-danger font-weight-bold">${status}</span>`;
                             rowElement.innerHTML = `
                                 <td class="font-weight-bold text-dark sticky-motor text-left-custom">${motorName}</td>
                                 <td class="text-muted">${waktu}</td>
                                 <td>${email}</td>
                                 <td>${badgeStatus}</td>
                                 <td>${section}</td>
-                                <td class="font-weight-bold text-primary">${vibDE}</td>
-                                <td class="font-weight-bold text-danger">${vibNDE}</td>
+                                <td class="font-weight-bold text-dark">${vibDE}</td>
+                                <td class="font-weight-bold text-dark">${vibNDE}</td>
                                 <td>${tempDE}</td>
                                 <td>${tempNDE}</td>
                                 <td>${beban}</td>
