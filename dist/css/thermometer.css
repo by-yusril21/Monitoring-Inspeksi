@@ -110,13 +110,47 @@
 /* =========================================================
    OPTIMASI RESPONSIVE (KHUSUS TERMOMETER)
    ========================================================= */
+/* =========================================================
+   OPTIMASI RESPONSIVE (KHUSUS TERMOMETER)
+   ========================================================= */
 @media (max-width: 1200px) {
   .modern-thermo-container {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-@media (max-width: 768px) {
+/* =========================================================
+   OPTIMASI RESPONSIVE (KHUSUS LAYAR HP) - TERMOMETER LEGA
+   ========================================================= */
+@media (max-width: 992px) {
+  /* Container tetap bisa di-scroll ke samping */
   .modern-thermo-container {
-    grid-template-columns: 1fr;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 5px !important;
+    padding-bottom: 10px !important;
+  }
+
+  /* Ukuran kartu dibiarkan lega (ukuran awal) */
+  .modern-thermo-card {
+    min-width: 170px !important;
+    flex: 0 0 auto !important;
+  }
+
+  /* [KUNCI] Perbaiki margin angka agar tidak menabrak gambar svg */
+  .th-value {
+    margin-left: -25px !important;
+    margin-bottom: 5px !important;
+  }
+
+  /* Menyembunyikan garis scrollbar tapi fungsi scroll tetap jalan */
+  .modern-thermo-container {
+    -ms-overflow-style: none; /* Untuk Internet Explorer dan Edge */
+    scrollbar-width: none; /* Untuk Firefox */
+  }
+
+  .modern-thermo-container::-webkit-scrollbar {
+    display: none; /* Untuk Chrome, Safari, dan Opera */
   }
 }

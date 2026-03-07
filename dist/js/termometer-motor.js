@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (currentTemp < 40) mercuryColor = "rgb(72, 235, 39)";
     else if (currentTemp >= 40 && currentTemp < 80)
-      mercuryColor = "rgb(186, 229, 30)";
+      mercuryColor = "rgb(240, 169, 15)";
     else mercuryColor = "rgb(231, 76, 60)";
 
     var bulb_cy = bottomY - bulbRadius,

@@ -23,7 +23,9 @@ if (isset($_GET['page']) && file_exists(filename: "page/" . $_GET['page'] . ".ph
 }
 ?>
 
+
 <script src="plugins/jquery/jquery.min.js"></script>
+<script src="plugins/chart.js/Chart.min.js"></script>
 <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -40,6 +42,8 @@ if (isset($_GET['page']) && file_exists(filename: "page/" . $_GET['page'] . ".ph
 <script src="plugins/toastr/toastr.min.js"></script>
 <script src="plugins/d3-min/d3.min.js"></script>
 <script src="plugins/VibeTube/VibeTube.js"></script>
+
+
 
 <script src="config/config.js"></script>
 

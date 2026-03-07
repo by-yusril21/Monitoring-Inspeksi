@@ -1,6 +1,6 @@
 /**
  * File: regreasing-motor.js
- * Deskripsi: Menghitung Jadwal Regreasing (Siklus 3 Bulan) + Peringatan Toastr
+ * Deskripsi: Menghitung Jadwal Regreasing (Siklus 3 Bulan) + Memunculkan Nama Updater + Toastr
  */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -32,11 +32,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function getRegreasingData(allData, colIndexRegrease) {
-    const colIndexTime = 1;
+    const colIndexTime = 1; // Posisi Waktu/Timestamp
+    const colIndexEmail = 2; // Posisi Nama/Email Updater
 
     let lastSelesaiTime = null;
     let lastBelumTime = null;
     let latestStatus = null;
+    let latestUpdater = null; // Variabel baru untuk menampung nama
 
     for (let i = allData.length - 1; i >= 0; i--) {
       let valRegrease = allData[i][colIndexRegrease];
@@ -53,9 +55,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 .replace(/(<([^>]+)>)/gi, "")
                 .trim()
             : "-";
+          let updaterVal = allData[i][colIndexEmail]
+            ? String(allData[i][colIndexEmail])
+                .replace(/(<([^>]+)>)/gi, "")
+                .trim()
+            : "-";
 
+          // Simpan status dan nama updater dari data terbaru
           if (latestStatus === null) {
             latestStatus = strVal;
+            latestUpdater = updaterVal;
           }
 
           if (strVal === "SELESAI" && lastSelesaiTime === null) {
@@ -69,7 +78,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     let baseTime = lastSelesaiTime || lastBelumTime || "-";
-    return { status: latestStatus || "--", baseTime: baseTime };
+    return {
+      status: latestStatus || "--",
+      baseTime: baseTime,
+      updater: latestUpdater || "--", // Kembalikan nilai nama
+    };
   }
 
   function syncRegreasingTable() {
@@ -79,25 +92,19 @@ document.addEventListener("DOMContentLoaded", function () {
       const lastDateDom = document.getElementById("date-regrease-last");
       const nextDateDom = document.getElementById("date-regrease-next");
       const timeLeftDom = document.getElementById("time-left-regrease");
-      const statDom = document.getElementById("stat-regrease");
+      const updaterDom = document.getElementById("updater-regrease"); // Ganti dari statDom
 
-      if (!lastDateDom || !nextDateDom || !timeLeftDom || !statDom) return;
+      if (!lastDateDom || !nextDateDom || !timeLeftDom || !updaterDom) return;
 
       if (table.data().any()) {
         const allData = table.rows().data();
-        let dataRegrease = getRegreasingData(allData, 17);
 
-        // 1. UPDATE BADGE STATUS
-        statDom.innerText =
-          dataRegrease.status !== "--" ? dataRegrease.status : "N/A";
-        statDom.className = "status-badge";
-        if (dataRegrease.status === "SELESAI") {
-          statDom.classList.add("status-done");
-        } else if (dataRegrease.status === "BELUM") {
-          statDom.classList.add("status-poor");
-        } else {
-          statDom.classList.add("status-pending");
-        }
+        // Menggunakan index 19 (sama seperti di file kondisi-motor.js)
+        let dataRegrease = getRegreasingData(allData, 18);
+
+        // 1. UPDATE KOLOM NAMA (UPDATE BY)
+        updaterDom.innerText =
+          dataRegrease.updater !== "--" ? dataRegrease.updater : "--";
 
         // 2. PERHITUNGAN KALENDER & TOASTR
         if (dataRegrease.baseTime !== "-") {
@@ -118,18 +125,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let currentMotor = $("#pilihMotor").val() || "Motor";
 
-            // LOGIKA WARNA & TOASTR ALERT
+            // LOGIKA WARNA SISA WAKTU & TOASTR ALERT
             if (sisaHari > 14) {
               timeLeftDom.innerHTML = `${sisaHari} Hari`;
-              timeLeftDom.style.color = "#28a745";
-              lastWarnedMotor = ""; // Reset flag jika aman
+              timeLeftDom.style.color = "#28a745"; // Hijau
+              lastWarnedMotor = "";
             } else if (sisaHari > 0 && sisaHari <= 14) {
               timeLeftDom.innerHTML = `${sisaHari} Hari`;
-              timeLeftDom.style.color = "#ffc107";
-              lastWarnedMotor = ""; // Reset flag jika aman
+              timeLeftDom.style.color = "#ffc107"; // Kuning Warning
+              lastWarnedMotor = "";
             } else {
               timeLeftDom.innerHTML = `Lewat ${Math.abs(sisaHari)} Hari`;
-              timeLeftDom.style.color = "#dc3545";
+              timeLeftDom.style.color = "#dc3545"; // Merah Critical
 
               // EKSEKUSI TOASTR OVERDUE
               if (lastWarnedMotor !== currentMotor) {
@@ -139,7 +146,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     "⚠️ Regreasing Overdue!",
                   );
                 }
-                // Kunci flag agar tidak muncul lagi saat user ganti page tabel
                 lastWarnedMotor = currentMotor;
               }
             }
@@ -149,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
           nextDateDom.innerText = "--/--/----";
           timeLeftDom.innerText = "-- Hari";
           timeLeftDom.style.color = "#6c757d";
-          lastWarnedMotor = ""; // Reset flag
+          lastWarnedMotor = "";
         }
       }
     }

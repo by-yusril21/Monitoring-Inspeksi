@@ -1,6 +1,4 @@
-/* =========================================================
-   STYLE KARTU VIBRASI MODERN (SANGAT RAMPING / PIPIH)
-   ========================================================= */
+
 .modern-vibe-card {
   background: #ffffff;
   border-radius: 12px;
@@ -110,25 +108,41 @@
   letter-spacing: 0.2px;
 }
 
-/* =========================================================
-   OPTIMASI RESPONSIVE (KHUSUS LAYAR HP)
-   ========================================================= */
 @media (max-width: 768px) {
+  /* Mengubah wadah Vibrasi menjadi Flex horizontal yang bisa di-scroll */
   .vibe-row-container {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 10px; /* Jarak antar Bearing DE, Garis, dan NDE */
+    padding-bottom: 1px; /* Ruang untuk scrollbar */
+    margin-bottom: 0;
   }
-  .vibe-vertical-divider {
-    display: none;
-  }
+
+  /* Mengunci ukuran masing-masing bearing agar tidak menciut */
   .vibe-section {
-    margin-bottom: 6px;
-    padding-bottom: 6px;
-    border-bottom: 1px dashed #e0e0e0;
-  }
-  .vibe-section:last-child {
-    border-bottom: none;
+    min-width: 220px; /* Lebar minimum tiap area bearing di HP */
+    flex: 0 0 auto;
     margin-bottom: 0;
     padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  /* Mempertahankan garis pembatas vertikal di tengah */
+  .vibe-vertical-divider {
+    display: block;
+    flex: 0 0 1px;
+    min-height: 80px; /* Menjaga garis tetap panjang */
+  }
+
+  /* Menyembunyikan garis scrollbar Vibrasi */
+  .vibe-row-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .vibe-row-container::-webkit-scrollbar {
+    display: none;
   }
 }

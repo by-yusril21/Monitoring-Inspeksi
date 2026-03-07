@@ -23,27 +23,31 @@ if (!array_key_exists($unit, $SCRIPT_URLS) || empty($SCRIPT_URLS[$unit])) {
 }
 
 // 4. Susun Payload untuk Google Apps Script
-// Kita ambil token dari config.php
+// Menggunakan isset() agar jika ada data yang kosong, PHP tidak mengeluarkan pesan Error/Warning
 $payloadForGoogle = [
-    "token" => $API_TOKEN,
-    "targetSheet" => $data['targetSheet'],
-    "maintenanceType" => $data['maintenanceType'],
-    "email" => $data['email'],
-    "sectionNo" => $data['sectionNo'],
-    "actions" => $data['actions'],
-    "vibrasi" => $data['vibrasi'],
-    "tempDE" => $data['tempDE'],
-    "tempNDE" => $data['tempNDE'],
-    "suhuRuang" => $data['suhuRuang'],
-    "beban" => $data['beban'],
-    "damper" => $data['damper'],
-    "amper" => $data['amper'],
-    "bunyi" => $data['bunyi'],
-    "panel" => $data['panel'],
-    "kelengkapan" => $data['kelengkapan'],
-    "kebersihan" => $data['kebersihan'],
-    "grounding" => $data['grounding'],
-    "regreasing" => $data['regreasing']
+    "token" => isset($API_TOKEN) ? $API_TOKEN : '',
+    "targetSheet" => isset($data['targetSheet']) ? $data['targetSheet'] : '',
+    "maintenanceType" => isset($data['maintenanceType']) ? $data['maintenanceType'] : '',
+    "email" => isset($data['email']) ? $data['email'] : '',
+    "sectionNo" => isset($data['sectionNo']) ? $data['sectionNo'] : '-',
+    "actions" => isset($data['actions']) ? $data['actions'] : '-',
+
+    // [DIPERBAIKI] Vibrasi sudah dipecah menjadi dua (DE & NDE)
+    "vibrasiDE" => isset($data['vibrasiDE']) ? $data['vibrasiDE'] : '-',
+    "vibrasiNDE" => isset($data['vibrasiNDE']) ? $data['vibrasiNDE'] : '-',
+
+    "tempDE" => isset($data['tempDE']) ? $data['tempDE'] : '-',
+    "tempNDE" => isset($data['tempNDE']) ? $data['tempNDE'] : '-',
+    "suhuRuang" => isset($data['suhuRuang']) ? $data['suhuRuang'] : '-',
+    "beban" => isset($data['beban']) ? $data['beban'] : '-',
+    "damper" => isset($data['damper']) ? $data['damper'] : '-',
+    "amper" => isset($data['amper']) ? $data['amper'] : '-',
+    "bunyi" => isset($data['bunyi']) ? $data['bunyi'] : '-',
+    "panel" => isset($data['panel']) ? $data['panel'] : '-',
+    "kelengkapan" => isset($data['kelengkapan']) ? $data['kelengkapan'] : '-',
+    "kebersihan" => isset($data['kebersihan']) ? $data['kebersihan'] : '-',
+    "grounding" => isset($data['grounding']) ? $data['grounding'] : '-',
+    "regreasing" => isset($data['regreasing']) ? $data['regreasing'] : '-'
 ];
 
 $targetUrl = $SCRIPT_URLS[$unit];
@@ -67,8 +71,6 @@ curl_close($ch);
 if ($error) {
     echo json_encode(["status" => "error", "message" => "Gagal menghubungi server Google: " . $error]);
 } else if ($httpCode == 200 || $httpCode == 302) {
-    // Karena Google Apps Script menggunakan redirect, kadang response bodynya kosong
-    // Kita anggap berhasil jika HTTP code 200 atau 302
     echo json_encode(["status" => "success", "message" => "Data berhasil dikirim."]);
 } else {
     echo json_encode(["status" => "error", "message" => "Server merespon dengan kode: " . $httpCode]);

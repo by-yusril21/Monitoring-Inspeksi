@@ -4,10 +4,15 @@
 // 1. Tangkap nilai ?page= dari URL
 $currentPage = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 
-// 2. Buat variabel penanda untuk Dashboard
+// 2. Buat variabel penanda untuk Dashboard & Chart
+// Karena menggunakan index.php, kita cukup cek dari parameter $currentPage
 $isDashboard = ($currentPage === 'dashboard');
+$isChart = ($currentPage === 'chart');
 
-// 3. Tangkap nama user yang sedang login dari Session
+// 3. Menentukan unit chart mana yang sedang aktif (Default: C6KV)
+$activeUnit = isset($_GET['unit']) ? strtoupper($_GET['unit']) : 'C6KV';
+
+// 4. Tangkap nama user yang sedang login dari Session
 $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
 ?>
 
@@ -36,6 +41,39 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
         <button type="button" id="btnRefresh" class="btn btn-primary btn-sm text-nowrap">
           <i class="fas fa-sync-alt mr-1"></i>Update
         </button>
+      </div>
+
+    <?php elseif ($isChart): ?>
+      <div class="d-flex align-items-center"
+        style="overflow-x: auto; white-space: nowrap; -ms-overflow-style: none; scrollbar-width: none;">
+        <style>
+          /* Menyembunyikan scrollbar untuk deretan button chart di Chrome/Safari */
+          .chart-nav-buttons::-webkit-scrollbar {
+            display: none;
+          }
+        </style>
+        <div class="chart-nav-buttons d-flex align-items-center py-1">
+          <a href="?page=chart&unit=C6KV"
+            class="btn <?= ($activeUnit == 'C6KV') ? 'btn-primary' : 'btn-outline-primary' ?> btn-sm mr-2 font-weight-bold shadow-sm">
+            MOTOR 6kV UNIT C
+          </a>
+          <a href="?page=chart&unit=D6KV"
+            class="btn <?= ($activeUnit == 'D6KV') ? 'btn-primary' : 'btn-outline-primary' ?> btn-sm mr-2 font-weight-bold shadow-sm">
+            MOTOR 6kV UNIT D
+          </a>
+          <a href="?page=chart&unit=C380"
+            class="btn <?= ($activeUnit == 'C380') ? 'btn-info text-white' : 'btn-outline-info' ?> btn-sm mr-2 font-weight-bold shadow-sm">
+            MOTOR 380V UNIT C
+          </a>
+          <a href="?page=chart&unit=D380"
+            class="btn <?= ($activeUnit == 'D380') ? 'btn-info text-white' : 'btn-outline-info' ?> btn-sm mr-2 font-weight-bold shadow-sm">
+            MOTOR 380V UNIT D
+          </a>
+          <a href="?page=chart&unit=UTILITY"
+            class="btn <?= ($activeUnit == 'UTILITY') ? 'btn-secondary text-white' : 'btn-outline-secondary' ?> btn-sm mr-2 font-weight-bold shadow-sm">
+            MOTOR 380V UTILITY
+          </a>
+        </div>
       </div>
     <?php endif; ?>
 
@@ -68,15 +106,7 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
             <span class="d-inline d-md-none ml-1">Input</span>
           </a>
         </li>
-      <?php endif; ?>
 
-      <!-- <li class="nav-item d-none d-md-block border-right pr-2 mr-2">
-        <a class="nav-link px-2" data-widget="fullscreen" href="#" role="button" title="Fullscreen">
-          <i class="fas fa-expand-arrows-alt text-secondary"></i>
-        </a>
-      </li> -->
-
-      <?php if ($isDashboard): ?>
         <li class="nav-item d-md-none border-right pr-2 mr-2">
           <a class="nav-link px-2" data-toggle="collapse" href="#filterCollapse" role="button">
             <i class="fas fa-filter text-primary"></i>
@@ -93,7 +123,9 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
         </a>
         <div class="dropdown-menu dropdown-menu-right shadow animated border-0 mt-2">
           <span class="dropdown-item dropdown-header border-bottom">
-            <strong><?= htmlspecialchars($username_login) ?></strong>
+            <strong>
+              <?= htmlspecialchars($username_login) ?>
+            </strong>
           </span>
           <a href="logout.php" class="dropdown-item text-danger py-2">
             <i class="fas fa-sign-out-alt mr-2"></i> Logout
@@ -103,6 +135,7 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
 
     </ul>
   </div>
+
   <?php if ($isDashboard): ?>
     <div class="collapse w-100 d-md-none" id="filterCollapse">
       <div class="px-3 py-2 border-top border-primary bg-light w-100">

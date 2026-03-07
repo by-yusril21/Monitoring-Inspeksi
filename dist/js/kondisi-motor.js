@@ -1,6 +1,6 @@
 /**
  * File: kondisi-motor.js
- * Deskripsi: Mensinkronkan Tabel Kondisi Fisik Motor & Action dengan Data Terakhir di DataTables
+ * Deskripsi: Mensinkronkan Tabel Kondisi Fisik (GOOD/FAIR/POOR) & Regreasing (BELUM/SELESAI)
  */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -22,37 +22,28 @@ document.addEventListener("DOMContentLoaded", function () {
     nameDom.innerText = nameText !== "" ? nameText : "--";
 
     statDom.removeAttribute("style");
-    statDom.className = "status-badge";
+    statDom.className = "status-badge"; // Reset class bawaan
 
-    if (
-      statusText === "GOOD" ||
-      statusText === "BAIK" ||
-      statusText === "NORMAL"
-    ) {
-      statDom.innerText = statusText;
+    // =========================================================
+    // REVISI LOGIKA STRICT (Hanya GOOD, FAIR, POOR, SELESAI, BELUM)
+    // =========================================================
+    if (statusText === "GOOD") {
+      statDom.innerText = "GOOD";
       statDom.classList.add("status-good");
-    } else if (
-      statusText === "FAIR" ||
-      statusText === "SEDANG" ||
-      statusText === "WARNING"
-    ) {
-      statDom.innerText = statusText;
+    } else if (statusText === "FAIR") {
+      statDom.innerText = "FAIR";
       statDom.classList.add("status-fair");
-    } else if (
-      statusText === "POOR" ||
-      statusText === "BURUK" ||
-      statusText === "JELEK"
-    ) {
-      statDom.innerText = statusText;
+    } else if (statusText === "POOR") {
+      statDom.innerText = "POOR";
       statDom.classList.add("status-poor");
-    } else if (
-      statusText === "SELESAI" ||
-      statusText === "DONE" ||
-      statusText === "SUDAH"
-    ) {
-      statDom.innerText = statusText;
+    } else if (statusText === "SELESAI") {
+      statDom.innerText = "SELESAI";
       statDom.classList.add("status-done");
+    } else if (statusText === "BELUM") {
+      statDom.innerText = "BELUM";
+      statDom.classList.add("status-belum");
     } else {
+      // Jika data kosong atau kata di luar 5 kata di atas
       statDom.innerText = "--";
       statDom.style.backgroundColor = "#e2e3e5";
       statDom.style.color = "#383d41";
@@ -60,10 +51,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // JANTUNG LOGIKA: Mencari baris ke atas sampai ketemu data yang BUKAN strip
+  // Mencari baris ke atas sampai ketemu data yang BUKAN strip
   function getLastValidCondition(allData, colIndexStatus) {
-    const colIndexTime = 1; // Timestamp
-    const colIndexEmail = 2; // Email/Nama
+    const colIndexTime = 1; // Posisi kolom Waktu/Timestamp
+    const colIndexEmail = 2; // Posisi kolom Nama/Email
 
     for (let i = allData.length - 1; i >= 0; i--) {
       let valStatus = allData[i][colIndexStatus];
@@ -109,17 +100,16 @@ document.addEventListener("DOMContentLoaded", function () {
       if (table.data().any()) {
         const allData = table.rows().data();
 
-        // Mengambil index kolom (berdasarkan permintaan Anda)
-        let dataBunyi = getLastValidCondition(allData, 12);
-        let dataPanel = getLastValidCondition(allData, 13);
-        let dataLengkap = getLastValidCondition(allData, 14);
-        let dataBersih = getLastValidCondition(allData, 15);
-        let dataGround = getLastValidCondition(allData, 16);
+        // Index bergeser +2 karena tambahan kolom Vibrasi DE dan NDE sebelumnya
+        let dataBunyi = getLastValidCondition(allData, 13);
+        let dataPanel = getLastValidCondition(allData, 14);
+        let dataLengkap = getLastValidCondition(allData, 15);
+        let dataBersih = getLastValidCondition(allData, 16);
+        let dataGround = getLastValidCondition(allData, 17);
 
-        // --- TAMBAHAN BARU: Mengambil data Action dari Kolom 19 ---
-        let dataAction = getLastValidCondition(allData, 18);
+        let dataAction = getLastValidCondition(allData, 19); // Action/Regreasing
 
-        // Eksekusi pembaruan elemen UI tabel kondisi (Fitur Lama)
+        // Eksekusi pembaruan elemen UI tabel kondisi fisik
         updateConditionItem(
           "bunyi",
           dataBunyi.status,
@@ -151,14 +141,16 @@ document.addEventListener("DOMContentLoaded", function () {
           dataGround.updater,
         );
 
-        // --- TAMBAHAN BARU: Update tampilan Dashboard Action ---
+        // Update tampilan Dashboard Action/Regreasing
         const teksActionDom = document.getElementById("teks-action");
         const tanggalActionDom = document.getElementById("tanggal-action");
-
         if (teksActionDom) teksActionDom.innerText = dataAction.status;
         if (tanggalActionDom) tanggalActionDom.innerText = dataAction.timestamp;
 
-        // Update waktu inspeksi terakhir secara global (Fitur Lama)
+        // Jika Anda juga melempar data Regreasing ini ke Tabel lewat fungsi updateConditionItem:
+        // Misalnya: updateConditionItem("regreasing", dataAction.status, dataAction.timestamp, dataAction.updater);
+
+        // Update waktu inspeksi terakhir secara global
         const timeGlobalDom = document.getElementById("time-kondisi");
         if (timeGlobalDom) {
           let lastRowTime = allData[allData.length - 1][1];
@@ -169,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
             : "-";
         }
       } else {
-        // Default jika tabel kosong (Tetap dipertahankan)
+        // Default jika tabel kosong
         const emptyData = {
           status: "--",
           timestamp: "--/--/----",
@@ -206,7 +198,6 @@ document.addEventListener("DOMContentLoaded", function () {
           emptyData.updater,
         );
 
-        // Reset data Action jika kosong
         if (document.getElementById("teks-action"))
           document.getElementById("teks-action").innerText = "--";
         if (document.getElementById("tanggal-action"))
@@ -218,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Trigger agar selalu terpanggil setiap ada refresh / pergantian motor
+  // Trigger agar selalu terpanggil setiap ada refresh / pergantian data
   if (typeof $ !== "undefined") {
     $("#example1").on("draw.dt", function () {
       syncConditionTable();

@@ -136,8 +136,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!pesanError && isPreventive) {
         const formData = new FormData(formInput);
+
+        // [DIPERBAIKI] Validasi kini mengecek kedua vibrasi
         const numericFields = [
-          "vibrasi",
+          "vibrasi_de",
+          "vibrasi_nde",
           "temp_de",
           "temp_nde",
           "suhu_ruang",
@@ -145,6 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
           "damper",
           "load_current",
         ];
+
         for (let name of numericFields) {
           let val = formData.get(name);
           if (val === null || val.trim() === "") {
@@ -196,15 +200,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const currentUser = userLoggedIn ? userLoggedIn.value : "Guest";
 
-        // Susun payload yang akan dikirim ke server proxy kita
+        // [DIPERBAIKI] Menyisipkan nilai Vibrasi DE dan NDE ke Payload
         const payload = {
-          unit: valUnit, // Menambahkan info unit untuk dibaca proxy
+          unit: valUnit,
           targetSheet: valMotor,
           maintenanceType: tipeMain,
           email: currentUser,
           sectionNo: inputSectionNo ? inputSectionNo.value || "-" : "-",
           actions: getGeneral("action"),
-          vibrasi: getTeknis("vibrasi"),
+          vibrasiDE: getTeknis("vibrasi_de"),
+          vibrasiNDE: getTeknis("vibrasi_nde"),
           tempDE: getTeknis("temp_de"),
           tempNDE: getTeknis("temp_nde"),
           suhuRuang: getTeknis("suhu_ruang"),
@@ -225,14 +230,12 @@ document.addEventListener("DOMContentLoaded", function () {
           '<i class="fas fa-spinner fa-spin"></i> MENGIRIM...';
 
         try {
-          // PENTING: Arahkan fetch ke file PHP pengirim data yang baru
           const response = await fetch("api/submit_proxy.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           });
 
-          // Mengambil respon dari server
           const result = await response.json();
 
           if (result.status === "success") {

@@ -81,28 +81,36 @@
   font-style: italic;
 }
 
-.condition-table th:nth-child(1),
+/* Penyesuaian lebar kolom Tabel Kondisi Fisik (Susunan Baru) */
+.condition-table th:nth-child(1) {
+  width: 20%;
+} /* Parameter */
 .condition-table th:nth-child(2) {
-  width: 25%;
-}
+  width: 30%;
+} /* Diupdate Oleh (Butuh ruang lebih lebar) */
 .condition-table th:nth-child(3) {
   width: 30%;
-}
+} /* Tanggal Update */
 .condition-table th:nth-child(4) {
   width: 20%;
-}
+} /* Status */
 
+/* Penyesuaian lebar kolom Tabel Regreasing (Susunan Baru) */
 .regreasing-table th:nth-child(1) {
-  width: 20%;
-}
-.regreasing-table th:nth-child(2),
-.regreasing-table th:nth-child(3) {
-  width: 22%;
-}
-.regreasing-table th:nth-child(4),
-.regreasing-table th:nth-child(5) {
   width: 18%;
-}
+} /* Item */
+.regreasing-table th:nth-child(2) {
+  width: 27%;
+} /* Update By (Butuh ruang untuk Nama) */
+.regreasing-table th:nth-child(3) {
+  width: 20%;
+} /* Tgl Terakhir */
+.regreasing-table th:nth-child(4) {
+  width: 20%;
+} /* Jadwal Next */
+.regreasing-table th:nth-child(5) {
+  width: 15%;
+} /* Sisa Waktu */
 
 .status-badge {
   font-size: 0.65rem;
@@ -139,9 +147,6 @@
   margin: 5px 0;
 }
 
-/* =========================================================
-   B. PROGRAM ORIGINAL & GAUGE ECHARTS
-   ========================================================= */
 .gauge-dashboard-title {
   color: var(--text-main);
   font-size: 0.9rem;
@@ -152,44 +157,167 @@
   padding-bottom: 3px;
   text-align: left;
 }
-.gauge-card {
+
+/* =========================================================
+   B. STYLE KARTU GAUGE ECHARTS MODERN (BEBAN, DAMPER, CURRENT)
+   ========================================================= */
+.modern-gauge-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.modern-gauge-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+  padding: 10px 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 140px;
-  min-height: 100px;
+  justify-content: space-between;
 }
-.gauge-header {
-  color: var(--text-main);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-bottom: 2px;
-  width: 120%;
-  border-bottom: 1px dashed var(--border-color);
-}
-.gauge-chart-container {
-  background: #f8fafa;
-  width: 118%;
-  height: 120px;
-}
-.gauge-timestamp {
-  color: var(--text-muted);
-  font-size: 0.65rem;
-  text-align: center;
+
+.gauge-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* [KUNCI] Membawa teks persis ke tengah */
+  font-size: 13px;
+  font-weight: 800;
+  color: #2c3e50;
   width: 100%;
+  margin-bottom: 5px;
+  padding-bottom: 1px;
+  border-bottom: 1px solid #f2f2f2;
+  white-space: nowrap;
+}
+
+.modern-gauge-chart {
+  width: 100%;
+
+  /* [DIPERBAIKI] Mengurangi tinggi kontainer agar memangkas ruang kosong di bawah grafik */
+  height: 110px;
+
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gauge-card-footer {
+  width: 100%;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 9px;
+  color: #95a5a6;
+  font-family: monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+
+  /* [DIPERBAIKI] Menggunakan margin negatif untuk menarik kotak waktu ke atas mendekati angka */
+  margin-top: -5px;
+
+  /* Memastikan kotak waktu tetap berada di lapisan atas dan tidak tertutup kanvas grafik */
+  z-index: 2;
 }
 
 /* =========================================================
-   C. OPTIMASI RESPONSIVE (KHUSUS LAYOUT & GAUGE)
+   Menyembunyikan Scrollbar Vertikal di Container Paling Luar 
+   (container-fluid) dan Action Box
    ========================================================= */
+#section-gauge .container-fluid,
+.action-box {
+  -ms-overflow-style: none !important; /* Untuk Firefox dan Edge */
+  scrollbar-width: none !important; /* Untuk Firefox terbaru */
+}
+
+/* Menyembunyikan di Chrome, Safari, dan Opera */
+#section-gauge .container-fluid::-webkit-scrollbar,
+.action-box::-webkit-scrollbar {
+  display: none !important;
+}
+
 @media (max-width: 768px) {
-  /* Memastikan elemen grid (seperti 3 gauge di bawah) menyusun ke bawah di HP */
-  .gauge-layout-vertical > div[style*="display: grid"] {
-    grid-template-columns: 1fr !important;
+  /* Mendorong Kolom Kanan (Tabel) ke Bawah */
+  .dashboard-horizontal-split {
+    flex-direction: column !important;
+    height: auto !important;
+  }
+
+  /* Container Utama: Mengatur lebar & Menyembunyikan Scrollbar Vertikal */
+  .gauge-main-container,
+  .condition-main-container {
+    width: 100% !important;
+    flex: none !important;
+    margin-bottom: 15px !important;
+
+    /* Menyembunyikan scrollbar vertikal di Firefox dan Edge */
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+
+  /* Menyembunyikan scrollbar vertikal di Chrome, Safari, dan Opera */
+  .gauge-main-container::-webkit-scrollbar,
+  .condition-main-container::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Mengubah Gauge sejajar dan bisa di-scroll horizontal */
+  .modern-gauge-container {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px !important;
+    padding-bottom: 10px !important;
+
+    /* Menyembunyikan garis scrollbar horizontal (Firefox, IE, Edge) */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Mengunci ukuran dan memangkas padding agar muat banyak di HP */
+  .modern-gauge-card {
+    min-width: 160px !important;
+    padding: 8px 6px !important;
+    flex: 0 0 auto !important;
+  }
+
+  /* Menyembunyikan garis scrollbar horizontal (Chrome, Safari, Opera) */
+  .modern-gauge-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* =========================================================
+       TABEL KONDISI & REGREASING: BISA DI-SCROLL KE SAMPING
+       ========================================================= */
+  .condition-table {
+    display: block !important; /* Mengubah sifat tabel agar bisa di-scroll mandiri */
+    width: 100% !important;
+    overflow-x: auto !important; /* Mengaktifkan scroll horizontal */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Mencegah teks (seperti email dan tanggal) terlipat ke baris bawah */
+  .condition-table th,
+  .condition-table td {
+    white-space: nowrap !important;
+    padding-left: 12px !important; /* Menambah sedikit ruang bernapas antar kolom */
+    padding-right: 12px !important;
+  }
+
+  /* Menyembunyikan garis scrollbar agar tetap rapi (tetap bisa diusap) */
+  .condition-table {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+  .condition-table::-webkit-scrollbar {
+    display: none !important;
   }
 }

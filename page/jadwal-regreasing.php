@@ -77,7 +77,7 @@ $motor_unit_d_380v = [
 
             <div class="card card-outline card-primary">
                 <div class="card-header">
-                    <h3 class="card-title"><b>MOTOR UNIT C 6KV</b></h3>
+                    <h3 class="card-title"><b>MOTOR 6kV PLTU UNIT C</b></h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-success btn-sm mr-2"
                             onclick="exportToExcel('table-unit-c-6kv', 'Jadwal_Regreasing_Unit_C_6KV')">
@@ -122,7 +122,7 @@ $motor_unit_d_380v = [
 
             <div class="card card-outline card-info">
                 <div class="card-header">
-                    <h3 class="card-title"><b>MOTOR UNIT D 6KV</b></h3>
+                    <h3 class="card-title"><b>MOTOR 6kV PLTU UNIT D</b></h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-success btn-sm mr-2"
                             onclick="exportToExcel('table-unit-d-6kv', 'Jadwal_Regreasing_Unit_D_6KV')">
@@ -167,7 +167,7 @@ $motor_unit_d_380v = [
 
             <div class="card card-outline card-primary">
                 <div class="card-header">
-                    <h3 class="card-title"><b>MOTOR UNIT C 380V</b></h3>
+                    <h3 class="card-title"><b>MOTOR 380V PLTU UNIT C</b></h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-success btn-sm mr-2"
                             onclick="exportToExcel('table-unit-c-380v', 'Jadwal_Regreasing_Unit_C_380V')">
@@ -212,7 +212,7 @@ $motor_unit_d_380v = [
 
             <div class="card card-outline card-info">
                 <div class="card-header">
-                    <h3 class="card-title"><b>MOTOR UNIT D 380V</b></h3>
+                    <h3 class="card-title"><b>MOTOR 380V PLTU UNIT D</b></h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-success btn-sm mr-2"
                             onclick="exportToExcel('table-unit-d-380v', 'Jadwal_Regreasing_Unit_D_380V')">

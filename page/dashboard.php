@@ -41,9 +41,14 @@ $columns = [
     }
 
     html { scroll-behavior: smooth; }
-    .content-wrapper { background-color: var(--bg-color) !important; overflow-x: hidden; }
+    
+    .content-wrapper { 
+        background-color: var(--bg-color) !important; 
+        overflow-x: hidden; 
+    }
+    
     .section-full { height: 100vh; display: flex; flex-direction: column; padding-top: 10px; padding-bottom: 10px; }
-    .px-custom-5 { padding-left: 7px !important; padding-right: 7px !important; }
+    .px-custom-5 { padding-left: 2px !important; padding-right: 2px !important; }
     
     .table-responsive-vh { flex: 1; overflow-y: auto; border: 1px solid var(--border-color); background-color: var(--card-bg); }
     .card-custom { border-radius: 0; box-shadow: none !important; border: 1px solid var(--border-color) !important; display: flex; flex-direction: column; height: 100%; margin-bottom: 0; background-color: var(--card-bg); }
@@ -61,12 +66,19 @@ $columns = [
         width: 100%;
     }
 
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #b3b3b3; }
-    html, body { -ms-overflow-style: none; scrollbar-width: none; }
-    body::-webkit-scrollbar { display: none; }
     #section-tabel, #section-gauge, #section-input { scroll-margin-top: 25px; }
+
+    /* =========================================================
+       GLOBAL SCROLLBAR HIDER (MENGHILANGKAN SEMUA GARIS SCROLL)
+       ========================================================= */
+    * {
+        -ms-overflow-style: none !important;  /* Untuk IE dan Edge */
+        scrollbar-width: none !important;     /* Untuk Firefox */
+    }
+    
+    *::-webkit-scrollbar { 
+        display: none !important; /* Untuk Chrome, Safari, dan Opera */
+    }
 </style>
 
 <div class="content-wrapper">
@@ -208,27 +220,40 @@ $columns = [
                             </div>
                         </div>
 
-
-                        
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; margin-top: 15px;">
-                            <div class="gauge-card w-100" style="justify-content: flex-start; padding: 0 1px; margin: 0;">
-                                <div class="gauge-header" style="width: 100%;">Beban Generator</div>
-                                <div id="gauge-beban-gen" class="gauge-chart-container" style="margin-top: 5px; width: 100%; background: transparent;"></div>
-                                <div id="time-beban-gen" class="gauge-timestamp mt-auto"><i class="far fa-clock"></i> -</div>
+                        <div class="modern-gauge-container">
+                            
+                            <div class="modern-gauge-card">
+                                <div class="gauge-card-header">
+                                    <span>Load Generator</span>
+                                </div>
+                                <div id="gauge-beban-gen" class="modern-gauge-chart"></div>
+                                <div class="gauge-card-footer">
+                                    <span id="time-beban-gen">Data Kosong</span>
+                                </div>
                             </div>
 
-                            <div class="gauge-card w-100" style="justify-content: flex-start; padding: 0 1px; margin: 0;">
-                                <div class="gauge-header" style="width: 100%;">Opening Damper</div>
-                                <div id="gauge-damper" class="gauge-chart-container" style="margin-top: 5px; width: 100%; background: transparent;"></div>
-                                <div id="time-damper" class="gauge-timestamp mt-auto"><i class="far fa-clock"></i> -</div>
+                            <div class="modern-gauge-card">
+                                <div class="gauge-card-header">
+                                    <span>Opening Damper</span>
+                                </div>
+                                <div id="gauge-damper" class="modern-gauge-chart"></div>
+                                <div class="gauge-card-footer">
+                                    <span id="time-damper">Data Kosong</span>
+                                </div>
                             </div>
                             
-                            <div class="gauge-card w-100" style="justify-content: flex-start; padding: 0 1px; margin: 0;">
-                                <div class="gauge-header" style="width: 100%;">Load Current</div>
-                                <div id="gauge-load-current" class="gauge-chart-container" style="margin-top: 5px; width: 100%; background: transparent;"></div>
-                                <div id="time-load-current" class="gauge-timestamp mt-auto"><i class="far fa-clock"></i> -</div>
+                            <div class="modern-gauge-card">
+                                <div class="gauge-card-header">
+                                    <span>Load Current</span>
+                                </div>
+                                <div id="gauge-load-current" class="modern-gauge-chart"></div>
+                                <div class="gauge-card-footer">
+                                    <span id="time-load-current">Data Kosong</span>
+                                </div>
                             </div>
-                        </div>                   
+
+                        </div>
+                        
 
                     </div> 
                 </div>
@@ -242,40 +267,40 @@ $columns = [
                         <thead>
                             <tr>
                                 <th>Parameter</th>
-                                <th>Tanggal Update</th>
                                 <th>Diupdate Oleh</th>
+                                <th>Tanggal Update</th>
                                 <th style="text-align: center;">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td class="cond-label">Bunyi Motor</td>
-                                <td id="date-bunyi" class="cond-date">--/--/----</td>
                                 <td id="updater-bunyi" class="cond-name">--</td>
+                                <td id="date-bunyi" class="cond-date">--/--/----</td>
                                 <td style="text-align: center;"><span id="stat-bunyi" class="status-badge status-good"></span></td>
                             </tr>
                             <tr>
                                 <td class="cond-label">Panel Local</td>
-                                <td id="date-panel" class="cond-date">--/--/----</td>
                                 <td id="updater-panel" class="cond-name">--</td>
+                                <td id="date-panel" class="cond-date">--/--/----</td>
                                 <td style="text-align: center;"><span id="stat-panel" class="status-badge status-fair"></span></td>
                             </tr>
                             <tr>
                                 <td class="cond-label">Kelengkapan</td>
-                                <td id="date-lengkap" class="cond-date">--/--/----</td>
                                 <td id="updater-lengkap" class="cond-name">--</td>
+                                <td id="date-lengkap" class="cond-date">--/--/----</td>
                                 <td style="text-align: center;"><span id="stat-lengkap" class="status-badge status-good"></span></td>
                             </tr>
                             <tr>
                                 <td class="cond-label">Kebersihan</td>
-                                <td id="date-bersih" class="cond-date">--/--/----</td>
                                 <td id="updater-bersih" class="cond-name">--</td>
+                                <td id="date-bersih" class="cond-date">--/--/----</td>
                                 <td style="text-align: center;"><span id="stat-bersih" class="status-badge status-poor"></span></td>
                             </tr>
                             <tr>
                                 <td class="cond-label">Grounding</td>
-                                <td id="date-ground" class="cond-date">--/--/----</td>
                                 <td id="updater-ground" class="cond-name">--</td>
+                                <td id="date-ground" class="cond-date">--/--/----</td>
                                 <td style="text-align: center;"><span id="stat-ground" class="status-badge status-good"></span></td>
                             </tr>
                         </tbody>
@@ -291,19 +316,19 @@ $columns = [
                         <thead>
                             <tr>
                                 <th>Item</th>
+                                <th style="text-align: left;">Update By</th> 
                                 <th>Tgl Terakhir</th>
                                 <th>Jadwal Next</th>
                                 <th>Sisa Waktu</th>
-                                <th style="text-align: center;">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td class="cond-label">Regreasing</td>
+                                <td id="updater-regrease" class="cond-name" style="font-weight: 600; color: #34495e;">--</td>
                                 <td id="date-regrease-last" class="cond-date">--/--/----</td>
                                 <td id="date-regrease-next" class="cond-date">--/--/----</td>
                                 <td id="time-left-regrease" class="cond-date" style="font-weight: bold; color: #d9534f;">-- Hari</td>
-                                <td style="text-align: center;"><span id="stat-regrease" class="status-badge status-done">-</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -318,14 +343,9 @@ $columns = [
                         <p id="teks-action" style="margin: 0 0 8px 0; font-size: 0.85rem; color: #333; line-height: 1.4; font-style: italic; word-wrap: break-word;">
                             "Belum ada data action yang direkam."
                         </p>
-                        
                         <div style="font-size: 0.75rem; color: #6c757d; text-align: right; margin-top: auto;">
                             <i class="far fa-calendar-alt mr-1"></i> <span id="tanggal-action">--/--/----</span>
                         </div>
-                    </div>
-
-                    <div class="gauge-timestamp mt-auto">
-                        <i class="far fa-clock"></i> Last Inspection: <span id="time-kondisi">-</span>
                     </div>
                 </div>
             </div> 
@@ -371,10 +391,15 @@ $columns = [
                         <hr class="my-2">
                         <div class="row">
                         <?php 
+                        // [DIPERBAIKI] Memisahkan Vibrasi menjadi DE dan NDE
                         $allInputs = [
-                            ["vibrasi", "Vibrasi/Getaran", "number"], ["temp_de", "Temp. Bearing DE", "number"],
-                            ["temp_nde", "Temp. Bearing NDE", "number"], ["suhu_ruang", "Suhu Ruangan", "number"],
-                            ["beban_gen", "Beban Generator", "number"], ["damper", "Opening Damper", "number"],
+                            ["vibrasi_de", "Vibrasi Bearing DE", "number"], 
+                            ["vibrasi_nde", "Vibrasi Bearing NDE", "number"], 
+                            ["temp_de", "Temp. Bearing DE", "number"],
+                            ["temp_nde", "Temp. Bearing NDE", "number"], 
+                            ["suhu_ruang", "Suhu Ruangan", "number"],
+                            ["beban_gen", "Beban Generator", "number"], 
+                            ["damper", "Opening Damper", "number"],
                             ["load_current", "Load Current", "number"],
                             ["bunyi", "Bunyi Motor", "select", ["GOOD", "FAIR", "POOR"]],
                             ["panel", "Panel Local", "select", ["GOOD", "FAIR", "POOR"]], 
@@ -437,4 +462,4 @@ $columns = [
     </section>
 </div>
 
-<script src="plugins/VibeTube/VibeTube.js"></script>
+
