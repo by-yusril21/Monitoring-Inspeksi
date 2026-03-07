@@ -103,6 +103,14 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
           </a>
         </li>
 
+        <li class="nav-item">
+          <a href="index.php?page=data_terbaru"
+            class="nav-link <?= (isset($_GET['page']) && $_GET['page'] == 'data_terbaru') ? 'active' : '' ?>">
+            <i class="nav-icon fas fa-table"></i>
+            <p>Data Terbaru</p>
+          </a>
+        </li>
+
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
           <li class="nav-item">
             <a href="?page=user" class="nav-link <?php echo ($current_page == 'user') ? 'active' : ''; ?>">

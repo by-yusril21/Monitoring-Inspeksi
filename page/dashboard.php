@@ -8,8 +8,8 @@ if (session_status() == PHP_SESSION_NONE) {
 $columns = [
     "No", 
     "TIMESTAMP", 
-    "EMAIL ADDRESS", 
-    "PILIH SALAH SATU", 
+    "EMAIL UPDATE", 
+    "AKSI", 
     "SECTION NO", 
     "VIBRASI BEARING DE", 
     "VIBRASI BEARING NDE",  // <-- INI TAMBAHANNYA
