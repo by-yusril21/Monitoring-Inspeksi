@@ -80,15 +80,17 @@ document.addEventListener("DOMContentLoaded", function () {
           colSelanjutnya.innerHTML = motorData.selanjutnya;
 
           let sisa = parseInt(motorData.sisaHari);
+
+          // Mengganti Badge menjadi Teks Warna Biasa
           if (!isNaN(sisa)) {
             if (sisa > 14) {
-              colSisa.innerHTML = `<span class="badge badge-success">${sisa} Hari Lagi</span>`;
+              colSisa.innerHTML = `<span class="text-success font-weight-bold">${sisa} Hari</span>`;
             } else if (sisa > 0 && sisa <= 14) {
-              colSisa.innerHTML = `<span class="badge badge-warning text-dark">${sisa} Hari Lagi</span>`;
+              colSisa.innerHTML = `<span class="text-warning font-weight-bold">${sisa} Hari</span>`;
             } else if (sisa === 0) {
-              colSisa.innerHTML = `<span class="badge badge-warning text-dark">Hari Ini!</span>`;
+              colSisa.innerHTML = `<span class="text-warning font-weight-bold">Hari Ini!</span>`;
             } else {
-              colSisa.innerHTML = `<span class="badge badge-danger">Lewat ${Math.abs(sisa)} Hari</span>`;
+              colSisa.innerHTML = `<span class="text-danger font-weight-bold">Lewat ${Math.abs(sisa)} Hari</span>`;
             }
           } else {
             colSisa.innerHTML = "-";

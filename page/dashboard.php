@@ -131,55 +131,50 @@ $columns = [
 </style>
 
 <div class="content-wrapper">
-    <section id="section-tabel" class="section-full">
-        <div class="container-fluid px-custom-5 h-100">
-            <div class="card card-custom">
+
+    <section id="section-tabel" class="vh-100 d-flex flex-column py-2">
+        <div class="container-fluid px-1 h-100">
+            <div class="card shadow-none border h-100 mb-0">
                 <div class="card-body p-0 flex-fill d-flex flex-column">
-                    <div class="table-responsive-vh">
+                    <div class="table-responsive flex-fill" style="overflow-y: auto;">
+
                         <table id="example1"
-                            class="table table-bordered table-striped table-hover table-sm text-nowrap m-0">
+                            class="table table-bordered table-striped table-hover table-sm text-nowrap m-0 text-center">
 
-                            <thead class="bg-secondary text-white table-header-custom">
+                            <thead class="bg-light text-dark align-middle">
                                 <tr>
-                                    <th rowspan="2" style="min-width: 20px;">No</th>
-                                    <th rowspan="2" style="min-width: 140px;">Date</th>
-                                    <th rowspan="2" style="min-width: 160px;">Update By</th>
-                                    <th rowspan="2" style="min-width: 70px;">Aksi</th>
-                                    <th rowspan="2" style="min-width: 50px;">Section<br>NO</th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 20px;">No</th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 140px;">Date</th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 160px;">Update By</th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 70px;">Aksi</th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Section<br>No</th>
 
-                                    <th colspan="2" class="border-bottom-0">Vibrasi (mm/s)</th>
+                                    <th class="align-middle" colspan="2">Vibrasi (mm/s)</th>
 
-                                    <th colspan="3" class="border-bottom-0">Temp (°C)</th>
+                                    <th class="align-middle" colspan="3">Temp (°C)</th>
 
-                                    <th rowspan="2" style="min-width: 50px;">Load<br>Generator</th>
-                                    <th rowspan="2" style="min-width: 50px;">Opening<br>Damper</th>
-                                    <th rowspan="2" style="min-width: 50px;">Load<br>Current</th>
-                                    <th rowspan="2" style="min-width: 50px;">Bunyi<br>Motor</th>
-                                    <th rowspan="2" style="min-width: 50px;">Kondisi<br>Panel</th>
-                                    <th rowspan="2" style="min-width: 50px;">Kelengkapan</th>
-                                    <th rowspan="2" style="min-width: 50px;">Kebersihan</th>
-                                    <th rowspan="2" style="min-width: 50px;">Grounding</th>
-                                    <th rowspan="2" style="min-width: 50px;">Regreasing</th>
-                                    <th rowspan="2" style="min-width: 300px;">Action</th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Load Gene<br>rator(MW)
+                                    </th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Opening<br>Damper(%)
+                                    </th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Load<br>Current(A)
+                                    </th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Bunyi<br>Motor</th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Kondisi<br>Panel</th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Kelengkapan</th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Kebersihan</th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Grounding</th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Regreasing</th>
+                                    <th class="align-middle" rowspan="2" style="min-width: 300px;">Action</th>
                                 </tr>
 
                                 <tr>
-                                    <th
-                                        style="width: 30px; min-width: 30px; max-width: 30px; font-weight: normal; background-color: rgba(0,0,0,0.1);">
-                                        DE</th>
-                                    <th
-                                        style="width: 30px; min-width: 30px; max-width: 30px; font-weight: normal; background-color: rgba(0,0,0,0.1);">
-                                        NDE</th>
+                                    <th style="width: 30px; min-width: 30px; max-width: 30px;">DE</th>
+                                    <th style="width: 30px; min-width: 30px; max-width: 30px;">NDE</th>
 
-                                    <th
-                                        style="width: 30px; min-width: 30px; max-width: 30px; font-weight: normal; background-color: rgba(0,0,0,0.1);">
-                                        DE</th>
-                                    <th
-                                        style="width: 30px; min-width: 30px; max-width: 30px; font-weight: normal; background-color: rgba(0,0,0,0.1);">
-                                        NDE</th>
-                                    <th
-                                        style="width: 30px; min-width: 30px; max-width: 30px; font-weight: normal; background-color: rgba(0,0,0,0.1);">
-                                        Ruang</th>
+                                    <th style="width: 30px; min-width: 30px; max-width: 30px;">DE</th>
+                                    <th style="width: 30px; min-width: 30px; max-width: 30px;">NDE</th>
+                                    <th style="width: 30px; min-width: 30px; max-width: 30px;">Ruang</th>
                                 </tr>
                             </thead>
 

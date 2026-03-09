@@ -56,26 +56,10 @@ $motor_unit_d_380v = [
 ?>
 
 <div class="content-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0"><i class="fas fa-oil-can mr-2"></i>Jadwal Regreasing Motor</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Jadwal Regreasing</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="content">
         <div class="container-fluid" style="padding-top: 10px;">
 
-            <div class="card card-outline card-primary">
+            <div class="card card-outline card-info">
                 <div class="card-header">
                     <h3 class="card-title"><b>MOTOR 6kV PLTU UNIT C</b></h3>
                     <div class="card-tools">
@@ -165,7 +149,7 @@ $motor_unit_d_380v = [
                 </div>
             </div>
 
-            <div class="card card-outline card-primary">
+            <div class="card card-outline card-info">
                 <div class="card-header">
                     <h3 class="card-title"><b>MOTOR 380V PLTU UNIT C</b></h3>
                     <div class="card-tools">

@@ -28,17 +28,6 @@ switch ($unitAktif) {
 ?>
 
 <div class="content-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0 text-bold text-primary"><?php echo $judul_unit; ?></h1>
-                    <p class="text-muted">Monitoring Trend Vibrasi Motor Aktual</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="content">
         <div class="container-fluid">
             <div class="row" id="chart-cards-container">

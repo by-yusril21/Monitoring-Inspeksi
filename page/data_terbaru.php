@@ -15,47 +15,54 @@ if (session_status() == PHP_SESSION_NONE) {
         scrollbar-width: none;
     }
 
-    /* 2. TEMA ABU-ABU HEADER TABEL (Sama dengan Tabel Utama) */
+    /* 2. TEMA ABU-ABU HEADER TABEL */
     .table-sticky-first thead th {
-        color: #333333 !important;
-        /* Teks gelap */
-        border-color: #adb5bd !important;
-        /* Garis batas abu-abu */
+        color: #000000 !important;
+        border-color: #282929 !important;
         vertical-align: middle !important;
         text-align: center;
     }
 
-    /* Baris Atas (Judul Utama) */
     .table-sticky-first thead tr:first-child th {
-        background-color: #e6e6e6 !important;
+        background-color: #56a5b4 !important;
         font-weight: bold !important;
     }
 
-    /* Baris Bawah (Sub-Judul DE/NDE) */
     .table-sticky-first thead tr:nth-child(2) th {
-        background-color: #f0f0f0 !important;
+        background-color: #75bfce !important;
         font-size: 13px !important;
         font-weight: 600 !important;
     }
 
-    /* 3. Sticky Column (Kolom Nama Motor) */
+    /* 3. Sticky Column (Kolom Nama Motor) - UNTUK LAYAR BESAR */
     .sticky-motor {
         position: sticky !important;
         left: 0;
         z-index: 2;
-        background-color: #ffffff !important;
+        background-color: #f9f9f9 !important;
         box-shadow: inset -2px 0 0 rgba(0, 0, 0, 0.1);
     }
 
-    /* Warna header kolom sticky disamakan dengan header lainnya */
     thead .sticky-motor {
-        background-color: #ced4da !important;
-        color: #333333 !important;
+        background-color: #ebebeb !important;
+        color: #000000 !important;
         z-index: 3;
     }
 
     .table-hover tbody tr:hover .sticky-motor {
-        background-color: #f4f6f9 !important;
+        background-color: #c7c7c7 !important;
+    }
+
+    /* Matikan Sticky di Layar HP (Maksimal Lebar 768px) */
+    @media (max-width: 768px) {
+        .sticky-motor {
+            position: static !important;
+            box-shadow: none !important;
+        }
+
+        thead .sticky-motor {
+            z-index: 1;
+        }
     }
 
     /* 4. Memangkas Padding & Rata Tengah Vertikal */
@@ -89,10 +96,6 @@ if (session_status() == PHP_SESSION_NONE) {
 
     <div class="content">
         <div class="container-fluid" id="rekap-container">
-            <div class="text-center py-5">
-                <i class="fas fa-circle-notch fa-spin fa-3x text-info mb-3"></i>
-                <p class="font-weight-bold">Mempersiapkan Tabel Data Master...</p>
-            </div>
         </div>
     </div>
 </div>
@@ -110,12 +113,11 @@ if (session_status() == PHP_SESSION_NONE) {
         const container = document.getElementById('rekap-container');
         container.innerHTML = "";
 
-        // 1. GENERATE TABEL KOSONG UNTUK SETIAP UNIT
+        // 1. GENERATE TABEL KOSONG UNTUK SETIAP UNIT DENGAN OVERLAY LOADING
         units.forEach(unit => {
             const listMotor = window.dataMotor[unit];
             if (listMotor.length === 0) return;
 
-            // Tema outline card dikembalikan ke Info
             let cardHTML = `
             <div class="card card-outline card-info mb-4 shadow-sm" style="border-radius: 10px; overflow: hidden;">
                 <div class="card-header bg-white pt-3 pb-2">
@@ -127,14 +129,8 @@ if (session_status() == PHP_SESSION_NONE) {
                         <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
                     </div>
                 </div>
+                
                 <div class="card-body p-0 position-relative">
-                    <div id="loading_${unit}" class="overlay d-flex justify-content-center align-items-center" style="background: rgba(255,255,255,0.8); z-index: 10;">
-                        <div class="text-center">
-                            <i class="fas fa-sync fa-spin fa-2x text-info"></i>
-                            <div class="mt-2 text-sm font-weight-bold text-muted">Menarik Data ${unit}...</div>
-                        </div>
-                    </div>
-
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered table-striped m-0 text-sm text-nowrap table-sticky-first" id="table_${unit}">
                             <thead>
@@ -185,6 +181,12 @@ if (session_status() == PHP_SESSION_NONE) {
                         </table>
                     </div>
                 </div>
+                
+                <div class="overlay" id="loading_${unit}" style="flex-direction: column; background-color: rgba(255,255,255,0.85);">
+                    <i class="fas fa-sync-alt fa-spin fa-3x text-info"></i>
+                    <div class="mt-3 text-info font-weight-bold" style="letter-spacing: 1px;">Mengambil Data...</div>
+                </div>
+
             </div>`;
 
             container.innerHTML += cardHTML;
@@ -199,8 +201,8 @@ if (session_status() == PHP_SESSION_NONE) {
                 const response = await fetch(targetUrl);
                 const result = await response.json();
 
+                // Hapus efek loading setelah data berhasil ditarik
                 if (loadingEl) {
-                    loadingEl.classList.remove('d-flex');
                     loadingEl.classList.add('d-none');
                 }
 
@@ -227,20 +229,33 @@ if (session_status() == PHP_SESSION_NONE) {
                             const damper = motorData['DAMPER (%)'] || '-';
                             const arus = motorData['ARUS (A)'] || '-';
                             const suhuRuang = motorData['SUHU RUANG/VENTILASI'] || '-';
-                            const bunyi = motorData['BUNYI BEARING'] || '-';
-                            const panel = motorData['PANEL LOKAL'] || '-';
-                            const kelengkapan = motorData['KELENGKAPAN'] || '-';
-                            const kebersihan = motorData['KEBERSIHAN'] || '-';
-                            const grounding = motorData['GROUNDING'] || '-';
                             const regreasing = motorData['REGREASING'] || '-';
                             const actions = motorData['ACTIONS'] || '-';
 
-                            // Menghilangkan kotak pembungkus (badge), diganti dengan teks warna biasa
+                            // --- [FUNGSI BARU] Pewarnaan Kondisi GOOD, FAIR, POOR ---
+                            const formatCond = (val) => {
+                                if (!val || val === '-') return '-';
+                                const v = val.toUpperCase();
+                                if (v === 'GOOD') return `<span class="text-success font-weight-bold">${val}</span>`;
+                                if (v === 'FAIR') return `<span class="text-warning font-weight-bold">${val}</span>`;
+                                if (v === 'POOR') return `<span class="text-danger font-weight-bold">${val}</span>`;
+                                return val; // Jika isinya selain 3 kata di atas, biarkan warna biasa
+                            };
+
+                            const bunyi = formatCond(motorData['BUNYI BEARING'] || '-');
+                            const panel = formatCond(motorData['PANEL LOKAL'] || '-');
+                            const kelengkapan = formatCond(motorData['KELENGKAPAN'] || '-');
+                            const kebersihan = formatCond(motorData['KEBERSIHAN'] || '-');
+                            const grounding = formatCond(motorData['GROUNDING'] || '-');
+                            // --------------------------------------------------------
+
+                            // Teks warna untuk status (Normal / Danger)
                             let badgeStatus = `<span>${status}</span>`;
                             const statusUpper = status.toUpperCase();
                             if (statusUpper.includes('NORMAL')) badgeStatus = `<span class="text-success font-weight-bold">${status}</span>`;
                             else if (statusUpper.includes('WARNING')) badgeStatus = `<span class="text-warning font-weight-bold">${status}</span>`;
                             else if (statusUpper.includes('DANGER') || statusUpper.includes('ALARM')) badgeStatus = `<span class="text-danger font-weight-bold">${status}</span>`;
+
                             rowElement.innerHTML = `
                                 <td class="font-weight-bold text-dark sticky-motor text-left-custom">${motorName}</td>
                                 <td class="text-muted">${waktu}</td>
@@ -288,7 +303,6 @@ if (session_status() == PHP_SESSION_NONE) {
             } catch (error) {
                 console.error(`Error fetch Unit ${unit}:`, error);
                 if (loadingEl) {
-                    loadingEl.classList.remove('d-flex');
                     loadingEl.classList.add('d-none');
                 }
                 const tbody = document.getElementById(`tbody_${unit}`);
