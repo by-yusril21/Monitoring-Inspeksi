@@ -3,6 +3,7 @@
 header('Content-Type: application/json');
 
 // 1. Panggil file konfigurasi rahasia
+require_once '../config/cek_session.php';
 require_once '../config/config.php';
 
 // 2. Tangkap permintaan unit dari JavaScript (contoh: api_proxy.php?unit=C6KV)

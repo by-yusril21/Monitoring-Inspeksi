@@ -5,14 +5,32 @@ if (session_status() == PHP_SESSION_NONE) {
 ?>
 
 <style>
-    /* 1. Menyembunyikan Scrollbar Horizontal */
-    .table-responsive::-webkit-scrollbar {
-        display: none;
+    /* 1. Menampilkan Scrollbar Horizontal & Menyembunyikan Vertikal */
+    .table-responsive {
+        /* Pengecualian di Firefox: Tampilkan scrollbar tipis */
+        scrollbar-width: thin !important;
     }
 
-    .table-responsive {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
+    /* Pengaturan untuk browser WebKit (Chrome, Safari, Edge, Opera) */
+    .table-responsive::-webkit-scrollbar {
+        width: 0px !important;
+        /* HILANGKAN scrollbar vertikal (Atas-Bawah) */
+        height: 8px !important;
+        /* TAMPILKAN scrollbar horizontal (Kiri-Kanan) */
+    }
+
+    /* Mempercantik tampilan scrollbar horizontal */
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f4f6f9;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
     }
 
     /* 2. TEMA ABU-ABU HEADER TABEL */
@@ -83,17 +101,6 @@ if (session_status() == PHP_SESSION_NONE) {
 </style>
 
 <div class="content-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0 text-bold text-dark">Rekap Data Terbaru Lengkap</h1>
-                    <p class="text-muted">Status ke-19 parameter aktual seluruh motor di lapangan.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="content">
         <div class="container-fluid" id="rekap-container">
         </div>
@@ -262,8 +269,8 @@ if (session_status() == PHP_SESSION_NONE) {
                                 <td>${email}</td>
                                 <td>${badgeStatus}</td>
                                 <td>${section}</td>
-                                <td class="font-weight-bold text-dark">${vibDE}</td>
-                                <td class="font-weight-bold text-dark">${vibNDE}</td>
+                                <td>${vibDE}</td>
+                                <td>${vibNDE}</td>
                                 <td>${tempDE}</td>
                                 <td>${tempNDE}</td>
                                 <td>${beban}</td>
@@ -315,6 +322,13 @@ if (session_status() == PHP_SESSION_NONE) {
         units.forEach(unit => {
             fetchUnitData(unit);
         });
+
+        setInterval(() => {
+            console.log("Melakukan auto-refresh data...");
+            units.forEach(unit => {
+                fetchUnitData(unit);
+            });
+        }, 300000);
 
     });
 </script>

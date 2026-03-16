@@ -108,18 +108,44 @@ $columns = [
     }
 
     /* =========================================================
-       GLOBAL SCROLLBAR HIDER (MENGHILANGKAN SEMUA GARIS SCROLL)
+       CUSTOM SCROLLBAR (VERTIKAL HILANG, HORIZONTAL TAMPIL)
        ========================================================= */
+
+    /* 1. Pengaturan untuk browser Firefox & IE/Edge Lama */
     * {
-        -ms-overflow-style: none !important;
-        /* Untuk IE dan Edge */
         scrollbar-width: none !important;
-        /* Untuk Firefox */
+        /* Sembunyikan semua di Firefox */
+        -ms-overflow-style: none !important;
+        /* Sembunyikan di IE/Edge */
     }
 
+    /* Pengecualian di Firefox: Tampilkan scrollbar tipis khusus area yang butuh geser kiri-kanan */
+    .dataTables_scrollBody,
+    .table-responsive-vh,
+    .table-responsive-custom {
+        scrollbar-width: thin !important;
+    }
+
+    /* 2. Pengaturan untuk browser WebKit (Chrome, Safari, Edge Baru, Opera) */
     *::-webkit-scrollbar {
-        display: none !important;
-        /* Untuk Chrome, Safari, dan Opera */
+        width: 0px !important;
+        /* HILANGKAN scrollbar vertikal (Atas-Bawah) */
+        height: 8px !important;
+        /* TAMPILKAN scrollbar horizontal (Kiri-Kanan) */
+    }
+
+    /* Mempercantik tampilan scrollbar horizontal yang muncul */
+    *::-webkit-scrollbar-track {
+        background: var(--bg-color);
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
     }
 
     /* CSS KHUSUS UNTUK MERAPIKAN HEADER TABEL BERTINGKAT */
@@ -428,7 +454,7 @@ $columns = [
 
                     <div class="gauge-dashboard-title"
                         style="font-size: 0.85rem; border: none; text-align: left; margin-bottom: 5px;">
-                        <i class="fas fa-clipboard-list mr-2 text-warning"></i> Action Terakhir
+                        <i class="fas fa-clipboard-list mr-2 text-warning"></i> Action
                     </div>
 
                     <div class="action-box"
@@ -451,7 +477,7 @@ $columns = [
             <div class="card card-custom bg-white shadow-sm">
                 <div class="card-header py-2 bg-light">
                     <h3 class="card-title text-sm font-weight-bold">
-                        <i class="fas fa-plus-circle mr-1 text-primary"></i> INPUT DATA MONITORING
+                        <i class="fas fa-plus-circle mr-1 text-primary"></i> INPUT DATA INSPEKSI
                     </h3>
                 </div>
 

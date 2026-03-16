@@ -3,6 +3,7 @@
 header('Content-Type: application/json');
 
 // 1. Panggil file konfigurasi rahasia
+require_once '../config/cek_session.php';
 require_once '../config/config.php';
 
 // 2. Baca data payload (JSON) yang dikirim oleh JavaScript

@@ -1,6 +1,9 @@
 <?php
+
+
 // File: api/fetch_latest_data.php
 header('Content-Type: application/json');
+require_once '../config/cek_session.php';
 require_once '../config/config.php';
 
 // Tangkap parameter unit (contoh: C6KV)

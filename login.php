@@ -1,36 +1,66 @@
 <?php
+// =========================================================
+// PENGATURAN SESSION 30 HARI (2.592.000 detik)
+// Harus dieksekusi sebelum session_start()
+// =========================================================
+ini_set('session.gc_maxlifetime', 2592000);
+session_set_cookie_params(2592000);
+
 session_start();
+
+// Jika pengguna sudah login sebelumnya, langsung lempar ke index (tidak perlu login lagi)
+if (isset($_SESSION['username'])) {
+  header("Location: index.php");
+  exit;
+}
+
 include "config/database.php";
 
 $message = "Masukkan Username Dan Password";
 
 if (isset($_POST['username'])) {
-  $username = $_POST['username'];
+  // Bersihkan input untuk mencegah error karakter aneh
+  $username = trim($_POST['username']);
   $password = $_POST['password'];
 
-  $sql = "SELECT * FROM user WHERE username = '$username' LIMIT 1";
-  $result = mysqli_query($conn, $sql);
+  // =========================================================
+  // PERBAIKAN KEAMANAN: Menggunakan Prepared Statement (Anti SQL Injection)
+  // =========================================================
+  $stmt = mysqli_prepare($conn, "SELECT * FROM user WHERE username = ? LIMIT 1");
+  mysqli_stmt_bind_param($stmt, "s", $username);
+  mysqli_stmt_execute($stmt);
+  $result = mysqli_stmt_get_result($stmt);
 
-  $data = mysqli_fetch_assoc($result);
+  // Cek apakah data user ditemukan
+  if (mysqli_num_rows($result) > 0) {
+    $data = mysqli_fetch_assoc($result);
 
-  if (!mysqli_num_rows($result) > 0) {
-    $message = "<b style='color:red'>Username Tidak Terdaftar</b>";
-  } else {
+    // Verifikasi Password
     if (password_verify($password, $data['password'])) {
+      // Jika sukses, buat session
       $_SESSION['username'] = $username;
       $_SESSION['fullname'] = $data['fullname'];
       $_SESSION['role'] = $data['role'];
 
-      echo "<script> location.href= 'index.php' </script>";
+      // Pindahkan ke halaman index menggunakan PHP murni (Lebih cepat dan aman dari JS)
+      header("Location: index.php");
+      exit;
     } else {
       $message = "<b style='color:red'>Password Salah</b>";
     }
+  } else {
+    $message = "<b style='color:red'>Username Tidak Terdaftar</b>";
   }
+
+  // Tutup statement
+  mysqli_stmt_close($stmt);
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
+</html>
 
 <head>
   <meta charset="utf-8">

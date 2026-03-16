@@ -84,7 +84,7 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
           <a href="javascript:void(0)" class="nav-link nav-menu-link text-primary px-2" data-target-id="section-tabel"
             onclick="scrollToSection('section-tabel')">
             <i class="fas fa-table"></i>
-            <span class="d-none d-md-inline ml-1">Tabel Data</span>
+            <span class="d-none d-md-inline ml-1">Tabel</span>
             <span class="d-inline d-md-none ml-1">Tabel</span>
           </a>
         </li>
@@ -93,8 +93,8 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
           <a href="javascript:void(0)" class="nav-link nav-menu-link text-dark px-2" data-target-id="section-gauge"
             onclick="scrollToSection('section-gauge')">
             <i class="fas fa-tachometer-alt"></i>
-            <span class="d-none d-md-inline ml-1">Gauge Data</span>
-            <span class="d-inline d-md-none ml-1">Gauge</span>
+            <span class="d-none d-md-inline ml-1">View</span>
+            <span class="d-inline d-md-none ml-1">View</span>
           </a>
         </li>
 
@@ -102,7 +102,7 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
           <a href="javascript:void(0)" class="nav-link nav-menu-link text-dark px-2" data-target-id="section-input"
             onclick="scrollToSection('section-input')">
             <i class="fas fa-edit"></i>
-            <span class="d-none d-md-inline ml-1">Input Data</span>
+            <span class="d-none d-md-inline ml-1">Input</span>
             <span class="d-inline d-md-none ml-1">Input</span>
           </a>
         </li>
