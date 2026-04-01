@@ -1,6 +1,6 @@
 /* =======================================================
    tabel-motor.js
-   Inisialisasi DataTable + Fungsi Load Data dari Sheet
+   Inisialisasi DataTable + Fungsi Load Data dari Sheet + Ekspor PDF Proporsional
    Membutuhkan: config.js (dimuat lebih dulu)
    ======================================================= */
 
@@ -189,11 +189,105 @@ $(document).ready(function () {
       [10, 25, 50, 100, "Semua"],
     ],
 
+    // --- UPDATE FITUR EXPORT PDF PROPORSIONAL ---
     buttons: [
       {
         extend: "excel",
         text: '<i class="fas fa-file-excel"></i> Excel',
         className: "btn btn-success btn-sm",
+      },
+      {
+        extend: "pdfHtml5",
+        text: '<i class="fas fa-file-pdf"></i> PDF',
+        className: "btn btn-danger btn-sm",
+        orientation: "landscape", // Tetap landscape agar kolom muat
+        pageSize: "A4", // Ukuran Kertas A4
+        title: function () {
+          // Mengambil teks dari dropdown navbar berdasarkan ID
+          let unitText =
+            $("#pilihUnit option:selected").text() ||
+            $("#pilihUnit").val() ||
+            "";
+          let motorText =
+            $("#pilihMotor option:selected").text() ||
+            $("#pilihMotor").val() ||
+            "";
+
+          // Membersihkan jika teks bawaannya adalah "Pilih Unit" dll
+          if (unitText.toUpperCase().includes("PILIH")) unitText = "";
+          if (motorText.toUpperCase().includes("PILIH"))
+            motorText = "Data Motor";
+
+          // Format Judul: [Nama Motor] [Nama Unit]
+          return (motorText + " " + unitText).trim();
+        },
+        exportOptions: {
+          format: {
+            body: function (data, row, column, node) {
+              // Bersihkan tag HTML (seperti <span>), ambil teks aslinya saja
+              return data ? data.toString().replace(/<[^>]*>?/gm, "") : data;
+            },
+          },
+        },
+        customize: function (doc) {
+          // --- KUSTOMISASI TAMPILAN PDF PROPOSIONAL ---
+
+          // 1. Font disesuaikan agar proporsional di A4 landscape (ukuran 7 agar jelas)
+          doc.defaultStyle.fontSize = 7;
+          doc.styles.tableHeader.fontSize = 8;
+          doc.styles.tableFooter.fontSize = 8;
+
+          // 2. Judul Posisi Center
+          doc.styles.title = {
+            color: "#000000",
+            fontSize: 12,
+            bold: true,
+            alignment: "center",
+          };
+
+          // 3. Meratakan (Center) Header dan Isi Tabel
+          doc.styles.tableHeader.alignment = "center";
+          doc.styles.tableHeader.margin = [2, 4, 2, 4]; // Spasi dalam header
+          doc.styles.tableBodyEven.alignment = "center";
+          doc.styles.tableBodyOdd.alignment = "center";
+
+          // CATATAN: Paksaan lebar kolom (doc.content[1].table.widths) sengaja DIHAPUS
+          // agar PDFMake menghitung otomatis sesuai panjang isi teks (auto-sizing).
+
+          // 4. Warna background selang-seling (Zebra layout) & Garis tabel
+          var objLayout = {};
+          objLayout["hLineWidth"] = function (i) {
+            return 0.5;
+          };
+          objLayout["vLineWidth"] = function (i) {
+            return 0.5;
+          };
+          objLayout["hLineColor"] = function (i) {
+            return "#aaaaaa";
+          };
+          objLayout["vLineColor"] = function (i) {
+            return "#aaaaaa";
+          };
+          objLayout["paddingLeft"] = function (i) {
+            return 2;
+          };
+          objLayout["paddingRight"] = function (i) {
+            return 2;
+          };
+          objLayout["fillColor"] = function (rowIndex, node, columnIndex) {
+            // Baris 0 (Header) abu-abu gelap, baris genap abu-abu muda
+            return rowIndex === 0
+              ? "#e9ecef"
+              : rowIndex % 2 === 0
+                ? "#f8f9fa"
+                : null;
+          };
+          doc.content[1].layout = objLayout;
+
+          // 5. Margin Halaman [kiri, atas, kanan, bawah]
+          // Margin kiri kanan dikurangi menjadi 15 agar A4 landscape lebih lega
+          doc.pageMargins = [15, 30, 15, 30];
+        },
       },
     ],
 

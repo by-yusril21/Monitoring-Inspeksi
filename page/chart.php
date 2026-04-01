@@ -66,7 +66,7 @@ switch ($unitAktif) {
 
         // Buat nama file yang rapi (menghilangkan spasi berlebih)
         const safeName = namaMotor.replace(/[^a-zA-Z0-9]/g, '_');
-        const fileName = `Trend_Vibrasi_${safeName}.png`;
+        const fileName = `Trend_Maintenance_${safeName}.png`;
 
         // Buat link download palsu, lalu klik otomatis
         const link = document.createElement('a');
@@ -155,7 +155,7 @@ switch ($unitAktif) {
                     if (result.labels.length === 0) {
                         if (loadingEl) {
                             loadingEl.classList.remove('d-flex');
-                            loadingEl.innerHTML = '<div class="text-muted text-center mt-5"><i class="fas fa-folder-open fa-2x mb-2 text-lightblue"></i><br>Belum ada riwayat vibrasi direkam.</div>';
+                            loadingEl.innerHTML = '<div class="text-muted text-center mt-5"><i class="fas fa-folder-open fa-2x mb-2 text-lightblue"></i><br>Belum ada riwayat data direkam.</div>';
                         }
                         return;
                     }
@@ -168,46 +168,82 @@ switch ($unitAktif) {
                     if (canvasEl) {
                         const ctx = canvasEl.getContext('2d');
 
-                        let gradientDE = ctx.createLinearGradient(0, 0, 0, 300);
-                        gradientDE.addColorStop(0, 'rgba(60,141,188, 0.6)');
-                        gradientDE.addColorStop(1, 'rgba(60,141,188, 0.0)');
-
-                        let gradientNDE = ctx.createLinearGradient(0, 0, 0, 300);
-                        gradientNDE.addColorStop(0, 'rgba(220,53,69, 0.6)');
-                        gradientNDE.addColorStop(1, 'rgba(220,53,69, 0.0)');
-
                         const areaChartData = {
                             labels: result.labels,
                             datasets: [
                                 {
                                     label: 'Vibrasi Bearing DE',
-                                    backgroundColor: gradientDE,
                                     borderColor: 'rgba(60,141,188, 1)',
+                                    backgroundColor: 'rgba(60,141,188, 0.1)',
                                     borderWidth: 2.5,
-                                    pointRadius: 3,
-                                    pointHoverRadius: 6,
-                                    pointBackgroundColor: '#ffffff',
-                                    pointBorderColor: 'rgba(60,141,188, 1)',
-                                    pointBorderWidth: 2,
-                                    pointStyle: 'rect',
+                                    pointRadius: 2,
                                     data: result.dataDE,
                                     fill: true,
-                                    lineTension: 0.4
+                                    spanGaps: true
                                 },
                                 {
                                     label: 'Vibrasi Bearing NDE',
-                                    backgroundColor: gradientNDE,
                                     borderColor: 'rgba(220,53,69, 1)',
+                                    backgroundColor: 'rgba(220,53,69, 0.1)',
                                     borderWidth: 2.5,
-                                    pointRadius: 3,
-                                    pointHoverRadius: 6,
-                                    pointBackgroundColor: '#ffffff',
-                                    pointBorderColor: 'rgba(220,53,69, 1)',
-                                    pointBorderWidth: 2,
-                                    pointStyle: 'rect',
+                                    pointRadius: 2,
                                     data: result.dataNDE,
                                     fill: true,
-                                    lineTension: 0.4
+                                    spanGaps: true
+                                },
+                                {
+                                    label: 'Temp Bearing DE',
+                                    borderColor: 'rgba(255, 133, 27, 1)', // Orange
+                                    borderWidth: 2,
+                                    pointRadius: 2,
+                                    data: result.dataTempDE,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: 'Temp Bearing NDE',
+                                    borderColor: 'rgba(255, 193, 7, 1)', // Kuning
+                                    borderWidth: 2,
+                                    pointRadius: 2,
+                                    data: result.dataTempNDE,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: 'Suhu Ruangan',
+                                    borderColor: 'rgba(40, 167, 69, 1)', // Hijau
+                                    borderWidth: 2,
+                                    pointRadius: 2,
+                                    data: result.dataSuhu,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: 'Beban Generator',
+                                    borderColor: 'rgba(111, 66, 193, 1)', // Ungu
+                                    borderWidth: 2,
+                                    pointRadius: 2,
+                                    data: result.dataBeban,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: 'Opening Damper',
+                                    borderColor: 'rgba(32, 201, 151, 1)', // Teal
+                                    borderWidth: 2,
+                                    pointRadius: 2,
+                                    data: result.dataDamper,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: 'Load Current',
+                                    borderColor: 'rgba(139, 0, 0, 1)', // Merah Gelap
+                                    borderWidth: 2,
+                                    pointRadius: 2,
+                                    data: result.dataCurrent,
+                                    fill: false,
+                                    spanGaps: true
                                 }
                             ]
                         };
@@ -215,51 +251,22 @@ switch ($unitAktif) {
                         const lineChartOptions = {
                             maintainAspectRatio: false,
                             responsive: true,
-                            layout: {
-                                padding: { top: 0, bottom: 0 }
-                            },
+                            layout: { padding: { top: 0, bottom: 0 } },
                             legend: {
                                 display: true,
                                 position: 'top',
-                                labels: {
-                                    usePointStyle: false,
-                                    boxWidth: 12,
-                                    padding: 10,
-                                    fontColor: '#555',
-                                    fontFamily: 'Helvetica Neue, Arial, sans-serif'
-                                }
+                                labels: { usePointStyle: false, boxWidth: 12, padding: 10, fontFamily: 'Helvetica Neue, Arial, sans-serif' }
                             },
                             scales: {
                                 xAxes: [{
-                                    gridLines: { display: false, drawBorder: false },
+                                    gridLines: { display: false },
                                     ticks: { fontColor: '#888', maxTicksLimit: 15 },
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: 'Waktu Pengukuran',
-                                        fontColor: '#333',
-                                        fontStyle: 'bold'
-                                    }
+                                    scaleLabel: { display: true, labelString: 'Waktu Pengukuran', fontColor: '#333', fontStyle: 'bold' }
                                 }],
                                 yAxes: [{
-                                    gridLines: {
-                                        display: true,
-                                        color: 'rgba(0,0,0,0.25)',
-                                        zeroLineColor: 'rgba(0,0,0,0.4)',
-                                        borderDash: [5, 5],
-                                        drawBorder: false
-                                    },
-                                    ticks: {
-                                        beginAtZero: true,
-                                        suggestedMax: 5,
-                                        fontColor: '#888',
-                                        padding: 10
-                                    },
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: 'Nilai Vibrasi (mm/s)',
-                                        fontColor: '#333',
-                                        fontStyle: 'bold'
-                                    }
+                                    gridLines: { display: true, color: 'rgba(0,0,0,0.1)', borderDash: [5, 5] },
+                                    ticks: { beginAtZero: true, fontColor: '#888', padding: 10 },
+                                    scaleLabel: { display: true, labelString: 'Nilai Parameter', fontColor: '#333', fontStyle: 'bold' }
                                 }]
                             },
                             tooltips: {
@@ -275,10 +282,19 @@ switch ($unitAktif) {
                                 yPadding: 12,
                                 callbacks: {
                                     label: function (tooltipItem, data) {
-                                        var label = data.datasets[tooltipItem.datasetIndex].label || '';
+                                        let label = data.datasets[tooltipItem.datasetIndex].label || '';
+                                        let val = tooltipItem.yLabel;
+                                        let unit = '';
+
+                                        // Setel satuan dinamis berdasarkan nama label
+                                        if (label.includes('Vibrasi')) unit = ' mm/s';
+                                        else if (label.includes('Temp') || label.includes('Suhu')) unit = ' °C';
+                                        else if (label.includes('Beban')) unit = ' MW'; // Ubah sesuai satuanmu (misal kW atau MW)
+                                        else if (label.includes('Damper')) unit = ' %';
+                                        else if (label.includes('Current')) unit = ' A';
+
                                         if (label) { label += ': '; }
-                                        label += tooltipItem.yLabel + ' mm/s';
-                                        return label;
+                                        return label + val + unit;
                                     }
                                 }
                             },

@@ -64,11 +64,19 @@ if (count($rawData) <= 1) {
 }
 
 $headers = $rawData[0];
-// Cari index kolom secara dinamis (Case Insensitive)
+
+// Inisialisasi index kolom ke -1
 $colWaktu = -1;
 $colVibDE = -1;
 $colVibNDE = -1;
+$colTempDE = -1;
+$colTempNDE = -1;
+$colSuhu = -1;
+$colBeban = -1;
+$colDamper = -1;
+$colCurrent = -1;
 
+// Cari index kolom secara dinamis (Case Insensitive)
 foreach ($headers as $index => $header) {
     $h = strtoupper(trim($header));
     if (strpos($h, 'TIMESTAMP') !== false || strpos($h, 'WAKTU') !== false)
@@ -77,66 +85,92 @@ foreach ($headers as $index => $header) {
         $colVibDE = $index;
     if (strpos($h, 'VIBRASI BEARING NDE') !== false)
         $colVibNDE = $index;
+    if (strpos($h, 'TEMPERATURE BEARING DE') !== false)
+        $colTempDE = $index;
+    if (strpos($h, 'TEMPERATURE BEARING NDE') !== false)
+        $colTempNDE = $index;
+    if (strpos($h, 'SUHU RUANGAN') !== false)
+        $colSuhu = $index;
+    if (strpos($h, 'BEBAN GENERATOR') !== false)
+        $colBeban = $index;
+    if (strpos($h, 'OPENING DAMPER') !== false)
+        $colDamper = $index;
+    if (strpos($h, 'LOAD CURRENT') !== false)
+        $colCurrent = $index;
 }
 
-if ($colWaktu == -1 || $colVibDE == -1 || $colVibNDE == -1) {
-    echo json_encode(["status" => "error", "message" => "Kolom Timestamp, Vibrasi DE, atau Vibrasi NDE tidak ditemukan di sheet ini."]);
+if ($colWaktu == -1) {
+    echo json_encode(["status" => "error", "message" => "Kolom Timestamp/Waktu tidak ditemukan di sheet ini."]);
     exit;
 }
 
 $labels = [];
 $dataDE = [];
 $dataNDE = [];
+$dataTempDE = [];
+$dataTempNDE = [];
+$dataSuhu = [];
+$dataBeban = [];
+$dataDamper = [];
+$dataCurrent = [];
+
+// Fungsi pembantu untuk memproses value string menjadi float atau null
+function parseValue($row, $colIndex)
+{
+    if ($colIndex == -1 || !isset($row[$colIndex]))
+        return null;
+    $val = trim($row[$colIndex]);
+    if ($val === "" || $val === "-" || $val === "--")
+        return null;
+    return (float) str_replace(',', '.', $val);
+}
 
 // Looping data mulai dari baris ke-2 (index 1)
 for ($i = 1; $i < count($rawData); $i++) {
     $row = $rawData[$i];
 
-    // Pastikan baris memiliki data yang cukup
-    if (!isset($row[$colWaktu]) || !isset($row[$colVibDE]) || !isset($row[$colVibNDE]))
+    if (!isset($row[$colWaktu]))
         continue;
-
     $valTime = trim($row[$colWaktu]);
-    $valDE = trim($row[$colVibDE]);
-    $valNDE = trim($row[$colVibNDE]);
-
-    // SKIP data kosong, '-', atau '--'
-    if (
-        $valDE == "" || $valDE == "-" || $valDE == "--" ||
-        $valNDE == "" || $valNDE == "-" || $valNDE == "--"
-    ) {
+    if ($valTime == "")
         continue;
-    }
 
-    // Ambil format Tanggal/Bulan/Tahun dari Timestamp Google Sheets
+    // Ambil format Tanggal/Bulan/Tahun dari Timestamp
     $formattedDate = $valTime;
     if (strpos($valTime, ' ') !== false) {
-        $parts = explode(' ', $valTime); // Pisahkan antara tanggal dan jam
+        $parts = explode(' ', $valTime);
         $dateParts = explode('/', $parts[0]);
         if (count($dateParts) == 3) {
-            // Gabungkan kembali menjadi format DD/MM/YYYY
             $formattedDate = $dateParts[0] . '/' . $dateParts[1] . '/' . $dateParts[2];
         } else {
-            // Jika formatnya berbeda, cukup ambil teks tanggalnya saja (sebelum spasi)
             $formattedDate = $parts[0];
         }
     }
 
     $labels[] = $formattedDate;
 
-    // Pastikan angka menggunakan titik untuk desimal, bukan koma
-    $valDE = str_replace(',', '.', $valDE);
-    $valNDE = str_replace(',', '.', $valNDE);
-
-    $dataDE[] = (float) $valDE;
-    $dataNDE[] = (float) $valNDE;
+    // Tarik semua data (jika kolom tidak ada, akan otomatis bernilai null)
+    $dataDE[] = parseValue($row, $colVibDE);
+    $dataNDE[] = parseValue($row, $colVibNDE);
+    $dataTempDE[] = parseValue($row, $colTempDE);
+    $dataTempNDE[] = parseValue($row, $colTempNDE);
+    $dataSuhu[] = parseValue($row, $colSuhu);
+    $dataBeban[] = parseValue($row, $colBeban);
+    $dataDamper[] = parseValue($row, $colDamper);
+    $dataCurrent[] = parseValue($row, $colCurrent);
 }
 
-// Kembalikan data yang sudah bersih dan terstruktur untuk Chart.js
+// Kembalikan data yang sudah lengkap ke Frontend
 echo json_encode([
     "status" => "success",
     "labels" => $labels,
     "dataDE" => $dataDE,
-    "dataNDE" => $dataNDE
+    "dataNDE" => $dataNDE,
+    "dataTempDE" => $dataTempDE,
+    "dataTempNDE" => $dataTempNDE,
+    "dataSuhu" => $dataSuhu,
+    "dataBeban" => $dataBeban,
+    "dataDamper" => $dataDamper,
+    "dataCurrent" => $dataCurrent
 ]);
 ?>

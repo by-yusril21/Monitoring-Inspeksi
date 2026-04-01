@@ -32,5 +32,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="dist/css/thermometer.css">
 </head>
 
-<body class="hold-transition sidebar-mini">
-  <div class="wrapper">
+<!-- <body class="hold-transition sidebar-mini"> -->
+
+<body class="hold-transition sidebar-mini sidebar-collapse"></body>
+<div class="wrapper">
