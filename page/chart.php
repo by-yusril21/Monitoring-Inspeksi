@@ -41,7 +41,7 @@ switch ($unitAktif) {
 </div>
 
 <script>
-    // FUNGSI UNTUK DOWNLOAD GRAFIK KE PNG (Berada di luar DOMContentLoaded agar bisa dipanggil tombol HTML)
+    // FUNGSI UNTUK DOWNLOAD GRAFIK KE PNG
     function downloadChart(canvasId, namaMotor) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) {
@@ -49,26 +49,21 @@ switch ($unitAktif) {
             return;
         }
 
-        // Trik Profesional: Bawaan Chart.js background-nya transparan. 
-        // Jika didownload langsung, kadang backgroundnya jadi hitam/gelap.
-        // Kita buat canvas sementara untuk memberi warna dasar putih.
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = canvas.width;
         tempCanvas.height = canvas.height;
         const tempCtx = tempCanvas.getContext('2d');
 
-        // Isi background warna putih
+        // Isi background warna putih (agar tidak transparan/hitam saat di-download)
         tempCtx.fillStyle = '#ffffff';
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
         // Timpa dengan grafik asli
         tempCtx.drawImage(canvas, 0, 0);
 
-        // Buat nama file yang rapi (menghilangkan spasi berlebih)
         const safeName = namaMotor.replace(/[^a-zA-Z0-9]/g, '_');
         const fileName = `Trend_Maintenance_${safeName}.png`;
 
-        // Buat link download palsu, lalu klik otomatis
         const link = document.createElement('a');
         link.download = fileName;
         link.href = tempCanvas.toDataURL('image/png');
@@ -100,7 +95,7 @@ switch ($unitAktif) {
             return;
         }
 
-        // 1. GENERATE KOTAK DENGAN TOMBOL DOWNLOAD
+        // 1. GENERATE KOTAK KANVAS GRAFIK HTML
         let cardsHTML = "";
         listPeralatan.forEach(function (nama, index) {
             cardsHTML += `
@@ -127,7 +122,7 @@ switch ($unitAktif) {
                             </div>
                         </div>
                         <div class="chart">
-                            <canvas id="chart_${index}" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            <canvas id="chart_${index}" style="min-height: 400px; height: 400px; max-height: 400px; max-width: 100%;"></canvas>
                         </div>
                     </div>
                 </div>
@@ -136,7 +131,7 @@ switch ($unitAktif) {
 
         container.innerHTML = cardsHTML;
 
-        // 2. FUNGSI UNTUK MENARIK DATA & MENGGAMBAR CHART PRO
+        // 2. FUNGSI UNTUK MENARIK DATA & MENGGAMBAR CHART
         async function fetchAndRenderChart(namaMotor, indexId) {
             const loadingEl = document.getElementById(`loading_${indexId}`);
             if (loadingEl) {
@@ -178,7 +173,7 @@ switch ($unitAktif) {
                                     borderWidth: 2.5,
                                     pointRadius: 2,
                                     data: result.dataDE,
-                                    fill: true,
+                                    fill: false,
                                     spanGaps: true
                                 },
                                 {
@@ -188,62 +183,68 @@ switch ($unitAktif) {
                                     borderWidth: 2.5,
                                     pointRadius: 2,
                                     data: result.dataNDE,
-                                    fill: true,
+                                    fill: false,
                                     spanGaps: true
                                 },
                                 {
                                     label: 'Temp Bearing DE',
-                                    borderColor: 'rgba(255, 133, 27, 1)', // Orange
+                                    borderColor: 'rgba(255, 133, 27, 1)',
                                     borderWidth: 2,
                                     pointRadius: 2,
                                     data: result.dataTempDE,
                                     fill: false,
-                                    spanGaps: true
+                                    spanGaps: true,
+                                    hidden: true
                                 },
                                 {
                                     label: 'Temp Bearing NDE',
-                                    borderColor: 'rgba(255, 193, 7, 1)', // Kuning
+                                    borderColor: 'rgba(255, 193, 7, 1)',
                                     borderWidth: 2,
                                     pointRadius: 2,
                                     data: result.dataTempNDE,
                                     fill: false,
-                                    spanGaps: true
+                                    spanGaps: true,
+                                    hidden: true
                                 },
                                 {
                                     label: 'Suhu Ruangan',
-                                    borderColor: 'rgba(40, 167, 69, 1)', // Hijau
+                                    borderColor: 'rgba(40, 167, 69, 1)',
                                     borderWidth: 2,
                                     pointRadius: 2,
                                     data: result.dataSuhu,
                                     fill: false,
-                                    spanGaps: true
+                                    spanGaps: true,
+                                    hidden: true
                                 },
                                 {
                                     label: 'Beban Generator',
-                                    borderColor: 'rgba(111, 66, 193, 1)', // Ungu
+                                    borderColor: 'rgba(111, 66, 193, 1)',
                                     borderWidth: 2,
                                     pointRadius: 2,
                                     data: result.dataBeban,
                                     fill: false,
-                                    spanGaps: true
+                                    spanGaps: true,
+                                    hidden: true
                                 },
                                 {
                                     label: 'Opening Damper',
-                                    borderColor: 'rgba(32, 201, 151, 1)', // Teal
+                                    borderColor: 'rgba(32, 201, 151, 1)',
                                     borderWidth: 2,
                                     pointRadius: 2,
                                     data: result.dataDamper,
                                     fill: false,
-                                    spanGaps: true
+                                    spanGaps: true,
+                                    hidden: true
                                 },
                                 {
                                     label: 'Load Current',
-                                    borderColor: 'rgba(139, 0, 0, 1)', // Merah Gelap
+                                    borderColor: 'rgba(139, 0, 0, 1)',
                                     borderWidth: 2,
                                     pointRadius: 2,
                                     data: result.dataCurrent,
                                     fill: false,
-                                    spanGaps: true
+                                    spanGaps: true,
+                                    hidden: true
                                 }
                             ]
                         };
@@ -275,8 +276,8 @@ switch ($unitAktif) {
                                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
                                 titleFontColor: '#333',
                                 bodyFontColor: '#555',
-                                borderColor: 'rgba(0,0,0,0.1)',
-                                borderWidth: 1,
+                                borderColor: 'rgba(52, 58, 64, 0.6)', // Border abu-abu tegas
+                                borderWidth: 3,                       // Ketebalan border tooltip
                                 cornerRadius: 8,
                                 xPadding: 12,
                                 yPadding: 12,
@@ -286,10 +287,9 @@ switch ($unitAktif) {
                                         let val = tooltipItem.yLabel;
                                         let unit = '';
 
-                                        // Setel satuan dinamis berdasarkan nama label
                                         if (label.includes('Vibrasi')) unit = ' mm/s';
                                         else if (label.includes('Temp') || label.includes('Suhu')) unit = ' °C';
-                                        else if (label.includes('Beban')) unit = ' MW'; // Ubah sesuai satuanmu (misal kW atau MW)
+                                        else if (label.includes('Beban')) unit = ' MW';
                                         else if (label.includes('Damper')) unit = ' %';
                                         else if (label.includes('Current')) unit = ' A';
 
@@ -298,13 +298,70 @@ switch ($unitAktif) {
                                     }
                                 }
                             },
-                            hover: { mode: 'nearest', intersect: true }
+                            hover: { mode: 'index', intersect: false } // Agar kursor bisa dilacak mulus
                         };
 
                         new Chart(ctx, {
                             type: 'line',
                             data: areaChartData,
-                            options: lineChartOptions
+                            options: lineChartOptions,
+                            plugins: [{
+                                // 1. TANGKAP POSISI MOUSE SECARA AKURAT
+                                afterEvent: function (chart, event) {
+                                    if (event.type === 'mousemove' || event.type === 'touchstart' || event.type === 'touchmove') {
+                                        chart.crosshairY = event.y;
+                                    } else if (event.type === 'mouseout') {
+                                        chart.crosshairY = undefined; // Hapus pelacak jika mouse keluar
+                                    }
+                                },
+                                // 2. GAMBAR GARIS CROSSHAIR
+                                afterDraw: function (chart) {
+                                    if (chart.tooltip._active && chart.tooltip._active.length && chart.crosshairY !== undefined) {
+                                        const activePoints = chart.tooltip._active;
+                                        const ctx = chart.ctx;
+
+                                        // Ambil koordinat X dari titik waktu (selalu sama untuk semua data vertikal)
+                                        const x = activePoints[0].tooltipPosition().x;
+
+                                        // Cari koordinat Y dari titik data yang PALING DEKAT dengan kursor mouse
+                                        let closestY = activePoints[0].tooltipPosition().y;
+                                        let minDiff = Infinity;
+
+                                        for (let i = 0; i < activePoints.length; i++) {
+                                            let pointY = activePoints[i].tooltipPosition().y;
+                                            let diff = Math.abs(pointY - chart.crosshairY);
+
+                                            if (diff < minDiff) {
+                                                minDiff = diff;
+                                                closestY = pointY; // Simpan nilai Y terdekat
+                                            }
+                                        }
+
+                                        // Tentukan batas kotak grafik agar garis tidak meluber keluar
+                                        const topY = chart.chartArea.top;
+                                        const bottomY = chart.chartArea.bottom;
+                                        const leftX = chart.chartArea.left;
+                                        const rightX = chart.chartArea.right;
+
+                                        ctx.save();
+                                        ctx.beginPath();
+                                        ctx.setLineDash([6, 6]); // Garis putus-putus
+                                        ctx.lineWidth = 1.5;       // Ketebalan garis
+                                        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)'; // Warna abu-abu transparan
+
+                                        // Gambar Garis Vertikal
+                                        ctx.moveTo(x, topY);
+                                        ctx.lineTo(x, bottomY);
+
+                                        // Gambar Garis Horizontal (Melompat ke titik Y terdekat yang sudah dihitung)
+                                        ctx.moveTo(leftX, closestY);
+                                        ctx.lineTo(rightX, closestY);
+
+                                        ctx.stroke();
+                                        ctx.restore();
+                                    }
+                                }
+                            }]
                         });
                     }
 
@@ -325,7 +382,7 @@ switch ($unitAktif) {
             }
         }
 
-        // 3. JALANKAN FETCH
+        // 3. JALANKAN FETCH UNTUK SEMUA MOTOR DI UNIT TERSEBUT
         listPeralatan.forEach(function (namaMotor, index) {
             fetchAndRenderChart(namaMotor, index);
         });
