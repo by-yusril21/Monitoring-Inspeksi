@@ -91,7 +91,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
         <li class="nav-item">
           <a href="?page=chart" class="nav-link <?php echo ($current_page == 'chart') ? 'active' : ''; ?>">
             <i class="nav-icon fas fa-chart-line"></i>
-            <p>Chart (Vibrasi DE/NDE)</p>
+            <p>Chart</p>
           </a>
         </li>
 
