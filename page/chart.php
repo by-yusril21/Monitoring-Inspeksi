@@ -27,6 +27,30 @@ switch ($unitAktif) {
 }
 ?>
 
+<style>
+    /* Mengatur posisi checkbox kotak standar agar sejajar di card-tools */
+    .card-tools .custom-checkbox {
+        vertical-align: middle;
+        margin-top: -3px;
+        /* Penyesuaian vertikal agar sejajar dengan icon icon lain */
+    }
+
+    .card-tools .custom-control-label {
+        padding-top: 2px;
+        font-weight: 600 !important;
+        cursor: pointer;
+        color: #495057;
+        font-size: 0.85rem;
+    }
+
+    /* Memastikan kotak centang bisa diklik dengan mudah */
+    .card-tools .custom-control-label::before,
+    .card-tools .custom-control-label::after {
+        top: 0.2rem;
+        cursor: pointer;
+    }
+</style>
+
 <div class="content-wrapper">
     <div class="content">
         <div class="container-fluid">
@@ -54,11 +78,8 @@ switch ($unitAktif) {
         tempCanvas.height = canvas.height;
         const tempCtx = tempCanvas.getContext('2d');
 
-        // Isi background warna putih (agar tidak transparan/hitam saat di-download)
         tempCtx.fillStyle = '#ffffff';
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-        // Timpa dengan grafik asli
         tempCtx.drawImage(canvas, 0, 0);
 
         const safeName = namaMotor.replace(/[^a-zA-Z0-9]/g, '_');
@@ -71,7 +92,6 @@ switch ($unitAktif) {
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-
         const unitAktif = "<?php echo $unitAktif; ?>";
 
         if (typeof window.dataMotor === 'undefined') {
@@ -95,7 +115,6 @@ switch ($unitAktif) {
             return;
         }
 
-        // 1. GENERATE KOTAK KANVAS GRAFIK HTML
         let cardsHTML = "";
         listPeralatan.forEach(function (nama, index) {
             cardsHTML += `
@@ -106,6 +125,11 @@ switch ($unitAktif) {
                             <i class="fas fa-chart-area text-primary mr-2"></i> ${nama}
                         </h3>
                         <div class="card-tools">
+                            <div class="custom-control custom-checkbox d-inline-block mr-3" title="Tampilkan/Sembunyikan Kotak Nilai">
+                                <input type="checkbox" class="custom-control-input" id="toggle_tooltip_${index}" checked>
+                                <label class="custom-control-label" for="toggle_tooltip_${index}">Tooltip</label>
+                            </div>
+
                             <button type="button" class="btn btn-tool" title="Download Grafik PNG" onclick="downloadChart('chart_${index}', '${nama}')">
                                 <i class="fas fa-download text-info"></i>
                             </button>
@@ -121,7 +145,7 @@ switch ($unitAktif) {
                                 <div class="mt-2 text-sm text-muted font-weight-bold">Sinkronisasi Data...</div>
                             </div>
                         </div>
-                        <div class="chart">
+                        <div class="chart mt-2">
                             <canvas id="chart_${index}" style="min-height: 400px; height: 400px; max-height: 400px; max-width: 100%;"></canvas>
                         </div>
                     </div>
@@ -131,7 +155,6 @@ switch ($unitAktif) {
 
         container.innerHTML = cardsHTML;
 
-        // 2. FUNGSI UNTUK MENARIK DATA & MENGGAMBAR CHART
         async function fetchAndRenderChart(namaMotor, indexId) {
             const loadingEl = document.getElementById(`loading_${indexId}`);
             if (loadingEl) {
@@ -143,7 +166,6 @@ switch ($unitAktif) {
                 const targetUrl = `api/fetch_chart_data.php?unit=${unitAktif}&sheet=${encodeURIComponent(namaMotor)}`;
                 const response = await fetch(targetUrl);
                 const result = await response.json();
-
                 const canvasEl = document.getElementById(`chart_${indexId}`);
 
                 if (result.status === 'success') {
@@ -162,122 +184,74 @@ switch ($unitAktif) {
 
                     if (canvasEl) {
                         const ctx = canvasEl.getContext('2d');
-
                         const areaChartData = {
                             labels: result.labels,
                             datasets: [
-                                {
-                                    label: 'Vibrasi Bearing DE',
-                                    borderColor: 'rgba(60,141,188, 1)',
-                                    backgroundColor: 'rgba(60,141,188, 0.1)',
-                                    borderWidth: 2.5,
-                                    pointRadius: 2,
-                                    data: result.dataDE,
-                                    fill: false,
-                                    spanGaps: true
-                                },
-                                {
-                                    label: 'Vibrasi Bearing NDE',
-                                    borderColor: 'rgba(220,53,69, 1)',
-                                    backgroundColor: 'rgba(220,53,69, 0.1)',
-                                    borderWidth: 2.5,
-                                    pointRadius: 2,
-                                    data: result.dataNDE,
-                                    fill: false,
-                                    spanGaps: true
-                                },
-                                {
-                                    label: 'Temp Bearing DE',
-                                    borderColor: 'rgba(255, 133, 27, 1)',
-                                    borderWidth: 2,
-                                    pointRadius: 2,
-                                    data: result.dataTempDE,
-                                    fill: false,
-                                    spanGaps: true,
-                                    hidden: true
-                                },
-                                {
-                                    label: 'Temp Bearing NDE',
-                                    borderColor: 'rgba(255, 193, 7, 1)',
-                                    borderWidth: 2,
-                                    pointRadius: 2,
-                                    data: result.dataTempNDE,
-                                    fill: false,
-                                    spanGaps: true,
-                                    hidden: true
-                                },
-                                {
-                                    label: 'Suhu Ruangan',
-                                    borderColor: 'rgba(40, 167, 69, 1)',
-                                    borderWidth: 2,
-                                    pointRadius: 2,
-                                    data: result.dataSuhu,
-                                    fill: false,
-                                    spanGaps: true,
-                                    hidden: true
-                                },
-                                {
-                                    label: 'Beban Generator',
-                                    borderColor: 'rgba(111, 66, 193, 1)',
-                                    borderWidth: 2,
-                                    pointRadius: 2,
-                                    data: result.dataBeban,
-                                    fill: false,
-                                    spanGaps: true,
-                                    hidden: true
-                                },
-                                {
-                                    label: 'Opening Damper',
-                                    borderColor: 'rgba(32, 201, 151, 1)',
-                                    borderWidth: 2,
-                                    pointRadius: 2,
-                                    data: result.dataDamper,
-                                    fill: false,
-                                    spanGaps: true,
-                                    hidden: true
-                                },
-                                {
-                                    label: 'Load Current',
-                                    borderColor: 'rgba(139, 0, 0, 1)',
-                                    borderWidth: 2,
-                                    pointRadius: 2,
-                                    data: result.dataCurrent,
-                                    fill: false,
-                                    spanGaps: true,
-                                    hidden: true
-                                }
+                                { label: 'Vibrasi Bearing DE', borderColor: 'rgba(60,141,188, 1)', backgroundColor: 'rgba(60,141,188, 0.1)', borderWidth: 2.5, pointRadius: 2, data: result.dataDE, fill: false, spanGaps: true },
+                                { label: 'Vibrasi Bearing NDE', borderColor: 'rgba(220,53,69, 1)', backgroundColor: 'rgba(220,53,69, 0.1)', borderWidth: 2.5, pointRadius: 2, data: result.dataNDE, fill: false, spanGaps: true },
+                                { label: 'Temp Bearing DE', borderColor: 'rgba(255, 133, 27, 1)', borderWidth: 2, pointRadius: 2, data: result.dataTempDE, fill: false, spanGaps: true, hidden: true },
+                                { label: 'Temp Bearing NDE', borderColor: 'rgba(255, 193, 7, 1)', borderWidth: 2, pointRadius: 2, data: result.dataTempNDE, fill: false, spanGaps: true, hidden: true },
+                                { label: 'Suhu Ruangan', borderColor: 'rgba(40, 167, 69, 1)', borderWidth: 2, pointRadius: 2, data: result.dataSuhu, fill: false, spanGaps: true, hidden: true },
+                                { label: 'Beban Generator', borderColor: 'rgba(111, 66, 193, 1)', borderWidth: 2, pointRadius: 2, data: result.dataBeban, fill: false, spanGaps: true, hidden: true },
+                                { label: 'Opening Damper', borderColor: 'rgba(32, 201, 151, 1)', borderWidth: 2, pointRadius: 2, data: result.dataDamper, fill: false, spanGaps: true, hidden: true },
+                                { label: 'Load Current', borderColor: 'rgba(139, 0, 0, 1)', borderWidth: 2, pointRadius: 2, data: result.dataCurrent, fill: false, spanGaps: true, hidden: true }
                             ]
                         };
 
                         const lineChartOptions = {
                             maintainAspectRatio: false,
                             responsive: true,
-                            layout: { padding: { top: 0, bottom: 0 } },
+                            layout: { padding: { top: 10, bottom: 10 } },
                             legend: {
                                 display: true,
-                                position: 'top',
-                                labels: { usePointStyle: false, boxWidth: 12, padding: 10, fontFamily: 'Helvetica Neue, Arial, sans-serif' }
+                                position: 'bottom',
+                                fullWidth: true,
+                                labels: {
+                                    usePointStyle: false, // Dipertahankan: Legend Kotak
+                                    boxWidth: 15,
+                                    padding: 20,
+                                    fontColor: '#444',
+                                    fontSize: 12,
+                                    fontFamily: 'Source Sans Pro, Arial, sans-serif',
+                                    generateLabels: function (chart) {
+                                        const original = Chart.defaults.global.legend.labels.generateLabels;
+                                        const labels = original.call(this, chart);
+                                        labels.forEach(label => {
+                                            label.width = 170; // Dipertahankan: Agar sejajar vertikal
+                                        });
+                                        return labels;
+                                    }
+                                }
                             },
                             scales: {
                                 xAxes: [{
-                                    gridLines: { display: false },
+                                    gridLines: {
+                                        display: true, // Dipertahankan: Garis Vertikal Aktif
+                                        color: 'rgba(0,0,0,0.05)',
+                                        drawOnChartArea: true
+                                    },
                                     ticks: { fontColor: '#888', maxTicksLimit: 15 },
                                     scaleLabel: { display: true, labelString: 'Waktu Pengukuran', fontColor: '#333', fontStyle: 'bold' }
                                 }],
                                 yAxes: [{
-                                    gridLines: { display: true, color: 'rgba(0,0,0,0.1)', borderDash: [5, 5] },
+                                    gridLines: {
+                                        display: true,
+                                        color: 'rgba(0,0,0,0.1)',
+                                        borderDash: [] // Dipertahankan: Garis Horizontal Menyambung
+                                    },
                                     ticks: { beginAtZero: true, fontColor: '#888', padding: 10 },
                                     scaleLabel: { display: true, labelString: 'Nilai Parameter', fontColor: '#333', fontStyle: 'bold' }
                                 }]
                             },
                             tooltips: {
+                                enabled: true, // Diatur dinamis oleh checkbox
                                 mode: 'index',
                                 intersect: false,
                                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
                                 titleFontColor: '#333',
                                 bodyFontColor: '#555',
-                                borderColor: 'rgba(52, 58, 64, 0.6)', // Border abu-abu tegas
-                                borderWidth: 3,                       // Ketebalan border tooltip
+                                borderColor: 'rgba(52, 58, 64, 0.6)',
+                                borderWidth: 3,
                                 cornerRadius: 8,
                                 xPadding: 12,
                                 yPadding: 12,
@@ -286,19 +260,16 @@ switch ($unitAktif) {
                                         let label = data.datasets[tooltipItem.datasetIndex].label || '';
                                         let val = tooltipItem.yLabel;
                                         let unit = '';
-
                                         if (label.includes('Vibrasi')) unit = ' mm/s';
                                         else if (label.includes('Temp') || label.includes('Suhu')) unit = ' °C';
                                         else if (label.includes('Beban')) unit = ' MW';
                                         else if (label.includes('Damper')) unit = ' %';
                                         else if (label.includes('Current')) unit = ' A';
-
-                                        if (label) { label += ': '; }
-                                        return label + val + unit;
+                                        return label + ': ' + val + unit;
                                     }
                                 }
                             },
-                            hover: { mode: 'index', intersect: false } // Agar kursor bisa dilacak mulus
+                            hover: { mode: 'index', intersect: false }
                         };
 
                         new Chart(ctx, {
@@ -306,38 +277,38 @@ switch ($unitAktif) {
                             data: areaChartData,
                             options: lineChartOptions,
                             plugins: [{
-                                // 1. TANGKAP POSISI MOUSE SECARA AKURAT
+                                // --- LOGIKA MENGATUR ON/OFF KOTAK DATA (TOOLTIP) ---
+                                beforeEvent: function (chart, event) {
+                                    const checkBox = document.getElementById(`toggle_tooltip_${indexId}`);
+                                    if (checkBox) {
+                                        chart.options.tooltips.enabled = checkBox.checked;
+                                    }
+                                },
+                                // --- GARIS PELACAK (CROSSHAIR) TETAP AKTIF ---
                                 afterEvent: function (chart, event) {
                                     if (event.type === 'mousemove' || event.type === 'touchstart' || event.type === 'touchmove') {
                                         chart.crosshairY = event.y;
-                                    } else if (event.type === 'mouseout') {
-                                        chart.crosshairY = undefined; // Hapus pelacak jika mouse keluar
+                                    } else {
+                                        chart.crosshairY = undefined;
                                     }
                                 },
-                                // 2. GAMBAR GARIS CROSSHAIR
                                 afterDraw: function (chart) {
                                     if (chart.tooltip._active && chart.tooltip._active.length && chart.crosshairY !== undefined) {
                                         const activePoints = chart.tooltip._active;
                                         const ctx = chart.ctx;
-
-                                        // Ambil koordinat X dari titik waktu (selalu sama untuk semua data vertikal)
                                         const x = activePoints[0].tooltipPosition().x;
 
-                                        // Cari koordinat Y dari titik data yang PALING DEKAT dengan kursor mouse
                                         let closestY = activePoints[0].tooltipPosition().y;
                                         let minDiff = Infinity;
-
                                         for (let i = 0; i < activePoints.length; i++) {
                                             let pointY = activePoints[i].tooltipPosition().y;
                                             let diff = Math.abs(pointY - chart.crosshairY);
-
                                             if (diff < minDiff) {
                                                 minDiff = diff;
-                                                closestY = pointY; // Simpan nilai Y terdekat
+                                                closestY = pointY;
                                             }
                                         }
 
-                                        // Tentukan batas kotak grafik agar garis tidak meluber keluar
                                         const topY = chart.chartArea.top;
                                         const bottomY = chart.chartArea.bottom;
                                         const leftX = chart.chartArea.left;
@@ -345,15 +316,15 @@ switch ($unitAktif) {
 
                                         ctx.save();
                                         ctx.beginPath();
-                                        ctx.setLineDash([6, 6]); // Garis putus-putus
-                                        ctx.lineWidth = 1.5;       // Ketebalan garis
-                                        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)'; // Warna abu-abu transparan
+                                        ctx.setLineDash([6, 6]);
+                                        ctx.lineWidth = 1.5;
+                                        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
 
-                                        // Gambar Garis Vertikal
+                                        // Garis Vertikal
                                         ctx.moveTo(x, topY);
                                         ctx.lineTo(x, bottomY);
 
-                                        // Gambar Garis Horizontal (Melompat ke titik Y terdekat yang sudah dihitung)
+                                        // Garis Horizontal
                                         ctx.moveTo(leftX, closestY);
                                         ctx.lineTo(rightX, closestY);
 
@@ -364,14 +335,12 @@ switch ($unitAktif) {
                             }]
                         });
                     }
-
                 } else {
                     if (loadingEl) {
                         loadingEl.classList.remove('d-flex');
                         loadingEl.innerHTML = `<div class="text-danger text-sm text-center px-3 mt-4"><i class="fas fa-times-circle mr-1"></i>${result.message}</div>`;
                     }
                 }
-
             } catch (error) {
                 console.error(`Error fetch ${namaMotor}:`, error);
                 const loadingEl = document.getElementById(`loading_${indexId}`);
@@ -382,10 +351,8 @@ switch ($unitAktif) {
             }
         }
 
-        // 3. JALANKAN FETCH UNTUK SEMUA MOTOR DI UNIT TERSEBUT
         listPeralatan.forEach(function (namaMotor, index) {
             fetchAndRenderChart(namaMotor, index);
         });
-
     });
 </script>
