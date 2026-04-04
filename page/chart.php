@@ -32,7 +32,6 @@ switch ($unitAktif) {
     .card-tools .custom-checkbox {
         vertical-align: middle;
         margin-top: -3px;
-        /* Penyesuaian vertikal agar sejajar dengan icon icon lain */
     }
 
     .card-tools .custom-control-label {
@@ -43,7 +42,6 @@ switch ($unitAktif) {
         font-size: 0.85rem;
     }
 
-    /* Memastikan kotak centang bisa diklik dengan mudah */
     .card-tools .custom-control-label::before,
     .card-tools .custom-control-label::after {
         top: 0.2rem;
@@ -65,7 +63,7 @@ switch ($unitAktif) {
 </div>
 
 <script>
-    // FUNGSI UNTUK DOWNLOAD GRAFIK KE PNG
+    // 1. FUNGSI UNTUK DOWNLOAD GRAFIK KE PNG
     function downloadChart(canvasId, namaMotor) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) {
@@ -115,6 +113,7 @@ switch ($unitAktif) {
             return;
         }
 
+        // 2. GENERATE HTML KARTU GRAFIK
         let cardsHTML = "";
         listPeralatan.forEach(function (nama, index) {
             cardsHTML += `
@@ -125,9 +124,14 @@ switch ($unitAktif) {
                             <i class="fas fa-chart-area text-primary mr-2"></i> ${nama}
                         </h3>
                         <div class="card-tools">
-                            <div class="custom-control custom-checkbox d-inline-block mr-3" title="Tampilkan/Sembunyikan Kotak Nilai">
-                                <input type="checkbox" class="custom-control-input" id="toggle_tooltip_${index}" checked>
+                            <div class="custom-control custom-checkbox d-inline-block mr-2" title="Tampilkan Kotak Detail saat Hover">
+                                <input type="checkbox" class="custom-control-input" id="toggle_tooltip_${index}">
                                 <label class="custom-control-label" for="toggle_tooltip_${index}">Tooltip</label>
+                            </div>
+
+                            <div class="custom-control custom-checkbox d-inline-block mr-3" title="Tampilkan Angka Langsung di Atas Titik Grafik">
+                                <input type="checkbox" class="custom-control-input" id="toggle_datalabels_${index}">
+                                <label class="custom-control-label" for="toggle_datalabels_${index}">Angka</label>
                             </div>
 
                             <button type="button" class="btn btn-tool" title="Download Grafik PNG" onclick="downloadChart('chart_${index}', '${nama}')">
@@ -155,6 +159,7 @@ switch ($unitAktif) {
 
         container.innerHTML = cardsHTML;
 
+        // 3. FUNGSI FETCH DATA DAN RENDER GRAFIK
         async function fetchAndRenderChart(namaMotor, indexId) {
             const loadingEl = document.getElementById(`loading_${indexId}`);
             if (loadingEl) {
@@ -201,60 +206,49 @@ switch ($unitAktif) {
                         const lineChartOptions = {
                             maintainAspectRatio: false,
                             responsive: true,
-                            layout: { padding: { top: 10, bottom: 10 } },
+                            layout: { padding: { top: 20, bottom: 10 } },
                             legend: {
                                 display: true,
                                 position: 'bottom',
-                                fullWidth: true,
                                 labels: {
-                                    usePointStyle: false, // Dipertahankan: Legend Kotak
-                                    boxWidth: 15,
-                                    padding: 20,
+                                    usePointStyle: false,
+                                    boxWidth: 10,
+                                    padding: 15,
                                     fontColor: '#444',
                                     fontSize: 12,
-                                    fontFamily: 'Source Sans Pro, Arial, sans-serif',
                                     generateLabels: function (chart) {
                                         const original = Chart.defaults.global.legend.labels.generateLabels;
                                         const labels = original.call(this, chart);
-                                        labels.forEach(label => {
-                                            label.width = 170; // Dipertahankan: Agar sejajar vertikal
-                                        });
+                                        labels.forEach(label => { label.width = 170; });
                                         return labels;
                                     }
                                 }
                             },
                             scales: {
                                 xAxes: [{
-                                    gridLines: {
-                                        display: true, // Dipertahankan: Garis Vertikal Aktif
-                                        color: 'rgba(0,0,0,0.05)',
-                                        drawOnChartArea: true
-                                    },
+                                    gridLines: { display: true, color: 'rgba(0,0,0,0.05)', drawOnChartArea: true },
                                     ticks: { fontColor: '#888', maxTicksLimit: 15 },
                                     scaleLabel: { display: true, labelString: 'Waktu Pengukuran', fontColor: '#333', fontStyle: 'bold' }
                                 }],
                                 yAxes: [{
-                                    gridLines: {
-                                        display: true,
-                                        color: 'rgba(0,0,0,0.1)',
-                                        borderDash: [] // Dipertahankan: Garis Horizontal Menyambung
-                                    },
+                                    gridLines: { display: true, color: 'rgba(0,0,0,0.1)', borderDash: [] },
                                     ticks: { beginAtZero: true, fontColor: '#888', padding: 10 },
                                     scaleLabel: { display: true, labelString: 'Nilai Parameter', fontColor: '#333', fontStyle: 'bold' }
                                 }]
                             },
                             tooltips: {
-                                enabled: true, // Diatur dinamis oleh checkbox
+                                // WAJIB TRUE: Agar sistem Chart.js tetap melacak koordinat untuk fitur Crosshair
+                                enabled: true,
                                 mode: 'index',
                                 intersect: false,
                                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
                                 titleFontColor: '#333',
                                 bodyFontColor: '#555',
-                                borderColor: 'rgba(52, 58, 64, 0.6)',
-                                borderWidth: 3,
+                                borderWidth: 0, // KOTAK POLOSAN (tanpa border)
                                 cornerRadius: 8,
                                 xPadding: 12,
                                 yPadding: 12,
+                                caretPadding: 20, // JARAK AMAN: Mendorong tooltip menjauh dari kursor agar tidak menghalangi
                                 callbacks: {
                                     label: function (tooltipItem, data) {
                                         let label = data.datasets[tooltipItem.datasetIndex].label || '';
@@ -269,71 +263,137 @@ switch ($unitAktif) {
                                     }
                                 }
                             },
-                            hover: { mode: 'index', intersect: false }
+                            hover: { mode: 'index', intersect: false },
+                            animation: { duration: 0 } // Matikan animasi agar peralihan checkbox terasa instan
                         };
 
-                        new Chart(ctx, {
+                        const myChart = new Chart(ctx, {
                             type: 'line',
                             data: areaChartData,
                             options: lineChartOptions,
                             plugins: [{
-                                // --- LOGIKA MENGATUR ON/OFF KOTAK DATA (TOOLTIP) ---
-                                beforeEvent: function (chart, event) {
+                                // --- A. PLUGIN SUPER AMAN: KONTROL TAMPILAN TOOLTIP ---
+                                beforeTooltipDraw: function (chart) {
                                     const checkBox = document.getElementById(`toggle_tooltip_${indexId}`);
-                                    if (checkBox) {
-                                        chart.options.tooltips.enabled = checkBox.checked;
+                                    // Jika checkbox MATI, batalkan proses menggambar tooltip (return false)
+                                    // Chart.js akan tetap menghitung posisi, tapi kotak hitamnya tidak akan muncul!
+                                    if (checkBox && !checkBox.checked) {
+                                        return false;
                                     }
                                 },
-                                // --- GARIS PELACAK (CROSSHAIR) TETAP AKTIF ---
+
+                                // --- B. AMBIL POSISI KURSOR SAAT HOVER ---
                                 afterEvent: function (chart, event) {
                                     if (event.type === 'mousemove' || event.type === 'touchstart' || event.type === 'touchmove') {
-                                        chart.crosshairY = event.y;
-                                    } else {
-                                        chart.crosshairY = undefined;
+                                        if (event.y !== undefined) {
+                                            chart.customCrosshairY = event.y;
+                                        }
+                                    } else if (event.type === 'mouseout') {
+                                        chart.customCrosshairY = undefined;
                                     }
                                 },
-                                afterDraw: function (chart) {
-                                    if (chart.tooltip._active && chart.tooltip._active.length && chart.crosshairY !== undefined) {
-                                        const activePoints = chart.tooltip._active;
-                                        const ctx = chart.ctx;
-                                        const x = activePoints[0].tooltipPosition().x;
 
-                                        let closestY = activePoints[0].tooltipPosition().y;
+                                // --- C. GAMBAR ANGKA DAN GARIS PELACAK ---
+                                afterDraw: function (chart) {
+                                    if (!chart || !chart.ctx) return;
+
+                                    const ctx = chart.ctx;
+
+                                    // 1. TAMPILKAN ANGKA DI ATAS TITIK
+                                    const showDataLabels = document.getElementById(`toggle_datalabels_${indexId}`);
+                                    if (showDataLabels && showDataLabels.checked) {
+                                        ctx.font = "11px 'Source Sans Pro', Arial, sans-serif";
+                                        ctx.textAlign = 'center';
+                                        ctx.textBaseline = 'bottom';
+
+                                        chart.data.datasets.forEach(function (dataset, i) {
+                                            if (chart.isDatasetVisible(i)) {
+                                                const meta = chart.getDatasetMeta(i);
+                                                if (meta.data) {
+                                                    meta.data.forEach(function (element, index) {
+                                                        let dataValue = dataset.data[index];
+                                                        if (dataValue !== null && dataValue !== undefined && dataValue !== '' && !isNaN(dataValue)) {
+                                                            if (element._model && element._model.x && element._model.y && !element._view.skip) {
+                                                                // Pastikan angka hanya digambar di dalam batas area grafik
+                                                                if (element._model.x >= chart.chartArea.left && element._model.x <= chart.chartArea.right &&
+                                                                    element._model.y >= chart.chartArea.top && element._model.y <= chart.chartArea.bottom) {
+
+                                                                    ctx.fillStyle = dataset.borderColor;
+                                                                    ctx.fillText(dataValue, element._model.x, element._model.y - 5);
+                                                                }
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                    // 2. TAMPILKAN GARIS PELACAK (CROSSHAIR)
+                                    // Berkat cara di 'beforeTooltipDraw', variabel _active ini dijamin selalu ada meski Tooltip tak terlihat
+                                    if (chart.tooltip && chart.tooltip._active && chart.tooltip._active.length && chart.customCrosshairY !== undefined) {
+                                        const activePoints = chart.tooltip._active;
+
+                                        if (!activePoints[0] || !activePoints[0]._model) return;
+
+                                        const x = activePoints[0]._model.x;
+                                        let closestY = activePoints[0]._model.y;
                                         let minDiff = Infinity;
+
                                         for (let i = 0; i < activePoints.length; i++) {
-                                            let pointY = activePoints[i].tooltipPosition().y;
-                                            let diff = Math.abs(pointY - chart.crosshairY);
-                                            if (diff < minDiff) {
-                                                minDiff = diff;
-                                                closestY = pointY;
+                                            if (activePoints[i] && activePoints[i]._model) {
+                                                let pointY = activePoints[i]._model.y;
+                                                let diff = Math.abs(pointY - chart.customCrosshairY);
+                                                if (diff < minDiff) {
+                                                    minDiff = diff;
+                                                    closestY = pointY;
+                                                }
                                             }
                                         }
 
-                                        const topY = chart.chartArea.top;
-                                        const bottomY = chart.chartArea.bottom;
-                                        const leftX = chart.chartArea.left;
-                                        const rightX = chart.chartArea.right;
+                                        if (chart.chartArea && closestY >= chart.chartArea.top && closestY <= chart.chartArea.bottom) {
+                                            const topY = chart.chartArea.top;
+                                            const bottomY = chart.chartArea.bottom;
+                                            const leftX = chart.chartArea.left;
+                                            const rightX = chart.chartArea.right;
 
-                                        ctx.save();
-                                        ctx.beginPath();
-                                        ctx.setLineDash([6, 6]);
-                                        ctx.lineWidth = 1.5;
-                                        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+                                            ctx.save();
+                                            ctx.beginPath();
+                                            ctx.setLineDash([6, 6]);
+                                            ctx.lineWidth = 1.5;
+                                            ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
 
-                                        // Garis Vertikal
-                                        ctx.moveTo(x, topY);
-                                        ctx.lineTo(x, bottomY);
+                                            // Garis Vertikal
+                                            ctx.moveTo(x, topY);
+                                            ctx.lineTo(x, bottomY);
 
-                                        // Garis Horizontal
-                                        ctx.moveTo(leftX, closestY);
-                                        ctx.lineTo(rightX, closestY);
+                                            // Garis Horizontal
+                                            ctx.moveTo(leftX, closestY);
+                                            ctx.lineTo(rightX, closestY);
 
-                                        ctx.stroke();
-                                        ctx.restore();
+                                            ctx.stroke();
+                                            ctx.restore();
+                                        }
                                     }
                                 }
                             }]
                         });
+
+                        // --- 4. EVENT LISTENER SEDERHANA UNTUK KEDUA CHECKBOX ---
+
+                        const tooltipCb = document.getElementById(`toggle_tooltip_${indexId}`);
+                        if (tooltipCb) {
+                            tooltipCb.addEventListener('change', function () {
+                                myChart.update(0); // Memaksa grafik dirender ulang
+                            });
+                        }
+
+                        const datalabelsCb = document.getElementById(`toggle_datalabels_${indexId}`);
+                        if (datalabelsCb) {
+                            datalabelsCb.addEventListener('change', function () {
+                                myChart.update(0); // Memaksa grafik dirender ulang
+                            });
+                        }
                     }
                 } else {
                     if (loadingEl) {
@@ -351,6 +411,7 @@ switch ($unitAktif) {
             }
         }
 
+        // 5. JALANKAN FETCH UNTUK SEMUA MOTOR
         listPeralatan.forEach(function (namaMotor, index) {
             fetchAndRenderChart(namaMotor, index);
         });
