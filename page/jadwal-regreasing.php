@@ -91,10 +91,10 @@ $motor_unit_d_380v = [
                                         <td><b><?php echo $motor; ?></b></td>
                                         <td class="status-updater">--</td>
                                         <td class="terakhir-regreasing">
-                                            <span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Menunggu
-                                                API...</span>
+                                            <span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil
+                                                data</span>
                                         </td>
-                                        <td class="jadwal-selanjutnya">--/--/----</td>
+                                        <td class="jadwal-selanjutnya">--</td>
                                         <td class="sisa-waktu">--</td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -136,10 +136,10 @@ $motor_unit_d_380v = [
                                         <td><b><?php echo $motor; ?></b></td>
                                         <td class="status-updater">--</td>
                                         <td class="terakhir-regreasing">
-                                            <span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Menunggu
-                                                API...</span>
+                                            <span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil
+                                                data</span>
                                         </td>
-                                        <td class="jadwal-selanjutnya">--/--/----</td>
+                                        <td class="jadwal-selanjutnya">--</td>
                                         <td class="sisa-waktu">--</td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -181,10 +181,10 @@ $motor_unit_d_380v = [
                                         <td><b><?php echo $motor; ?></b></td>
                                         <td class="status-updater">--</td>
                                         <td class="terakhir-regreasing">
-                                            <span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Menunggu
-                                                API...</span>
+                                            <span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil
+                                                data</span>
                                         </td>
-                                        <td class="jadwal-selanjutnya">--/--/----</td>
+                                        <td class="jadwal-selanjutnya">--</td>
                                         <td class="sisa-waktu">--</td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -226,10 +226,10 @@ $motor_unit_d_380v = [
                                         <td><b><?php echo $motor; ?></b></td>
                                         <td class="status-updater">--</td>
                                         <td class="terakhir-regreasing">
-                                            <span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Menunggu
-                                                API...</span>
+                                            <span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil
+                                                data</span>
                                         </td>
-                                        <td class="jadwal-selanjutnya">--/--/----</td>
+                                        <td class="jadwal-selanjutnya">--</td>
                                         <td class="sisa-waktu">--</td>
                                     </tr>
                                 <?php endforeach; ?>
