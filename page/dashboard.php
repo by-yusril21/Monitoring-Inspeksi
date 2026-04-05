@@ -4,8 +4,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Catatan: Array $columns ini bisa dibiarkan saja jika dipakai di tempat lain (misal untuk export data di backend),
-// Namun untuk tampilan visual header tabel, kita akan menggunakan HTML statis bertingkat di bawah.
+// Catatan: Array $columns ini bisa dibiarkan saja jika dipakai di tempat lain...
 $columns = [
     "No",
     "TIMESTAMP",
@@ -28,6 +27,16 @@ $columns = [
     "REGREASING",
     "ACTIONS"
 ];
+
+// --- TAMBAHAN BARU: Query untuk mengambil Setting PDF dari Database ---
+// Pastikan file koneksi ($conn) sudah di-include sebelum baris ini
+$q_pdf = mysqli_query($conn, "SELECT setting_key, setting_value FROM settings WHERE setting_key IN ('pdf_judul_1', 'pdf_judul_2', 'pdf_logo_base64')");
+$pdf_data = [];
+if ($q_pdf) {
+    while ($row = mysqli_fetch_assoc($q_pdf)) {
+        $pdf_data[$row['setting_key']] = $row['setting_value'];
+    }
+}
 ?>
 
 <style>
@@ -157,13 +166,23 @@ $columns = [
 </style>
 
 <div class="content-wrapper">
-
     <section id="section-tabel" class="vh-100 d-flex flex-column py-2">
         <div class="container-fluid px-1 h-100">
             <div class="card shadow-none border h-100 mb-0">
                 <div class="card-body p-0 flex-fill d-flex flex-column">
                     <div class="table-responsive flex-fill" style="overflow-y: auto;">
 
+                        <span id="nama-user-login"
+                            style="display: none;"><?php echo htmlspecialchars($username_login ?? 'User'); ?></span>
+
+                        <span id="judul-1-pdf"
+                            style="display: none;"><?php echo htmlspecialchars($pdf_data['pdf_judul_1'] ?? 'DOKUMEN RANGKUMAN DATA PMC SCHEDULE BULANAN MOTOR 6kV DAN 380V'); ?></span>
+
+                        <span id="judul-2-pdf"
+                            style="display: none;"><?php echo htmlspecialchars($pdf_data['pdf_judul_2'] ?? 'PT Semen Tonasa - Electrical of Power Plant Elins Maintenance'); ?></span>
+
+                        <span id="logo-base64-pdf"
+                            style="display: none;"><?php echo htmlspecialchars($pdf_data['pdf_logo_base64'] ?? ''); ?></span>
                         <table id="example1"
                             class="table table-bordered table-striped table-hover table-sm text-nowrap m-0 text-center">
 
@@ -205,8 +224,6 @@ $columns = [
                             </thead>
 
                             <tbody>
-                                <span id="nama-user-login"
-                                    style="display: none;"><?php echo htmlspecialchars($username_login); ?></span>
                             </tbody>
                         </table>
                     </div>

@@ -161,7 +161,7 @@ window.loadDataFromSheet = function (unit, sheetName) {
 };
 
 /* =======================================================
-   Inisialisasi DataTable
+   Inisialisasi DataTable & Export PDF Custom
    ======================================================= */
 $(document).ready(function () {
   $("#example1").DataTable({
@@ -225,13 +225,13 @@ $(document).ready(function () {
                 "Temp DE\n(°C)",
                 "Temp NDE\n(°C)",
                 "Temp\nRuang\n(°C)",
-                "load\nGenerator\n(MW)",
+                "Beban\nGen\n(MW)",
                 "Opening\nDamper\n(%)",
                 "Load\nCurrent\n(A)",
                 "Bunyi\nMotor",
                 "Kondisi\nPanel",
-                "kelengkapan\nMotor",
-                "kebersihan\nMotor",
+                "Lengkap\nMotor",
+                "Bersih\nMotor",
                 "Grounding\nMotor",
                 "Regreasing\nMotor",
                 "Action",
@@ -243,11 +243,25 @@ $(document).ready(function () {
             },
           },
         },
-        title: "",
+        title: "", // Title bawaan dikosongkan karena pakai custom header
         customize: function (doc) {
+          // Hapus watermark teks bawaan
           doc.watermark = null;
 
-          // --- UPDATE: AMBIL DATA UNIT & MOTOR ---
+          // =======================================================
+          // 1. BACA DATA DARI JEMBATAN HTML (HASIL QUERY DATABASE)
+          // =======================================================
+          let judul1Text =
+            $("#judul-1-pdf").text().trim() ||
+            "DOKUMEN RANGKUMAN DATA PMC SCHEDULE BULANAN MOTOR";
+          let judul2Text =
+            $("#judul-2-pdf").text().trim() ||
+            "PT Semen Tonasa - Electrical of Power Plant Elins Maintenance";
+          let logoBase64 = $("#logo-base64-pdf").text().trim(); // Mengambil string Base64 gambar
+
+          // =======================================================
+          // 2. BACA DATA UNIT & MOTOR DARI DROPDOWN
+          // =======================================================
           let unitText = $("#pilihUnit option:selected").text() || "Data Unit";
           if (unitText.toUpperCase().includes("PILIH")) {
             unitText = "Data Unit";
@@ -259,7 +273,10 @@ $(document).ready(function () {
             motorText = "Data Motor";
           }
 
-          let currentUser = $("#nama-user-login").text().trim() || "";
+          // =======================================================
+          // 3. WAKTU & NAMA USER
+          // =======================================================
+          let currentUser = $("#nama-user-login").text().trim() || "Admin";
           let today = new Date();
           let dateString =
             ("0" + today.getDate()).slice(-2) +
@@ -282,27 +299,29 @@ $(document).ready(function () {
             " | Oleh : " +
             currentUser;
 
-          // --- UPDATE: GABUNGKAN UNIT DAN MOTOR DI SUBHEADER ---
-          let subHeaderString = "UNIT : " + unitText + "  -  " + motorText;
+          // String Sub Header
+          let subHeaderString =
+            "UNIT : " + unitText + "  -  MOTOR : " + motorText;
 
-          let logoBase64 =
-            typeof MY_GLOBAL_LOGO !== "undefined" ? MY_GLOBAL_LOGO : "";
-
-          if (logoBase64 !== "") {
+          // =======================================================
+          // 4. PEMBUATAN WATERMARK LOGO DI TENGAH
+          // =======================================================
+          // Validasi sederhana: pastikan string base64 mengandung 'data:image' agar tidak error
+          if (logoBase64 !== "" && logoBase64.indexOf("data:image") === 0) {
             doc.background = function (page) {
               return [
                 {
                   table: {
                     widths: ["*"],
-                    heights: [595],
+                    heights: [595], // Tinggi kertas A4 Landscape
                     body: [
                       [
                         {
                           image: logoBase64,
-                          width: 450,
-                          opacity: 0.2,
+                          width: 450, // Lebar logo watermark
+                          opacity: 0.2, // Transparansi
                           alignment: "center",
-                          margin: [0, 80, 0, 0],
+                          margin: [0, 80, 0, 0], // Geser sedikit ke bawah
                           border: [false, false, false, false],
                         },
                       ],
@@ -313,17 +332,20 @@ $(document).ready(function () {
             };
           }
 
+          // =======================================================
+          // 5. PEMBUATAN HEADER KOP SURAT
+          // =======================================================
           let headerColumns = [
             {
               stack: [
                 {
-                  text: "DOKUMEN RANGKUMAN DATA PMC SCHEDULE BULANAN MOTOR 6kV DAN 380V",
+                  text: judul1Text, // Teks dinamis dari database
                   fontSize: 10,
                   bold: true,
                   alignment: "left",
                 },
                 {
-                  text: "PT Semen Tonasa - Electrical of Power Plant Elins Maintenance",
+                  text: judul2Text, // Teks dinamis dari database
                   fontSize: 9,
                   bold: true,
                   alignment: "left",
@@ -341,7 +363,8 @@ $(document).ready(function () {
             },
           ];
 
-          if (logoBase64 !== "") {
+          // Menambahkan logo kecil di pojok kanan atas kop surat
+          if (logoBase64 !== "" && logoBase64.indexOf("data:image") === 0) {
             headerColumns.push({
               image: logoBase64,
               width: 45,
@@ -358,10 +381,10 @@ $(document).ready(function () {
                     type: "line",
                     x1: 0,
                     y1: 0,
-                    x2: 801.89,
+                    x2: 801.89, // Lebar full A4 Landscape dengan margin 20pt
                     y2: 0,
                     lineWidth: 1.5,
-                    lineColor: "#cda434",
+                    lineColor: "#cda434", // Warna Kuning Emas
                   },
                 ],
                 margin: [0, 6, 0, 6],
@@ -375,17 +398,21 @@ $(document).ready(function () {
                 margin: [0, 0, 0, 5],
               },
             ],
-            margin: [0, 0, 0, 10],
+            margin: [0, 0, 0, 10], // Spasi antara header dan tabel
           };
 
+          // Menyuntikkan custom header ke dalam dokumen PDF
           doc.content.splice(0, 0, customHeader);
 
-          doc.defaultStyle.fontSize = 5;
-          doc.styles.tableHeader.fontSize = 4;
-          doc.styles.tableHeader.fillColor = "#1a3b5c";
-          doc.styles.tableHeader.color = "#ffffff";
+          // =======================================================
+          // 6. STYLING TABEL PDF
+          // =======================================================
+          doc.defaultStyle.fontSize = 5; // Ukuran font isi tabel
+          doc.styles.tableHeader.fontSize = 4; // Ukuran font header tabel
+          doc.styles.tableHeader.fillColor = "#1a3b5c"; // Warna background biru gelap
+          doc.styles.tableHeader.color = "#ffffff"; // Warna tulisan header putih
           doc.defaultStyle.alignment = "center";
-          doc.pageMargins = [20, 20, 20, 20];
+          doc.pageMargins = [20, 20, 20, 20]; // Margin halaman PDF
 
           doc.content[1].table.widths = [
             "1%",
@@ -434,6 +461,7 @@ $(document).ready(function () {
       },
     ],
 
+    // Bahasa dan teks UI bawaan DataTables
     language: {
       search: "",
       searchPlaceholder: "Cari data...",
@@ -445,6 +473,7 @@ $(document).ready(function () {
       paginate: { previous: "Kembali", next: "Lanjut" },
     },
 
+    // Memindahkan filter custom jika ada
     initComplete: function () {
       const filterContent = $("#my-filter-source").html();
       if (filterContent) {
@@ -454,6 +483,7 @@ $(document).ready(function () {
     },
   });
 
+  // Reload data saat page-length (Jumlah baris yang ditampilkan) berubah
   $("#example1").on("length.dt", function () {
     const unit = localStorage.getItem("mon_selectedUnit");
     const motor = localStorage.getItem("mon_selectedMotor");

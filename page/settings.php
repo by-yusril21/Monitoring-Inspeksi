@@ -17,6 +17,31 @@ require 'config/database.php';
 // --- 1. PROSES SIMPAN DATA JIKA TOMBOL DITEKAN (POST) ---
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
+    // --- TAMBAHAN BARU: Jika Form Setting PDF disubmit ---
+    if (isset($_POST['form_update_pdf'])) {
+        $judul_1 = mysqli_real_escape_string($conn, $_POST['pdf_judul_1']);
+        $judul_2 = mysqli_real_escape_string($conn, $_POST['pdf_judul_2']);
+        
+        mysqli_query($conn, "UPDATE settings SET setting_value = '$judul_1' WHERE setting_key = 'pdf_judul_1'");
+        mysqli_query($conn, "UPDATE settings SET setting_value = '$judul_2' WHERE setting_key = 'pdf_judul_2'");
+        
+        // Proses Upload Logo
+        if (isset($_FILES['logo_baru']['name']) && $_FILES['logo_baru']['name'] != '') {
+            $tmp_name = $_FILES['logo_baru']['tmp_name'];
+            $type = $_FILES['logo_baru']['type'];
+            
+            $data_gambar = file_get_contents($tmp_name);
+            $base64 = base64_encode($data_gambar);
+            $logo_base64 = 'data:' . $type . ';base64,' . $base64;
+            
+            mysqli_query($conn, "UPDATE settings SET setting_value = '$logo_base64' WHERE setting_key = 'pdf_logo_base64'");
+        }
+
+        unset($_POST['form_update_pdf']); 
+        unset($_POST['pdf_judul_1']);
+        unset($_POST['pdf_judul_2']);
+    }
+
     // Jika Form Chart yang disubmit
     if (isset($_POST['form_update_chart'])) {
         if (!isset($_POST['chart_hidden_parameters'])) {
@@ -34,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         unset($_POST['form_update_regreasing']); 
     }
 
-    // Looping semua input form yang dikirim
+    // Looping semua input form yang dikirim (General Update)
     foreach ($_POST as $key => $value) {
         if (is_array($value)) {
             $value = implode(',', $value);
@@ -59,7 +84,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // --- 2. CEK PESAN NOTIFIKASI (GET) ---
 $pesan_notifikasi = "";
 
-// Jika ada pesan sukses di memori session (baru saja selesai disave)
 if (isset($_SESSION['flash_message'])) {
     $pesan_notifikasi = "
     <div class='alert alert-success alert-dismissible fade show shadow-sm' role='alert'>
@@ -69,7 +93,6 @@ if (isset($_SESSION['flash_message'])) {
         </button>
     </div>";
     
-    // Hapus pesan dari memori
     unset($_SESSION['flash_message']); 
 }
 
@@ -157,6 +180,11 @@ if ($result) {
                                                 <i class="fas fa-clipboard-check mr-2"></i> Form Inspeksi
                                             </a>
                                         </li>
+                                        <li class="nav-item mt-1">
+                                            <a class="nav-link" id="tab-pdf" data-toggle="pill" href="#content-pdf" role="tab" aria-selected="false">
+                                                <i class="fas fa-file-pdf mr-2"></i> Pengaturan PDF
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -217,7 +245,7 @@ if ($result) {
                                                                 </div>
                                                                 <?php } ?>
                                                             </div>
-                                                            
+                                                        
                                                         <?php 
                                                         } else if (strpos($key, 'default_') !== false) { 
                                                         ?>
@@ -323,7 +351,6 @@ if ($result) {
                                                 </p>
 
                                                 <?php 
-                                                // PERBAIKAN: Menambahkan array kustom untuk mengubah Judul Display secara langsung
                                                 $mapping_filter = [
                                                     'regreasing_filter_c6kv' => [
                                                         'master' => 'motor_list_c6kv', 
@@ -345,7 +372,7 @@ if ($result) {
 
                                                 foreach ($mapping_filter as $filter_key => $data_map) {
                                                     $master_key = $data_map['master'];
-                                                    $nama_display = $data_map['judul']; // Menggunakan judul baru yang sudah Anda tentukan
+                                                    $nama_display = $data_map['judul'];
                                                     
                                                     $master_raw = isset($konfigurasi[$master_key]) ? $konfigurasi[$master_key]['setting_value'] : '';
                                                     $master_array = array_filter(array_map('trim', explode("\n", $master_raw)));
@@ -359,8 +386,6 @@ if ($result) {
                                                         <div class="row bg-light p-3 border" style="border-radius: 8px; max-height: 200px; overflow-y: auto;">
                                                             <?php foreach($master_array as $m) { 
                                                                 $isSel = in_array($m, $checked_array) ? 'checked' : '';
-                                                                
-                                                                // ID Unik Gabungan Kategori dan Nama Motor agar tidak tabrakan
                                                                 $unique_id = md5($filter_key . '_' . $m); 
                                                             ?>
                                                             <div class="col-md-4 mb-2">
@@ -451,6 +476,59 @@ if ($result) {
                                         </form>
                                     </div>
                                 </div>
+                                
+                                <div class="tab-pane fade" id="content-pdf" role="tabpanel">
+                                    <div class="card card-outline card-danger shadow-sm" style="border-radius: 10px;">
+                                        <div class="card-header border-0">
+                                            <h3 class="card-title font-weight-bold">Pengaturan Kop Surat PDF</h3>
+                                        </div>
+
+                                        <form action="" method="POST" enctype="multipart/form-data">
+                                            <input type="hidden" name="form_update_pdf" value="1">
+                                            
+                                            <div class="card-body pt-0 text-left">
+                                                <p class="text-muted text-sm mb-4 pb-2 border-bottom">
+                                                    Sesuaikan teks judul dan logo yang akan ditampilkan saat mengunduh data tabel sebagai dokumen PDF.
+                                                </p>
+
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold text-dark">Judul Baris 1 (Utama)</label>
+                                                    <input type="text" name="pdf_judul_1" class="form-control" value="<?php echo htmlspecialchars($konfigurasi['pdf_judul_1']['setting_value'] ?? ''); ?>" required>
+                                                </div>
+
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold text-dark">Judul Baris 2 (Sub Judul / Nama Perusahaan)</label>
+                                                    <input type="text" name="pdf_judul_2" class="form-control" value="<?php echo htmlspecialchars($konfigurasi['pdf_judul_2']['setting_value'] ?? ''); ?>" required>
+                                                </div>
+
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold text-dark">Logo Watermark PDF (Format: PNG/JPG transparan)</label>
+                                                    
+                                                    <div class="mb-3 p-3 text-center" style="background-color: #f8f9fa; border: 1px dashed #ccc; border-radius: 5px;">
+                                                        <?php if(!empty($konfigurasi['pdf_logo_base64']['setting_value'])): ?>
+                                                            <img src="<?php echo $konfigurasi['pdf_logo_base64']['setting_value']; ?>" alt="Logo Preview" style="max-height: 100px;">
+                                                            <div class="mt-2 text-success" style="font-size: 12px;"><i class="fas fa-check-circle"></i> Logo Aktif Terpasang</div>
+                                                        <?php else: ?>
+                                                            <div class="text-muted"><i class="fas fa-image fa-2x mb-2 text-black-50"></i><br>Belum ada logo terpasang.</div>
+                                                        <?php endif; ?>
+                                                    </div>
+
+                                                    <div class="custom-file">
+                                                        <input type="file" class="custom-file-input" id="logoUpload" name="logo_baru" accept="image/png, image/jpeg">
+                                                        <label class="custom-file-label" for="logoUpload">Pilih file logo baru...</label>
+                                                    </div>
+                                                    <small class="text-muted mt-2 d-block">Biarkan kosong jika tidak ingin mengubah logo saat ini.</small>
+                                                </div>
+
+                                            </div>
+                                            <div class="card-footer bg-light text-right" style="border-radius: 0 0 10px 10px;">
+                                                <button type="submit" class="btn btn-danger px-4 shadow-sm">
+                                                    <i class="fas fa-save mr-1"></i> Simpan Pengaturan PDF
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
@@ -461,5 +539,14 @@ if ($result) {
         </div>
 
     </div>
+    
+    <script>
+        $(document).ready(function () {
+            $('.custom-file-input').on('change', function() {
+                let fileName = $(this).val().split('\\').pop();
+                $(this).next('.custom-file-label').addClass("selected").html(fileName);
+            });
+        });
+    </script>
 </body>
 </html>
