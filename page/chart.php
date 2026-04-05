@@ -3,21 +3,59 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+// --- KODE BARU: AMBIL SETTING DARI DATABASE ---
+require 'config/database.php'; // PERBAIKAN PATH
+
+// Nilai default darurat (jika database gagal diakses/kosong)
+$db_max_visible = 15;
+$db_shift_step = 1;
+$db_line_width = 2.5;
+$db_point_radius = 2;
+$db_default_tooltip = 0;
+$db_default_datalabel = 0;
+$db_hidden_params = 'TempDE,TempNDE,Suhu,Beban,Damper,Current';
+$db_bg_download = '#ffffff';
+
+$query_settings = "SELECT setting_key, setting_value FROM settings";
+$hasil_settings = mysqli_query($conn, $query_settings);
+
+if ($hasil_settings) {
+    while ($row = mysqli_fetch_assoc($hasil_settings)) {
+        if ($row['setting_key'] == 'chart_max_visible')
+            $db_max_visible = (int) $row['setting_value'];
+        if ($row['setting_key'] == 'chart_shift_step')
+            $db_shift_step = (int) $row['setting_value'];
+        if ($row['setting_key'] == 'chart_line_width')
+            $db_line_width = (float) $row['setting_value'];
+        if ($row['setting_key'] == 'chart_point_radius')
+            $db_point_radius = (float) $row['setting_value'];
+        if ($row['setting_key'] == 'chart_default_tooltip')
+            $db_default_tooltip = (int) $row['setting_value'];
+        if ($row['setting_key'] == 'chart_default_datalabel')
+            $db_default_datalabel = (int) $row['setting_value'];
+        if ($row['setting_key'] == 'chart_hidden_parameters')
+            $db_hidden_params = $row['setting_value'];
+        if ($row['setting_key'] == 'chart_bg_download')
+            $db_bg_download = $row['setting_value'];
+    }
+}
+//
+
 $unitAktif = isset($_GET['unit']) ? strtoupper($_GET['unit']) : 'C6KV';
 
 $judul_unit = "";
 switch ($unitAktif) {
     case 'C6KV':
-        $judul_unit = "PLTU UNIT C MOTOR 6kV"; // Format diperbarui
+        $judul_unit = "PLTU UNIT C MOTOR 6kV";
         break;
     case 'D6KV':
-        $judul_unit = "PLTU UNIT D MOTOR 6kV"; // Format diperbarui
+        $judul_unit = "PLTU UNIT D MOTOR 6kV";
         break;
     case 'C380':
-        $judul_unit = "PLTU UNIT C MOTOR 380V"; // Format diperbarui
+        $judul_unit = "PLTU UNIT C MOTOR 380V";
         break;
     case 'D380':
-        $judul_unit = "PLTU UNIT D MOTOR 380V"; // Format diperbarui
+        $judul_unit = "PLTU UNIT D MOTOR 380V";
         break;
     case 'UTILITY':
         $judul_unit = "PLTU UNIT UTILITY";
@@ -63,7 +101,7 @@ switch ($unitAktif) {
 </div>
 
 <script>
-    // 1. FUNGSI UNTUK DOWNLOAD GRAFIK KE PNG (DIPERBARUI DENGAN JUDUL)
+    // 1. FUNGSI UNTUK DOWNLOAD GRAFIK KE PNG
     function downloadChart(canvasId, namaMotor, judulUnit) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) {
@@ -77,19 +115,21 @@ switch ($unitAktif) {
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = canvas.width;
         // Tinggi total adalah tinggi grafik ditambah ruang judul
-        tempCanvas.height = canvas.height + headerHeight; 
+        tempCanvas.height = canvas.height + headerHeight;
         const tempCtx = tempCanvas.getContext('2d');
 
-        // A. Mengisi background menjadi putih utuh
-        tempCtx.fillStyle = '#ffffff';
+        // A. Mengisi background dengan warna dari database
+        tempCtx.fillStyle = '<?php echo $db_bg_download; ?>';
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
         // B. Menulis Judul di bagian atas (Kiri)
-        tempCtx.fillStyle = '#333333';
+        // Jika background gelap, kita ubah warna font agar terlihat (otomatis deteksi sederhana)
+        const bgColor = '<?php echo $db_bg_download; ?>'.toLowerCase();
+        tempCtx.fillStyle = (bgColor === '#000000' || bgColor === 'black') ? '#ffffff' : '#333333';
         tempCtx.font = "bold 18px 'Source Sans Pro', Arial, sans-serif";
         tempCtx.textAlign = 'left';
         tempCtx.textBaseline = 'middle';
-        
+
         // Format: Nama Unit - Nama Motor
         const teksJudul = `${judulUnit} - ${namaMotor}`;
         tempCtx.fillText(teksJudul, paddingX, 30);
@@ -98,7 +138,7 @@ switch ($unitAktif) {
         tempCtx.beginPath();
         tempCtx.moveTo(paddingX, 50);
         tempCtx.lineTo(tempCanvas.width - paddingX, 50);
-        tempCtx.strokeStyle = '#e0e0e0';
+        tempCtx.strokeStyle = (bgColor === '#000000' || bgColor === 'black') ? '#555555' : '#e0e0e0';
         tempCtx.lineWidth = 1;
         tempCtx.stroke();
 
@@ -117,14 +157,13 @@ switch ($unitAktif) {
 
     document.addEventListener("DOMContentLoaded", function () {
         const unitAktif = "<?php echo $unitAktif; ?>";
-        // Mengambil teks judul unit dari PHP untuk dilempar ke fungsi download
         const judulUnitLengkap = "<?php echo $judul_unit; ?>";
 
         if (typeof window.dataMotor === 'undefined') {
             document.getElementById('chart-cards-container').innerHTML = `
                 <div class="col-12 text-center py-5">
                     <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
-                    <p>Error: File config.js tidak terbaca atau belum dimuat.</p>
+                    <p>Error: File config_motor.php tidak terbaca atau belum dimuat.</p>
                 </div>`;
             return;
         }
@@ -144,6 +183,10 @@ switch ($unitAktif) {
         // 2. GENERATE HTML KARTU GRAFIK & TOMBOL KONTROL
         let cardsHTML = "";
         listPeralatan.forEach(function (nama, index) {
+            // Terapkan default status checkbox dari database PHP
+            const chkTooltip = <?php echo ($db_default_tooltip == 1) ? "'checked'" : "''"; ?>;
+            const chkDatalabel = <?php echo ($db_default_datalabel == 1) ? "'checked'" : "''"; ?>;
+
             cardsHTML += `
             <div class="col-lg-6">
                 <div class="card card-outline card-primary shadow-sm" style="border-radius: 10px; overflow: hidden;">
@@ -153,12 +196,12 @@ switch ($unitAktif) {
                         </h3>
                         <div class="card-tools">
                             <div class="custom-control custom-checkbox d-inline-block mr-2" title="Tampilkan Kotak Detail saat Hover">
-                                <input type="checkbox" class="custom-control-input" id="toggle_tooltip_${index}">
+                                <input type="checkbox" class="custom-control-input" id="toggle_tooltip_${index}" ${chkTooltip}>
                                 <label class="custom-control-label" for="toggle_tooltip_${index}">Tooltip</label>
                             </div>
 
                             <div class="custom-control custom-checkbox d-inline-block mr-3" title="Tampilkan Angka Langsung di Atas Titik Grafik">
-                                <input type="checkbox" class="custom-control-input" id="toggle_datalabels_${index}">
+                                <input type="checkbox" class="custom-control-input" id="toggle_datalabels_${index}" ${chkDatalabel}>
                                 <label class="custom-control-label" for="toggle_datalabels_${index}">Angka</label>
                             </div>
 
@@ -254,24 +297,35 @@ switch ($unitAktif) {
                             Current: result.dataCurrent
                         };
 
-                        let maxVisible = 15; 
-                        const shiftStep = 1; 
+                        let maxVisible = <?php echo $db_max_visible; ?>;
+                        const shiftStep = <?php echo $db_shift_step; ?>;
+                        const lineWidthDb = <?php echo $db_line_width; ?>;
+                        const pointRadiusDb = <?php echo $db_point_radius; ?>;
 
                         let currentIndex = Math.max(0, fullLabels.length - maxVisible);
                         let startInit = currentIndex;
                         let endInit = currentIndex + maxVisible;
 
+                        // Pecah string hidden parameter dari database jadi Array JS
+                        const hiddenParamsStr = "<?php echo $db_hidden_params; ?>";
+                        const hiddenList = hiddenParamsStr.split(',').map(item => item.trim().toLowerCase());
+
+                        // Fungsi cerdas untuk mengecek apakah suatu parameter disembunyikan
+                        function checkHidden(fullName, shortName) {
+                            return hiddenList.includes(fullName.toLowerCase()) || hiddenList.includes(shortName.toLowerCase());
+                        }
+
                         const areaChartData = {
                             labels: fullLabels.slice(startInit, endInit),
                             datasets: [
-                                { label: 'Vibrasi Bearing DE', borderColor: 'rgba(60,141,188, 1)', backgroundColor: 'rgba(60,141,188, 0.1)', borderWidth: 2.5, pointRadius: 2, data: fullData.DE.slice(startInit, endInit), fill: false, spanGaps: true },
-                                { label: 'Vibrasi Bearing NDE', borderColor: 'rgba(220,53,69, 1)', backgroundColor: 'rgba(220,53,69, 0.1)', borderWidth: 2.5, pointRadius: 2, data: fullData.NDE.slice(startInit, endInit), fill: false, spanGaps: true },
-                                { label: 'Temp Bearing DE', borderColor: 'rgba(255, 133, 27, 1)', borderWidth: 2, pointRadius: 2, data: fullData.TempDE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: true },
-                                { label: 'Temp Bearing NDE', borderColor: 'rgba(255, 193, 7, 1)', borderWidth: 2, pointRadius: 2, data: fullData.TempNDE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: true },
-                                { label: 'Suhu Ruangan', borderColor: 'rgba(40, 167, 69, 1)', borderWidth: 2, pointRadius: 2, data: fullData.Suhu.slice(startInit, endInit), fill: false, spanGaps: true, hidden: true },
-                                { label: 'Beban Generator', borderColor: 'rgba(111, 66, 193, 1)', borderWidth: 2, pointRadius: 2, data: fullData.Beban.slice(startInit, endInit), fill: false, spanGaps: true, hidden: true },
-                                { label: 'Opening Damper', borderColor: 'rgba(32, 201, 151, 1)', borderWidth: 2, pointRadius: 2, data: fullData.Damper.slice(startInit, endInit), fill: false, spanGaps: true, hidden: true },
-                                { label: 'Load Current', borderColor: 'rgba(139, 0, 0, 1)', borderWidth: 2, pointRadius: 2, data: fullData.Current.slice(startInit, endInit), fill: false, spanGaps: true, hidden: true }
+                                { label: 'Vibrasi Bearing DE', borderColor: 'rgba(60,141,188, 1)', backgroundColor: 'rgba(60,141,188, 0.1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.DE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vibrasi Bearing DE', 'DE') },
+                                { label: 'Vibrasi Bearing NDE', borderColor: 'rgba(220,53,69, 1)', backgroundColor: 'rgba(220,53,69, 0.1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.NDE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vibrasi Bearing NDE', 'NDE') },
+                                { label: 'Temp Bearing DE', borderColor: 'rgba(255, 133, 27, 1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.TempDE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Temp Bearing DE', 'TempDE') },
+                                { label: 'Temp Bearing NDE', borderColor: 'rgba(255, 193, 7, 1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.TempNDE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Temp Bearing NDE', 'TempNDE') },
+                                { label: 'Suhu Ruangan', borderColor: 'rgba(40, 167, 69, 1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Suhu.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Suhu Ruangan', 'Suhu') },
+                                { label: 'Beban Generator', borderColor: 'rgba(111, 66, 193, 1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Beban.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Beban Generator', 'Beban') },
+                                { label: 'Opening Damper', borderColor: 'rgba(32, 201, 151, 1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Damper.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Opening Damper', 'Damper') },
+                                { label: 'Load Current', borderColor: 'rgba(139, 0, 0, 1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Current.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Load Current', 'Current') }
                             ]
                         };
 
@@ -291,14 +345,14 @@ switch ($unitAktif) {
                                     generateLabels: function (chart) {
                                         const original = Chart.defaults.global.legend.labels.generateLabels;
                                         const labels = original.call(this, chart);
-                                        labels.forEach(label => { 
-                                            label.width = 170; 
+                                        labels.forEach(label => {
+                                            label.width = 170;
                                             if (label.hidden) {
                                                 label.fillStyle = 'rgba(200, 200, 200, 0.4)';
                                                 label.strokeStyle = 'rgba(150, 150, 150, 0.4)';
-                                                label.fontColor = '#adb5bd'; 
+                                                label.fontColor = '#adb5bd';
                                             } else {
-                                                label.fontColor = '#444'; 
+                                                label.fontColor = '#444';
                                             }
                                         });
                                         return labels;
@@ -318,7 +372,7 @@ switch ($unitAktif) {
                                 }]
                             },
                             tooltips: {
-                                enabled: true, 
+                                enabled: true,
                                 mode: 'index',
                                 intersect: false,
                                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -344,7 +398,7 @@ switch ($unitAktif) {
                                 }
                             },
                             hover: { mode: 'index', intersect: false },
-                            animation: { duration: 0 } 
+                            animation: { duration: 0 }
                         };
 
                         const myChart = new Chart(ctx, {
@@ -371,11 +425,11 @@ switch ($unitAktif) {
                                     if (!chart || !chart.ctx) return;
                                     const ctx = chart.ctx;
 
-                                    // 1. TAMPILKAN ANGKA DI ATAS TITIK (ANTI-BLUR FIX)
+                                    // 1. TAMPILKAN ANGKA DI ATAS TITIK
                                     const showDataLabels = document.getElementById(`toggle_datalabels_${indexId}`);
                                     if (showDataLabels && showDataLabels.checked) {
-                                        ctx.save(); 
-                                        ctx.font = "bold 11px 'Source Sans Pro', Arial, sans-serif"; 
+                                        ctx.save();
+                                        ctx.font = "bold 11px 'Source Sans Pro', Arial, sans-serif";
                                         ctx.textAlign = 'center';
                                         ctx.textBaseline = 'bottom';
 
@@ -399,10 +453,10 @@ switch ($unitAktif) {
                                                 }
                                             }
                                         });
-                                        ctx.restore(); 
+                                        ctx.restore();
                                     }
 
-                                    // 2. TAMPILKAN CROSSHAIR (ANTI-BLUR FIX)
+                                    // 2. TAMPILKAN CROSSHAIR
                                     if (chart.tooltip && chart.tooltip._active && chart.tooltip._active.length && chart.customCrosshairY !== undefined) {
                                         const activePoints = chart.tooltip._active;
 
@@ -422,8 +476,8 @@ switch ($unitAktif) {
                                                 }
                                             }
                                         }
-                                        
-                                        closestY = Math.round(closestY); 
+
+                                        closestY = Math.round(closestY);
 
                                         if (chart.chartArea && closestY >= chart.chartArea.top && closestY <= chart.chartArea.bottom) {
                                             const topY = Math.round(chart.chartArea.top);
@@ -434,7 +488,7 @@ switch ($unitAktif) {
                                             ctx.save();
                                             ctx.beginPath();
                                             ctx.setLineDash([6, 6]);
-                                            ctx.lineWidth = 1; 
+                                            ctx.lineWidth = 1;
                                             ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
 
                                             ctx.moveTo(x + 0.5, topY);
@@ -481,13 +535,13 @@ switch ($unitAktif) {
                             } else {
                                 if (btnPrev) btnPrev.disabled = (currentIndex === 0);
                                 if (btnNext) btnNext.disabled = (currentIndex + limit >= fullLabels.length);
-                                
+
                                 const displayEnd = Math.min(start + limit, fullLabels.length);
                                 if (infoText) {
                                     if (fullLabels.length <= limit) {
                                         infoText.innerText = `Semua Data (${fullLabels.length})`;
-                                        if(btnPrev) btnPrev.disabled = true;
-                                        if(btnNext) btnNext.disabled = true;
+                                        if (btnPrev) btnPrev.disabled = true;
+                                        if (btnNext) btnNext.disabled = true;
                                     } else {
                                         infoText.innerText = `Data ${start + 1} - ${displayEnd} dari ${fullLabels.length}`;
                                     }
@@ -504,11 +558,11 @@ switch ($unitAktif) {
                         // Dropdown Limit Data
                         const limitSelect = document.getElementById(`data_limit_${indexId}`);
                         if (limitSelect) {
-                            limitSelect.addEventListener('change', function() {
+                            limitSelect.addEventListener('change', function () {
                                 const val = this.value;
                                 if (val === 'all') {
                                     maxVisible = 'all';
-                                    currentIndex = 0; 
+                                    currentIndex = 0;
                                 } else {
                                     maxVisible = parseInt(val);
                                     currentIndex = Math.max(0, fullLabels.length - maxVisible);

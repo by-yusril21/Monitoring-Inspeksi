@@ -120,6 +120,15 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
           </li>
         <?php endif; ?>
 
+        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+          <li class="nav-item">
+            <a href="?page=settings" class="nav-link <?php echo ($current_page == 'settings') ? 'active' : ''; ?>">
+              <i class="nav-icon fas fa-cogs"></i>
+              <p>Settings</p>
+            </a>
+          </li>
+        <?php endif; ?>
+
         <li class="nav-header" style="padding: 10px 1rem 5px; color: #888; font-size: 10px;">AKUN</li>
 
         <li class="nav-item">

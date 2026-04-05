@@ -1,8 +1,17 @@
 // =========================================================================
-// Fungsi Export Tabel ke Excel
+// Fungsi Export Tabel ke Excel (Disempurnakan dengan Tanggal)
 // =========================================================================
 function exportToExcel(tableID, filename = "") {
   const tableSelect = document.getElementById(tableID);
+  if (!tableSelect) {
+      alert("Tabel tidak ditemukan!");
+      return;
+  }
+
+  // Membuat format tanggal YYYY-MM-DD untuk nama file
+  const today = new Date();
+  const dateStr = today.toISOString().split('T')[0];
+  const finalFilename = filename ? `${filename}_${dateStr}.xls` : `Data_Regreasing_${dateStr}.xls`;
 
   const html = `
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
@@ -23,7 +32,7 @@ function exportToExcel(tableID, filename = "") {
   const downloadLink = document.createElement("a");
   const url = URL.createObjectURL(blob);
   downloadLink.href = url;
-  downloadLink.download = filename ? filename + ".xls" : "data_motor.xls";
+  downloadLink.download = finalFilename;
 
   document.body.appendChild(downloadLink);
   downloadLink.click();
@@ -31,26 +40,27 @@ function exportToExcel(tableID, filename = "") {
 }
 
 // =========================================================================
-// Fungsi Tarik Data dari PROXY SERVER (Bukan Google Langsung)
+// Fungsi Tarik Data dari PROXY SERVER
 // =========================================================================
 document.addEventListener("DOMContentLoaded", function () {
-  // Fungsi Reusable yang menembak api_proxy.php lokal
+  
   async function loadDataMotor(kodeUnit, tableId) {
-    const tableRows = document.querySelectorAll(`#${tableId} tbody tr`);
+    // Safety check: Pastikan tabel ada di halaman
+    const tableEl = document.getElementById(tableId);
+    if (!tableEl) return;
 
+    const tableRows = tableEl.querySelectorAll(`tbody tr.data-row`);
+
+    // Jika tidak ada motor yang dicentang di Settings, hentikan proses (Hemat Bandwidth)
     if (tableRows.length === 0) return;
 
     try {
-      // PENTING: Menembak file PHP di server sendiri
+      // Menembak file PHP di server sendiri
       const response = await fetch(`api/api_proxy.php?unit=${kodeUnit}`);
       const dataRekap = await response.json();
 
       if (dataRekap.error || dataRekap.status === "error") {
-        throw new Error(
-          dataRekap.message ||
-            dataRekap.error ||
-            "Gagal memuat data dari server proxy",
-        );
+        throw new Error(dataRekap.message || dataRekap.error || "Gagal memuat data dari server proxy");
       }
 
       const dataMotorMap = {};
@@ -81,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           let sisa = parseInt(motorData.sisaHari);
 
-          // Mengganti Badge menjadi Teks Warna Biasa
+          // Logika Pewarnaan Sisa Waktu
           if (!isNaN(sisa)) {
             if (sisa > 14) {
               colSisa.innerHTML = `<span class="text-success font-weight-bold">${sisa} Hari</span>`;
@@ -98,20 +108,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
           colStatus.innerHTML = `<span class="text-muted">${motorData.email}</span>`;
         } else {
-          colTerakhir.innerHTML = "Belum ada data";
+          colTerakhir.innerHTML = "Belum ada riwayat";
           colSelanjutnya.innerHTML = "-";
           colSisa.innerHTML = "-";
           colStatus.innerHTML = "-";
         }
       });
     } catch (error) {
-      console.error(
-        `Error saat memproses data regreasing untuk ${tableId}:`,
-        error,
-      );
+      console.error(`Error saat memproses data regreasing untuk ${tableId}:`, error);
       tableRows.forEach((tr) => {
-        tr.querySelector(".terakhir-regreasing").innerHTML =
-          `<span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Gagal memuat</span>`;
+        tr.querySelector(".terakhir-regreasing").innerHTML = `<span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Gagal memuat</span>`;
         tr.querySelector(".jadwal-selanjutnya").innerHTML = "-";
         tr.querySelector(".sisa-waktu").innerHTML = "-";
         tr.querySelector(".status-updater").innerHTML = "-";

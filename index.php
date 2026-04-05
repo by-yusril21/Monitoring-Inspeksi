@@ -45,7 +45,7 @@ if (isset($_GET['page']) && file_exists(filename: "page/" . $_GET['page'] . ".ph
 
 
 
-<script src="config/config.js"></script>
+<script src="config/config_motor.php?v=<?php echo time(); ?>"></script>
 
 <script src="dist/js/adminlte.min.js"></script>
 <script src="dist/js/tabel-motor.js"></script>
