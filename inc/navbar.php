@@ -27,12 +27,12 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
 
     <?php if ($isDashboard): ?>
       <div class="d-none d-md-flex align-items-center">
-        <select id="pilihUnit" class="form-control form-control-sm mr-1" style="width:155px;">
+        <select id="pilihUnit" class="form-control form-control-sm mr-1" style="width:220px;">
           <option value="">-- Pilih Unit --</option>
-          <option value="C6KV">PLTU UNIT C 6KV</option>
-          <option value="C380">PLTU UNIT C 380</option>
-          <option value="D6KV">PLTU UNIT D 6KV</option>
-          <option value="D380">PLTU UNIT D 380</option>
+          <option value="C6KV">PLTU UNIT C - MOTOR 6KV</option>
+          <option value="C380">PLTU UNIT C - MOTOR 380V</option>
+          <option value="D6KV">PLTU UNIT D - MOTOR 6KV</option>
+          <option value="D380">PLTU UNIT D - MOTOR 380V</option>
           <option value="UTILITY">PLTU UNIT UTILITY</option>
         </select>
         <select id="pilihMotor" class="form-control form-control-sm mr-1" style="width: 230px;" disabled>

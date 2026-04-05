@@ -253,7 +253,7 @@ if ($result) {
                                             </div>
                                             <div class="card-footer bg-light text-right" style="border-radius: 0 0 10px 10px;">
                                                 <button type="reset" class="btn btn-default mr-2">
-                                                    <i class="fas fa-undo mr-1"></i> Kembalikan Input
+                                                    <i class="fas fa-undo mr-1"></i> Batal
                                                 </button>
                                                 <button type="submit" class="btn btn-primary px-4 shadow-sm">
                                                     <i class="fas fa-save mr-1"></i> Simpan Konfigurasi Grafik

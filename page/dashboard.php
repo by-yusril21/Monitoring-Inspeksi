@@ -204,7 +204,10 @@ $columns = [
                                 </tr>
                             </thead>
 
-                            <tbody></tbody>
+                            <tbody>
+                                <span id="nama-user-login"
+                                    style="display: none;"><?php echo htmlspecialchars($username_login); ?></span>
+                            </tbody>
                         </table>
                     </div>
                 </div>

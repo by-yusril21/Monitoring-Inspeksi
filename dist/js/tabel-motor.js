@@ -189,104 +189,247 @@ $(document).ready(function () {
       [10, 25, 50, 100, "Semua"],
     ],
 
-    // --- UPDATE FITUR EXPORT PDF PROPORSIONAL ---
     buttons: [
       {
         extend: "excel",
         text: '<i class="fas fa-file-excel"></i> Excel',
         className: "btn btn-success btn-sm",
+        exportOptions: {
+          columns: [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+            19,
+          ],
+        },
       },
       {
         extend: "pdfHtml5",
         text: '<i class="fas fa-file-pdf"></i> PDF',
         className: "btn btn-danger btn-sm",
-        orientation: "landscape", // Tetap landscape agar kolom muat
-        pageSize: "A4", // Ukuran Kertas A4
-        title: function () {
-          // Mengambil teks dari dropdown navbar berdasarkan ID
-          let unitText =
-            $("#pilihUnit option:selected").text() ||
-            $("#pilihUnit").val() ||
-            "";
-          let motorText =
-            $("#pilihMotor option:selected").text() ||
-            $("#pilihMotor").val() ||
-            "";
-
-          // Membersihkan jika teks bawaannya adalah "Pilih Unit" dll
-          if (unitText.toUpperCase().includes("PILIH")) unitText = "";
-          if (motorText.toUpperCase().includes("PILIH"))
-            motorText = "Data Motor";
-
-          // Format Judul: [Nama Motor] [Nama Unit]
-          return (motorText + " " + unitText).trim();
-        },
+        orientation: "landscape",
+        pageSize: "A4",
         exportOptions: {
+          columns: [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+            19,
+          ],
           format: {
+            header: function (data, columnIdx) {
+              const customHeaders = [
+                "No",
+                "Date",
+                "Update By",
+                "Aksi",
+                "Section\nNo",
+                "Vib DE\n(mm/s)",
+                "Vib NDE\n(mm/s)",
+                "Temp DE\n(°C)",
+                "Temp NDE\n(°C)",
+                "Temp\nRuang\n(°C)",
+                "load\nGenerator\n(MW)",
+                "Opening\nDamper\n(%)",
+                "Load\nCurrent\n(A)",
+                "Bunyi\nMotor",
+                "Kondisi\nPanel",
+                "kelengkapan\nMotor",
+                "kebersihan\nMotor",
+                "Grounding\nMotor",
+                "Regreasing\nMotor",
+                "Action",
+              ];
+              return customHeaders[columnIdx];
+            },
             body: function (data, row, column, node) {
-              // Bersihkan tag HTML (seperti <span>), ambil teks aslinya saja
               return data ? data.toString().replace(/<[^>]*>?/gm, "") : data;
             },
           },
         },
+        title: "",
         customize: function (doc) {
-          // --- KUSTOMISASI TAMPILAN PDF PROPOSIONAL ---
+          doc.watermark = null;
 
-          // 1. Font disesuaikan agar proporsional di A4 landscape (ukuran 7 agar jelas)
-          doc.defaultStyle.fontSize = 7;
-          doc.styles.tableHeader.fontSize = 8;
-          doc.styles.tableFooter.fontSize = 8;
+          // --- UPDATE: AMBIL DATA UNIT & MOTOR ---
+          let unitText = $("#pilihUnit option:selected").text() || "Data Unit";
+          if (unitText.toUpperCase().includes("PILIH")) {
+            unitText = "Data Unit";
+          }
 
-          // 2. Judul Posisi Center
-          doc.styles.title = {
-            color: "#000000",
-            fontSize: 12,
-            bold: true,
-            alignment: "center",
+          let motorText =
+            $("#pilihMotor option:selected").text() || "Data Motor";
+          if (motorText.toUpperCase().includes("PILIH")) {
+            motorText = "Data Motor";
+          }
+
+          let currentUser = $("#nama-user-login").text().trim() || "";
+          let today = new Date();
+          let dateString =
+            ("0" + today.getDate()).slice(-2) +
+            "/" +
+            ("0" + (today.getMonth() + 1)).slice(-2) +
+            "/" +
+            today.getFullYear();
+          let timeString =
+            ("0" + today.getHours()).slice(-2) +
+            ":" +
+            ("0" + today.getMinutes()).slice(-2) +
+            ":" +
+            ("0" + today.getSeconds()).slice(-2);
+
+          let infoString =
+            "Tanggal unduh data : " +
+            dateString +
+            " " +
+            timeString +
+            " | Oleh : " +
+            currentUser;
+
+          // --- UPDATE: GABUNGKAN UNIT DAN MOTOR DI SUBHEADER ---
+          let subHeaderString = "UNIT : " + unitText + "  -  " + motorText;
+
+          let logoBase64 =
+            typeof MY_GLOBAL_LOGO !== "undefined" ? MY_GLOBAL_LOGO : "";
+
+          if (logoBase64 !== "") {
+            doc.background = function (page) {
+              return [
+                {
+                  table: {
+                    widths: ["*"],
+                    heights: [595],
+                    body: [
+                      [
+                        {
+                          image: logoBase64,
+                          width: 450,
+                          opacity: 0.2,
+                          alignment: "center",
+                          margin: [0, 80, 0, 0],
+                          border: [false, false, false, false],
+                        },
+                      ],
+                    ],
+                  },
+                },
+              ];
+            };
+          }
+
+          let headerColumns = [
+            {
+              stack: [
+                {
+                  text: "DOKUMEN RANGKUMAN DATA PMC SCHEDULE BULANAN MOTOR 6kV DAN 380V",
+                  fontSize: 10,
+                  bold: true,
+                  alignment: "left",
+                },
+                {
+                  text: "PT Semen Tonasa - Electrical of Power Plant Elins Maintenance",
+                  fontSize: 9,
+                  bold: true,
+                  alignment: "left",
+                  margin: [0, 2, 0, 0],
+                },
+                {
+                  text: infoString,
+                  fontSize: 8,
+                  alignment: "left",
+                  margin: [0, 2, 0, 2],
+                },
+              ],
+              width: "*",
+              alignment: "left",
+            },
+          ];
+
+          if (logoBase64 !== "") {
+            headerColumns.push({
+              image: logoBase64,
+              width: 45,
+              alignment: "right",
+            });
+          }
+
+          let customHeader = {
+            stack: [
+              { columns: headerColumns },
+              {
+                canvas: [
+                  {
+                    type: "line",
+                    x1: 0,
+                    y1: 0,
+                    x2: 801.89,
+                    y2: 0,
+                    lineWidth: 1.5,
+                    lineColor: "#cda434",
+                  },
+                ],
+                margin: [0, 6, 0, 6],
+              },
+              {
+                text: subHeaderString,
+                fontSize: 8,
+                color: "#555",
+                bold: true,
+                alignment: "left",
+                margin: [0, 0, 0, 5],
+              },
+            ],
+            margin: [0, 0, 0, 10],
           };
 
-          // 3. Meratakan (Center) Header dan Isi Tabel
-          doc.styles.tableHeader.alignment = "center";
-          doc.styles.tableHeader.margin = [2, 4, 2, 4]; // Spasi dalam header
-          doc.styles.tableBodyEven.alignment = "center";
-          doc.styles.tableBodyOdd.alignment = "center";
+          doc.content.splice(0, 0, customHeader);
 
-          // CATATAN: Paksaan lebar kolom (doc.content[1].table.widths) sengaja DIHAPUS
-          // agar PDFMake menghitung otomatis sesuai panjang isi teks (auto-sizing).
+          doc.defaultStyle.fontSize = 5;
+          doc.styles.tableHeader.fontSize = 4;
+          doc.styles.tableHeader.fillColor = "#1a3b5c";
+          doc.styles.tableHeader.color = "#ffffff";
+          doc.defaultStyle.alignment = "center";
+          doc.pageMargins = [20, 20, 20, 20];
 
-          // 4. Warna background selang-seling (Zebra layout) & Garis tabel
-          var objLayout = {};
-          objLayout["hLineWidth"] = function (i) {
-            return 0.5;
-          };
-          objLayout["vLineWidth"] = function (i) {
-            return 0.5;
-          };
-          objLayout["hLineColor"] = function (i) {
-            return "#aaaaaa";
-          };
-          objLayout["vLineColor"] = function (i) {
-            return "#aaaaaa";
-          };
-          objLayout["paddingLeft"] = function (i) {
-            return 2;
-          };
-          objLayout["paddingRight"] = function (i) {
-            return 2;
-          };
-          objLayout["fillColor"] = function (rowIndex, node, columnIndex) {
-            // Baris 0 (Header) abu-abu gelap, baris genap abu-abu muda
-            return rowIndex === 0
-              ? "#e9ecef"
-              : rowIndex % 2 === 0
-                ? "#f8f9fa"
-                : null;
-          };
-          doc.content[1].layout = objLayout;
+          doc.content[1].table.widths = [
+            "1%",
+            "8%",
+            "13%",
+            "5%",
+            "5%",
+            "3%",
+            "3%",
+            "3%",
+            "3%",
+            "3%",
+            "3%",
+            "3%",
+            "3%",
+            "3%",
+            "3%",
+            "3.5%",
+            "3%",
+            "3%",
+            "3.5%",
+            "25%",
+          ];
 
-          // 5. Margin Halaman [kiri, atas, kanan, bawah]
-          // Margin kiri kanan dikurangi menjadi 15 agar A4 landscape lebih lega
-          doc.pageMargins = [15, 30, 15, 30];
+          doc.content[1].layout = {
+            hLineWidth: function (i) {
+              return 0.5;
+            },
+            vLineWidth: function (i) {
+              return 0.5;
+            },
+            hLineColor: function (i) {
+              return "#aaa";
+            },
+            vLineColor: function (i) {
+              return "#aaa";
+            },
+            paddingLeft: function (i) {
+              return 3;
+            },
+            paddingRight: function (i) {
+              return 3;
+            },
+          };
         },
       },
     ],
@@ -302,7 +445,6 @@ $(document).ready(function () {
       paginate: { previous: "Kembali", next: "Lanjut" },
     },
 
-    /* Pindahkan filter dari #my-filter-source ke placeholder DataTable */
     initComplete: function () {
       const filterContent = $("#my-filter-source").html();
       if (filterContent) {
@@ -312,7 +454,6 @@ $(document).ready(function () {
     },
   });
 
-  /* Reload data saat page-length berubah */
   $("#example1").on("length.dt", function () {
     const unit = localStorage.getItem("mon_selectedUnit");
     const motor = localStorage.getItem("mon_selectedMotor");
