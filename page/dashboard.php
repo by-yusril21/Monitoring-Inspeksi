@@ -174,52 +174,87 @@ if ($q_pdf) {
 
                         <span id="nama-user-login"
                             style="display: none;"><?php echo htmlspecialchars($username_login ?? 'User'); ?></span>
-
                         <span id="judul-1-pdf"
                             style="display: none;"><?php echo htmlspecialchars($pdf_data['pdf_judul_1'] ?? 'DOKUMEN RANGKUMAN DATA PMC SCHEDULE BULANAN MOTOR 6kV DAN 380V'); ?></span>
-
                         <span id="judul-2-pdf"
                             style="display: none;"><?php echo htmlspecialchars($pdf_data['pdf_judul_2'] ?? 'PT Semen Tonasa - Electrical of Power Plant Elins Maintenance'); ?></span>
-
                         <span id="logo-base64-pdf"
                             style="display: none;"><?php echo htmlspecialchars($pdf_data['pdf_logo_base64'] ?? ''); ?></span>
+
                         <table id="example1"
                             class="table table-bordered table-striped table-hover table-sm text-nowrap m-0 text-center">
 
                             <thead class="bg-light text-dark align-middle">
                                 <tr>
-                                    <th class="align-middle" rowspan="2" style="min-width: 20px;">No</th>
-                                    <th class="align-middle" rowspan="2" style="min-width: 140px;">Date</th>
-                                    <th class="align-middle" rowspan="2" style="min-width: 160px;">Update By</th>
-                                    <th class="align-middle" rowspan="2" style="min-width: 70px;">Aksi</th>
-                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Section<br>No</th>
+                                    <th class="align-middle" rowspan="3" style="min-width: 20px;">No</th>
+                                    <th class="align-middle" rowspan="3" style="min-width: 140px;">Date</th>
+                                    <th class="align-middle" rowspan="3" style="min-width: 160px;">Update By</th>
+                                    <th class="align-middle" rowspan="3" style="min-width: 70px;">Aksi</th>
+                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Section<br>No</th>
 
-                                    <th class="align-middle" colspan="2">Vibrasi (mm/s)</th>
+                                    <th class="align-middle" colspan="8">Vibrasi (mm/s)</th>
 
                                     <th class="align-middle" colspan="3">Temp (°C)</th>
 
-                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Load Gene<br>rator(MW)
+                                    <th class="align-middle" colspan="3">Load<br>Current(A)</th>
+
+                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Load Gene<br>rator(MW)
                                     </th>
-                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Opening<br>Damper(%)
+                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Opening<br>Damper(%)
                                     </th>
-                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Load<br>Current(A)
+
+                                    
+
+                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Bunyi<br>Motor</th>
+                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Kondisi<br>Panel</th>
+                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Kelengkapan<br>Motor
                                     </th>
-                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Bunyi<br>Motor</th>
-                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Kondisi<br>Panel</th>
-                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Kelengkapan</th>
-                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Kebersihan</th>
-                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Grounding</th>
-                                    <th class="align-middle" rowspan="2" style="min-width: 50px;">Regreasing</th>
-                                    <th class="align-middle" rowspan="2" style="min-width: 300px;">Action</th>
+                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Kebersihan<br>Motor
+                                    </th>
+                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Grounding<br>Motor
+                                    </th>
+                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Regreasing<br>Motor
+                                    </th>
+                                    <th class="align-middle" rowspan="3" style="min-width: 300px;">Action</th>
                                 </tr>
 
                                 <tr>
-                                    <th style="width: 30px; min-width: 30px; max-width: 30px;">DE</th>
-                                    <th style="width: 30px; min-width: 30px; max-width: 30px;">NDE</th>
+                                    <th class="align-middle" colspan="4">DE</th>
+                                    <th class="align-middle" colspan="4">NDE</th>
 
-                                    <th style="width: 30px; min-width: 30px; max-width: 30px;">DE</th>
-                                    <th style="width: 30px; min-width: 30px; max-width: 30px;">NDE</th>
-                                    <th style="width: 30px; min-width: 30px; max-width: 30px;">Ruang</th>
+                                    <th class="align-middle" rowspan="2"
+                                        style="width: 30px; min-width: 30px; max-width: 30px;">DE</th>
+                                    <th class="align-middle" rowspan="2"
+                                        style="width: 30px; min-width: 30px; max-width: 30px;">NDE</th>
+                                    <th class="align-middle" rowspan="2"
+                                        style="width: 30px; min-width: 30px; max-width: 30px;">Ruang</th>
+
+                                    <th class="align-middle" rowspan="2"
+                                        style="width: 30px; min-width: 30px; max-width: 30px;">R</th>
+                                    <th class="align-middle" rowspan="2"
+                                        style="width: 30px; min-width: 30px; max-width: 30px;">S</th>
+                                    <th class="align-middle" rowspan="2"
+                                        style="width: 30px; min-width: 30px; max-width: 30px;">T</th>
+                                </tr>
+
+                                <tr>
+                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">H
+                                    </th>
+                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">V
+                                    </th>
+                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">Ax
+                                    </th>
+                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">gE
+                                    </th>
+
+                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">H
+                                    </th>
+                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">V
+                                    </th>
+                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">Ax
+                                    </th>
+                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">gE
+                                    </th>
                                 </tr>
                             </thead>
 

@@ -17,7 +17,7 @@ require 'config/database.php';
 // --- 1. PROSES SIMPAN DATA JIKA TOMBOL DITEKAN (POST) ---
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
-    // --- TAMBAHAN BARU: Jika Form Setting PDF disubmit ---
+    // --- JIKA FORM PENGATURAN PDF DISUBMIT ---
     if (isset($_POST['form_update_pdf'])) {
         $judul_1 = mysqli_real_escape_string($conn, $_POST['pdf_judul_1']);
         $judul_2 = mysqli_real_escape_string($conn, $_POST['pdf_judul_2']);
@@ -25,16 +25,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         mysqli_query($conn, "UPDATE settings SET setting_value = '$judul_1' WHERE setting_key = 'pdf_judul_1'");
         mysqli_query($conn, "UPDATE settings SET setting_value = '$judul_2' WHERE setting_key = 'pdf_judul_2'");
         
-        // Proses Upload Logo
+        // Proses Upload Logo Gambar -> Base64
         if (isset($_FILES['logo_baru']['name']) && $_FILES['logo_baru']['name'] != '') {
             $tmp_name = $_FILES['logo_baru']['tmp_name'];
             $type = $_FILES['logo_baru']['type'];
-            
-            $data_gambar = file_get_contents($tmp_name);
-            $base64 = base64_encode($data_gambar);
-            $logo_base64 = 'data:' . $type . ';base64,' . $base64;
-            
-            mysqli_query($conn, "UPDATE settings SET setting_value = '$logo_base64' WHERE setting_key = 'pdf_logo_base64'");
+            $size = $_FILES['logo_baru']['size'];
+            $error = $_FILES['logo_baru']['error'];
+
+            if ($error === 0 && $size > 0) {
+                if (strpos($type, 'image/') === 0) {
+                    $data_gambar = file_get_contents($tmp_name);
+                    $base64 = base64_encode($data_gambar);
+                    $logo_base64 = 'data:' . $type . ';base64,' . $base64;
+                    
+                    mysqli_query($conn, "UPDATE settings SET setting_value = '$logo_base64' WHERE setting_key = 'pdf_logo_base64'");
+                }
+            }
         }
 
         unset($_POST['form_update_pdf']); 
@@ -218,15 +224,29 @@ if ($result) {
                                                         
                                                         <?php 
                                                         if ($key === 'chart_hidden_parameters') { 
+                                                            // ===============================================
+                                                            // ARRAY PARAMETER 16 DATA BARU
+                                                            // ===============================================
                                                             $daftar_parameter = [
-                                                                'DE' => 'Vibrasi Bearing DE',
-                                                                'NDE' => 'Vibrasi Bearing NDE',
-                                                                'TempDE' => 'Temp Bearing DE',
-                                                                'TempNDE' => 'Temp Bearing NDE',
-                                                                'Suhu' => 'Suhu Ruangan',
-                                                                'Beban' => 'Beban Generator',
-                                                                'Damper' => 'Opening Damper',
-                                                                'Current' => 'Load Current'
+                                                                'DE_H'  => 'Vib. DE (H)',
+                                                                'DE_V'  => 'Vib. DE (V)',
+                                                                'DE_Ax' => 'Vib. DE (Ax)',
+                                                                'DE_gE' => 'Vib. DE (gE)',
+                                                                
+                                                                'NDE_H'  => 'Vib. NDE (H)',
+                                                                'NDE_V'  => 'Vib. NDE (V)',
+                                                                'NDE_Ax' => 'Vib. NDE (Ax)',
+                                                                'NDE_gE' => 'Vib. NDE (gE)',
+                                                                
+                                                                'TempDE'  => 'Temp DE',
+                                                                'TempNDE' => 'Temp NDE',
+                                                                'Suhu'    => 'Suhu Ruangan',
+                                                                'Beban'   => 'Beban Gen.',
+                                                                'Damper'  => 'Open Damper',
+                                                                
+                                                                'CurrR' => 'Arus (R)',
+                                                                'CurrS' => 'Arus (S)',
+                                                                'CurrT' => 'Arus (T)'
                                                             ];
                                                             
                                                             $hidden_array = array_map('trim', explode(',', $data['setting_value']));
@@ -235,7 +255,7 @@ if ($result) {
                                                                 <?php foreach($daftar_parameter as $val => $label) { 
                                                                     $isChecked = in_array($val, $hidden_array) ? 'checked' : '';
                                                                 ?>
-                                                                <div class="col-md-4 col-sm-6 mb-2">
+                                                                <div class="col-md-3 col-sm-4 col-6 mb-2">
                                                                     <div class="custom-control custom-checkbox">
                                                                         <input type="checkbox" class="custom-control-input" id="chk_<?php echo $val; ?>" name="<?php echo $key; ?>[]" value="<?php echo $val; ?>" <?php echo $isChecked; ?>>
                                                                         <label class="custom-control-label font-weight-normal text-muted" for="chk_<?php echo $val; ?>">

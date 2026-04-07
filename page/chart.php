@@ -13,7 +13,7 @@ $db_line_width = 2.5;
 $db_point_radius = 2;
 $db_default_tooltip = 0;
 $db_default_datalabel = 0;
-$db_hidden_params = 'TempDE,TempNDE,Suhu,Beban,Damper,Current';
+$db_hidden_params = 'TempDE,TempNDE,Suhu,Beban,Damper,CurrR,CurrS,CurrT';
 $db_bg_download = '#ffffff';
 
 $query_settings = "SELECT setting_key, setting_value FROM settings";
@@ -123,14 +123,12 @@ switch ($unitAktif) {
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
         // B. Menulis Judul di bagian atas (Kiri)
-        // Jika background gelap, kita ubah warna font agar terlihat (otomatis deteksi sederhana)
         const bgColor = '<?php echo $db_bg_download; ?>'.toLowerCase();
         tempCtx.fillStyle = (bgColor === '#000000' || bgColor === 'black') ? '#ffffff' : '#333333';
         tempCtx.font = "bold 18px 'Source Sans Pro', Arial, sans-serif";
         tempCtx.textAlign = 'left';
         tempCtx.textBaseline = 'middle';
 
-        // Format: Nama Unit - Nama Motor
         const teksJudul = `${judulUnit} - ${namaMotor}`;
         tempCtx.fillText(teksJudul, paddingX, 30);
 
@@ -142,7 +140,7 @@ switch ($unitAktif) {
         tempCtx.lineWidth = 1;
         tempCtx.stroke();
 
-        // D. Menggambar grafik tepat di bawah area judul (y = headerHeight)
+        // D. Menggambar grafik tepat di bawah area judul
         tempCtx.drawImage(canvas, 0, headerHeight);
 
         // Proses Download
@@ -183,7 +181,6 @@ switch ($unitAktif) {
         // 2. GENERATE HTML KARTU GRAFIK & TOMBOL KONTROL
         let cardsHTML = "";
         listPeralatan.forEach(function (nama, index) {
-            // Terapkan default status checkbox dari database PHP
             const chkTooltip = <?php echo ($db_default_tooltip == 1) ? "'checked'" : "''"; ?>;
             const chkDatalabel = <?php echo ($db_default_datalabel == 1) ? "'checked'" : "''"; ?>;
 
@@ -221,11 +218,10 @@ switch ($unitAktif) {
                             </div>
                         </div>
                         <div class="chart mt-0">
-                            <canvas id="chart_${index}" style="min-height: 380px; height: 380px; max-height: 380px; max-width: 100%;"></canvas>
+                            <canvas id="chart_${index}" style="min-height: 450px; height: 450px; max-height: 450px; max-width: 100%;"></canvas>
                         </div>
 
                         <div class="d-flex justify-content-start align-items-center mt-0 pt-1 pb-1 pl-3">
-                            
                             <div class="d-flex align-items-center border-right pr-3 mr-3">
                                 <button class="btn btn-sm btn-outline-secondary px-2 mx-1" id="btn_prev_${index}" title="Mundur ke data sebelumnya (-)"><i class="fas fa-chevron-left"></i></button>
                                 <span class="text-muted text-sm font-weight-bold mx-1" id="page_info_${index}" style="min-width: 120px; text-align: center;">Menyiapkan...</span>
@@ -241,9 +237,7 @@ switch ($unitAktif) {
                                     <option value="all">Semua Data</option>
                                 </select>
                             </div>
-
                         </div>
-
                     </div>
                 </div>
             </div>`;
@@ -283,18 +277,30 @@ switch ($unitAktif) {
                         const ctx = canvasEl.getContext('2d');
 
                         // ==========================================
-                        // SETUP PAGINATION (PENYIMPANAN DATA UTUH)
+                        // UPDATE: PEMECAHAN DATA UNTUK 16 PARAMETER
                         // ==========================================
                         const fullLabels = result.labels;
                         const fullData = {
-                            DE: result.dataDE,
-                            NDE: result.dataNDE,
-                            TempDE: result.dataTempDE,
-                            TempNDE: result.dataTempNDE,
-                            Suhu: result.dataSuhu,
-                            Beban: result.dataBeban,
-                            Damper: result.dataDamper,
-                            Current: result.dataCurrent
+                            DE_H: result.dataDE_H || [],
+                            DE_V: result.dataDE_V || [],
+                            DE_Ax: result.dataDE_Ax || [],
+                            DE_gE: result.dataDE_gE || [],
+
+                            NDE_H: result.dataNDE_H || [],
+                            NDE_V: result.dataNDE_V || [],
+                            NDE_Ax: result.dataNDE_Ax || [],
+                            NDE_gE: result.dataNDE_gE || [],
+
+                            TempDE: result.dataTempDE || [],
+                            TempNDE: result.dataTempNDE || [],
+                            Suhu: result.dataSuhu || [],
+
+                            Beban: result.dataBeban || [],
+                            Damper: result.dataDamper || [],
+
+                            CurrR: result.dataCurrR || [],
+                            CurrS: result.dataCurrS || [],
+                            CurrT: result.dataCurrT || []
                         };
 
                         let maxVisible = <?php echo $db_max_visible; ?>;
@@ -306,26 +312,42 @@ switch ($unitAktif) {
                         let startInit = currentIndex;
                         let endInit = currentIndex + maxVisible;
 
-                        // Pecah string hidden parameter dari database jadi Array JS
                         const hiddenParamsStr = "<?php echo $db_hidden_params; ?>";
                         const hiddenList = hiddenParamsStr.split(',').map(item => item.trim().toLowerCase());
 
-                        // Fungsi cerdas untuk mengecek apakah suatu parameter disembunyikan
                         function checkHidden(fullName, shortName) {
                             return hiddenList.includes(fullName.toLowerCase()) || hiddenList.includes(shortName.toLowerCase());
                         }
 
+                        // ==========================================
+                        // UPDATE: 16 DATASETS DENGAN PALET WARNA BARU
+                        // ==========================================
                         const areaChartData = {
                             labels: fullLabels.slice(startInit, endInit),
                             datasets: [
-                                { label: 'Vibrasi Bearing DE', borderColor: 'rgba(60,141,188, 1)', backgroundColor: 'rgba(60,141,188, 0.1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.DE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vibrasi Bearing DE', 'DE') },
-                                { label: 'Vibrasi Bearing NDE', borderColor: 'rgba(220,53,69, 1)', backgroundColor: 'rgba(220,53,69, 0.1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.NDE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vibrasi Bearing NDE', 'NDE') },
-                                { label: 'Temp Bearing DE', borderColor: 'rgba(255, 133, 27, 1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.TempDE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Temp Bearing DE', 'TempDE') },
-                                { label: 'Temp Bearing NDE', borderColor: 'rgba(255, 193, 7, 1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.TempNDE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Temp Bearing NDE', 'TempNDE') },
-                                { label: 'Suhu Ruangan', borderColor: 'rgba(40, 167, 69, 1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Suhu.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Suhu Ruangan', 'Suhu') },
-                                { label: 'Beban Generator', borderColor: 'rgba(111, 66, 193, 1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Beban.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Beban Generator', 'Beban') },
-                                { label: 'Opening Damper', borderColor: 'rgba(32, 201, 151, 1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Damper.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Opening Damper', 'Damper') },
-                                { label: 'Load Current', borderColor: 'rgba(139, 0, 0, 1)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Current.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Load Current', 'Current') }
+                                // VIBRASI DE (Blue Shades)
+                                { label: 'Vib DE (H)', borderColor: '#007bff', backgroundColor: 'rgba(0,123,255,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.DE_H.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib DE (H)', 'DE_H') },
+                                { label: 'Vib DE (V)', borderColor: '#17a2b8', backgroundColor: 'rgba(23,162,184,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.DE_V.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib DE (V)', 'DE_V') },
+                                { label: 'Vib DE (Ax)', borderColor: '#3498db', backgroundColor: 'rgba(52,152,219,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.DE_Ax.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib DE (Ax)', 'DE_Ax') },
+                                { label: 'Vib DE (gE)', borderColor: '#20c997', backgroundColor: 'rgba(32,201,151,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.DE_gE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib DE (gE)', 'DE_gE') },
+
+                                // VIBRASI NDE (Red/Pink Shades)
+                                { label: 'Vib NDE (H)', borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.NDE_H.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib NDE (H)', 'NDE_H') },
+                                { label: 'Vib NDE (V)', borderColor: '#e83e8c', backgroundColor: 'rgba(232,62,140,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.NDE_V.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib NDE (V)', 'NDE_V') },
+                                { label: 'Vib NDE (Ax)', borderColor: '#ff6b6b', backgroundColor: 'rgba(255,107,107,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.NDE_Ax.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib NDE (Ax)', 'NDE_Ax') },
+                                { label: 'Vib NDE (gE)', borderColor: '#fd7e14', backgroundColor: 'rgba(253,126,20,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.NDE_gE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib NDE (gE)', 'NDE_gE') },
+
+                                // SUHU & BEBAN (Oranges & Purples)
+                                { label: 'Temp DE', borderColor: '#ffc107', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.TempDE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Temp DE', 'TempDE') },
+                                { label: 'Temp NDE', borderColor: '#ff851b', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.TempNDE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Temp NDE', 'TempNDE') },
+                                { label: 'Suhu Ruang', borderColor: '#28a745', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Suhu.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Suhu Ruang', 'Suhu') },
+                                { label: 'Beban Gen', borderColor: '#6f42c1', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Beban.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Beban Gen', 'Beban') },
+                                { label: 'Damper', borderColor: '#3d9970', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Damper.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Damper', 'Damper') },
+
+                                // LOAD CURRENT (Dark/Brown Shades)
+                                { label: 'Arus (R)', borderColor: '#8b0000', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.CurrR.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Arus (R)', 'CurrR') },
+                                { label: 'Arus (S)', borderColor: '#343a40', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.CurrS.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Arus (S)', 'CurrS') },
+                                { label: 'Arus (T)', borderColor: '#85144b', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.CurrT.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Arus (T)', 'CurrT') }
                             ]
                         };
 
@@ -341,12 +363,12 @@ switch ($unitAktif) {
                                     boxWidth: 10,
                                     padding: 10,
                                     fontColor: '#444',
-                                    fontSize: 12,
+                                    fontSize: 11,
                                     generateLabels: function (chart) {
                                         const original = Chart.defaults.global.legend.labels.generateLabels;
                                         const labels = original.call(this, chart);
                                         labels.forEach(label => {
-                                            label.width = 170;
+                                            label.width = 110; // Dikecilkan agar muat banyak garis
                                             if (label.hidden) {
                                                 label.fillStyle = 'rgba(200, 200, 200, 0.4)';
                                                 label.strokeStyle = 'rgba(150, 150, 150, 0.4)';
@@ -388,11 +410,13 @@ switch ($unitAktif) {
                                         let label = data.datasets[tooltipItem.datasetIndex].label || '';
                                         let val = tooltipItem.yLabel;
                                         let unit = '';
-                                        if (label.includes('Vibrasi')) unit = ' mm/s';
+
+                                        if (label.includes('Vib')) unit = ' mm/s';
                                         else if (label.includes('Temp') || label.includes('Suhu')) unit = ' °C';
                                         else if (label.includes('Beban')) unit = ' MW';
                                         else if (label.includes('Damper')) unit = ' %';
-                                        else if (label.includes('Current')) unit = ' A';
+                                        else if (label.includes('Arus')) unit = ' A';
+
                                         return label + ': ' + val + unit;
                                     }
                                 }
@@ -505,7 +529,7 @@ switch ($unitAktif) {
                         });
 
                         // ==========================================
-                        // FUNGSI UPDATE DATA (GESER / UBAH LIMIT)
+                        // FUNGSI UPDATE DATA 16 PARAMETER
                         // ==========================================
                         function updateChartDataWindow() {
                             const start = currentIndex;
@@ -513,14 +537,26 @@ switch ($unitAktif) {
                             const end = maxVisible === 'all' ? fullLabels.length : currentIndex + limit;
 
                             myChart.data.labels = fullLabels.slice(start, end);
-                            myChart.data.datasets[0].data = fullData.DE.slice(start, end);
-                            myChart.data.datasets[1].data = fullData.NDE.slice(start, end);
-                            myChart.data.datasets[2].data = fullData.TempDE.slice(start, end);
-                            myChart.data.datasets[3].data = fullData.TempNDE.slice(start, end);
-                            myChart.data.datasets[4].data = fullData.Suhu.slice(start, end);
-                            myChart.data.datasets[5].data = fullData.Beban.slice(start, end);
-                            myChart.data.datasets[6].data = fullData.Damper.slice(start, end);
-                            myChart.data.datasets[7].data = fullData.Current.slice(start, end);
+                            myChart.data.datasets[0].data = fullData.DE_H.slice(start, end);
+                            myChart.data.datasets[1].data = fullData.DE_V.slice(start, end);
+                            myChart.data.datasets[2].data = fullData.DE_Ax.slice(start, end);
+                            myChart.data.datasets[3].data = fullData.DE_gE.slice(start, end);
+
+                            myChart.data.datasets[4].data = fullData.NDE_H.slice(start, end);
+                            myChart.data.datasets[5].data = fullData.NDE_V.slice(start, end);
+                            myChart.data.datasets[6].data = fullData.NDE_Ax.slice(start, end);
+                            myChart.data.datasets[7].data = fullData.NDE_gE.slice(start, end);
+
+                            myChart.data.datasets[8].data = fullData.TempDE.slice(start, end);
+                            myChart.data.datasets[9].data = fullData.TempNDE.slice(start, end);
+                            myChart.data.datasets[10].data = fullData.Suhu.slice(start, end);
+
+                            myChart.data.datasets[11].data = fullData.Beban.slice(start, end);
+                            myChart.data.datasets[12].data = fullData.Damper.slice(start, end);
+
+                            myChart.data.datasets[13].data = fullData.CurrR.slice(start, end);
+                            myChart.data.datasets[14].data = fullData.CurrS.slice(start, end);
+                            myChart.data.datasets[15].data = fullData.CurrT.slice(start, end);
 
                             myChart.update(0);
 
@@ -551,11 +587,7 @@ switch ($unitAktif) {
 
                         updateChartDataWindow();
 
-                        // ==========================================
-                        // EVENT LISTENER KONTROL BAWAH
-                        // ==========================================
-
-                        // Dropdown Limit Data
+                        // Event Listener Limit & Paging
                         const limitSelect = document.getElementById(`data_limit_${indexId}`);
                         if (limitSelect) {
                             limitSelect.addEventListener('change', function () {
@@ -571,7 +603,6 @@ switch ($unitAktif) {
                             });
                         }
 
-                        // Tombol Mundur (-)
                         const btnPrev = document.getElementById(`btn_prev_${indexId}`);
                         if (btnPrev) {
                             btnPrev.addEventListener('click', () => {
@@ -582,7 +613,6 @@ switch ($unitAktif) {
                             });
                         }
 
-                        // Tombol Maju (+)
                         const btnNext = document.getElementById(`btn_next_${indexId}`);
                         if (btnNext) {
                             btnNext.addEventListener('click', () => {
@@ -593,21 +623,11 @@ switch ($unitAktif) {
                             });
                         }
 
-                        // Checkbox Tooltip
                         const tooltipCb = document.getElementById(`toggle_tooltip_${indexId}`);
-                        if (tooltipCb) {
-                            tooltipCb.addEventListener('change', function () {
-                                myChart.update(0);
-                            });
-                        }
+                        if (tooltipCb) tooltipCb.addEventListener('change', () => myChart.update(0));
 
-                        // Checkbox Angka
                         const datalabelsCb = document.getElementById(`toggle_datalabels_${indexId}`);
-                        if (datalabelsCb) {
-                            datalabelsCb.addEventListener('change', function () {
-                                myChart.update(0);
-                            });
-                        }
+                        if (datalabelsCb) datalabelsCb.addEventListener('change', () => myChart.update(0));
                     }
                 } else {
                     if (loadingEl) {
