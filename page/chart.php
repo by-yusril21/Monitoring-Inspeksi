@@ -39,7 +39,6 @@ if ($hasil_settings) {
             $db_bg_download = $row['setting_value'];
     }
 }
-//
 
 $unitAktif = isset($_GET['unit']) ? strtoupper($_GET['unit']) : 'C6KV';
 
@@ -101,6 +100,9 @@ switch ($unitAktif) {
 </div>
 
 <script>
+    // Penampung Global untuk Instance Chart agar tidak menumpuk saat dibuka-tutup
+    window.myCharts = {};
+
     // 1. FUNGSI UNTUK DOWNLOAD GRAFIK KE PNG
     function downloadChart(canvasId, namaMotor, judulUnit) {
         const canvas = document.getElementById(canvasId);
@@ -109,20 +111,17 @@ switch ($unitAktif) {
             return;
         }
 
-        const headerHeight = 60; // Ruang tambahan di atas grafik untuk judul
-        const paddingX = 20;     // Jarak teks dari pinggir kiri
+        const headerHeight = 60;
+        const paddingX = 20;
 
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = canvas.width;
-        // Tinggi total adalah tinggi grafik ditambah ruang judul
         tempCanvas.height = canvas.height + headerHeight;
         const tempCtx = tempCanvas.getContext('2d');
 
-        // A. Mengisi background dengan warna dari database
         tempCtx.fillStyle = '<?php echo $db_bg_download; ?>';
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-        // B. Menulis Judul di bagian atas (Kiri)
         const bgColor = '<?php echo $db_bg_download; ?>'.toLowerCase();
         tempCtx.fillStyle = (bgColor === '#000000' || bgColor === 'black') ? '#ffffff' : '#333333';
         tempCtx.font = "bold 18px 'Source Sans Pro', Arial, sans-serif";
@@ -132,7 +131,6 @@ switch ($unitAktif) {
         const teksJudul = `${judulUnit} - ${namaMotor}`;
         tempCtx.fillText(teksJudul, paddingX, 30);
 
-        // C. Membuat Garis Pembatas tipis di bawah judul agar terlihat elegan
         tempCtx.beginPath();
         tempCtx.moveTo(paddingX, 50);
         tempCtx.lineTo(tempCanvas.width - paddingX, 50);
@@ -140,10 +138,8 @@ switch ($unitAktif) {
         tempCtx.lineWidth = 1;
         tempCtx.stroke();
 
-        // D. Menggambar grafik tepat di bawah area judul
         tempCtx.drawImage(canvas, 0, headerHeight);
 
-        // Proses Download
         const safeName = namaMotor.replace(/[^a-zA-Z0-9]/g, '_');
         const fileName = `Trend_Maintenance_${safeName}.png`;
 
@@ -178,7 +174,7 @@ switch ($unitAktif) {
             return;
         }
 
-        // 2. GENERATE HTML KARTU GRAFIK & TOMBOL KONTROL
+        // 2. GENERATE HTML KARTU GRAFIK TERTUTUP (COLLAPSED)
         let cardsHTML = "";
         listPeralatan.forEach(function (nama, index) {
             const chkTooltip = <?php echo ($db_default_tooltip == 1) ? "'checked'" : "''"; ?>;
@@ -186,27 +182,31 @@ switch ($unitAktif) {
 
             cardsHTML += `
             <div class="col-lg-6">
-                <div class="card card-outline card-primary shadow-sm" style="border-radius: 10px; overflow: hidden;">
+                <div class="card card-outline card-primary shadow-sm collapsed-card" id="card_${index}" style="border-radius: 10px; overflow: hidden;">
                     <div class="card-header border-0 bg-white pt-2 pb-0">
                         <h3 class="card-title font-weight-bold text-dark" style="font-size: 1.1rem;">
                             <i class="fas fa-chart-area text-primary mr-2"></i> ${nama}
                         </h3>
                         <div class="card-tools">
-                            <div class="custom-control custom-checkbox d-inline-block mr-2" title="Tampilkan Kotak Detail saat Hover">
-                                <input type="checkbox" class="custom-control-input" id="toggle_tooltip_${index}" ${chkTooltip}>
-                                <label class="custom-control-label" for="toggle_tooltip_${index}">Tooltip</label>
-                            </div>
+                            
+                            <span id="chart_tools_${index}" style="display: none;">
+                                <div class="custom-control custom-checkbox d-inline-block mr-2" title="Tampilkan Kotak Detail saat Hover">
+                                    <input type="checkbox" class="custom-control-input" id="toggle_tooltip_${index}" ${chkTooltip}>
+                                    <label class="custom-control-label" for="toggle_tooltip_${index}">Tooltip</label>
+                                </div>
 
-                            <div class="custom-control custom-checkbox d-inline-block mr-3" title="Tampilkan Angka Langsung di Atas Titik Grafik">
-                                <input type="checkbox" class="custom-control-input" id="toggle_datalabels_${index}" ${chkDatalabel}>
-                                <label class="custom-control-label" for="toggle_datalabels_${index}">Angka</label>
-                            </div>
+                                <div class="custom-control custom-checkbox d-inline-block mr-3" title="Tampilkan Angka Langsung di Atas Titik Grafik">
+                                    <input type="checkbox" class="custom-control-input" id="toggle_datalabels_${index}" ${chkDatalabel}>
+                                    <label class="custom-control-label" for="toggle_datalabels_${index}">Angka</label>
+                                </div>
 
-                            <button type="button" class="btn btn-tool" title="Download Grafik PNG" onclick="downloadChart('chart_${index}', '${nama}', '${judulUnitLengkap}')">
-                                <i class="fas fa-download text-info"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Minimize">
-                                <i class="fas fa-minus text-muted"></i>
+                                <button type="button" class="btn btn-tool" title="Download Grafik PNG" onclick="downloadChart('chart_${index}', '${nama}', '${judulUnitLengkap}')">
+                                    <i class="fas fa-download text-info"></i>
+                                </button>
+                            </span>
+
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Minimize/Maximize">
+                                <i class="fas fa-plus"></i>
                             </button>
                         </div>
                     </div>
@@ -276,9 +276,11 @@ switch ($unitAktif) {
                     if (canvasEl) {
                         const ctx = canvasEl.getContext('2d');
 
-                        // ==========================================
-                        // UPDATE: PEMECAHAN DATA UNTUK 16 PARAMETER
-                        // ==========================================
+                        // Jika Chart sudah pernah dibuat di kotak ini, hancurkan (destroy) dulu agar tidak tumpang tindih
+                        if (window.myCharts[indexId]) {
+                            window.myCharts[indexId].destroy();
+                        }
+
                         const fullLabels = result.labels;
                         const fullData = {
                             DE_H: result.dataDE_H || [],
@@ -319,32 +321,25 @@ switch ($unitAktif) {
                             return hiddenList.includes(fullName.toLowerCase()) || hiddenList.includes(shortName.toLowerCase());
                         }
 
-                        // ==========================================
-                        // UPDATE: 16 DATASETS DENGAN PALET WARNA BARU
-                        // ==========================================
                         const areaChartData = {
                             labels: fullLabels.slice(startInit, endInit),
                             datasets: [
-                                // VIBRASI DE (Blue Shades)
                                 { label: 'Vib DE (H)', borderColor: '#007bff', backgroundColor: 'rgba(0,123,255,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.DE_H.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib DE (H)', 'DE_H') },
                                 { label: 'Vib DE (V)', borderColor: '#17a2b8', backgroundColor: 'rgba(23,162,184,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.DE_V.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib DE (V)', 'DE_V') },
                                 { label: 'Vib DE (Ax)', borderColor: '#3498db', backgroundColor: 'rgba(52,152,219,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.DE_Ax.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib DE (Ax)', 'DE_Ax') },
                                 { label: 'Vib DE (gE)', borderColor: '#20c997', backgroundColor: 'rgba(32,201,151,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.DE_gE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib DE (gE)', 'DE_gE') },
 
-                                // VIBRASI NDE (Red/Pink Shades)
                                 { label: 'Vib NDE (H)', borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.NDE_H.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib NDE (H)', 'NDE_H') },
                                 { label: 'Vib NDE (V)', borderColor: '#e83e8c', backgroundColor: 'rgba(232,62,140,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.NDE_V.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib NDE (V)', 'NDE_V') },
                                 { label: 'Vib NDE (Ax)', borderColor: '#ff6b6b', backgroundColor: 'rgba(255,107,107,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.NDE_Ax.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib NDE (Ax)', 'NDE_Ax') },
                                 { label: 'Vib NDE (gE)', borderColor: '#fd7e14', backgroundColor: 'rgba(253,126,20,0.05)', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.NDE_gE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Vib NDE (gE)', 'NDE_gE') },
 
-                                // SUHU & BEBAN (Oranges & Purples)
                                 { label: 'Temp DE', borderColor: '#ffc107', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.TempDE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Temp DE', 'TempDE') },
                                 { label: 'Temp NDE', borderColor: '#ff851b', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.TempNDE.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Temp NDE', 'TempNDE') },
                                 { label: 'Suhu Ruang', borderColor: '#28a745', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Suhu.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Suhu Ruang', 'Suhu') },
                                 { label: 'Beban Gen', borderColor: '#6f42c1', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Beban.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Beban Gen', 'Beban') },
                                 { label: 'Damper', borderColor: '#3d9970', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.Damper.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Damper', 'Damper') },
 
-                                // LOAD CURRENT (Dark/Brown Shades)
                                 { label: 'Arus (R)', borderColor: '#8b0000', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.CurrR.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Arus (R)', 'CurrR') },
                                 { label: 'Arus (S)', borderColor: '#343a40', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.CurrS.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Arus (S)', 'CurrS') },
                                 { label: 'Arus (T)', borderColor: '#85144b', borderWidth: lineWidthDb, pointRadius: pointRadiusDb, data: fullData.CurrT.slice(startInit, endInit), fill: false, spanGaps: true, hidden: checkHidden('Arus (T)', 'CurrT') }
@@ -368,7 +363,7 @@ switch ($unitAktif) {
                                         const original = Chart.defaults.global.legend.labels.generateLabels;
                                         const labels = original.call(this, chart);
                                         labels.forEach(label => {
-                                            label.width = 110; // Dikecilkan agar muat banyak garis
+                                            label.width = 110;
                                             if (label.hidden) {
                                                 label.fillStyle = 'rgba(200, 200, 200, 0.4)';
                                                 label.strokeStyle = 'rgba(150, 150, 150, 0.4)';
@@ -425,7 +420,8 @@ switch ($unitAktif) {
                             animation: { duration: 0 }
                         };
 
-                        const myChart = new Chart(ctx, {
+                        // Simpan ke Object Global
+                        window.myCharts[indexId] = new Chart(ctx, {
                             type: 'line',
                             data: areaChartData,
                             options: lineChartOptions,
@@ -449,7 +445,6 @@ switch ($unitAktif) {
                                     if (!chart || !chart.ctx) return;
                                     const ctx = chart.ctx;
 
-                                    // 1. TAMPILKAN ANGKA DI ATAS TITIK
                                     const showDataLabels = document.getElementById(`toggle_datalabels_${indexId}`);
                                     if (showDataLabels && showDataLabels.checked) {
                                         ctx.save();
@@ -480,10 +475,8 @@ switch ($unitAktif) {
                                         ctx.restore();
                                     }
 
-                                    // 2. TAMPILKAN CROSSHAIR
                                     if (chart.tooltip && chart.tooltip._active && chart.tooltip._active.length && chart.customCrosshairY !== undefined) {
                                         const activePoints = chart.tooltip._active;
-
                                         if (!activePoints[0] || !activePoints[0]._model) return;
 
                                         const x = Math.round(activePoints[0]._model.x);
@@ -528,9 +521,8 @@ switch ($unitAktif) {
                             }]
                         });
 
-                        // ==========================================
-                        // FUNGSI UPDATE DATA 16 PARAMETER
-                        // ==========================================
+                        const myChart = window.myCharts[indexId]; // Referensi untuk update controls
+
                         function updateChartDataWindow() {
                             const start = currentIndex;
                             const limit = maxVisible === 'all' ? fullLabels.length : maxVisible;
@@ -587,10 +579,10 @@ switch ($unitAktif) {
 
                         updateChartDataWindow();
 
-                        // Event Listener Limit & Paging
+                        // Event Listener Limit & Paging (Dibuat .onchange / .onclick agar tidak double trigger)
                         const limitSelect = document.getElementById(`data_limit_${indexId}`);
                         if (limitSelect) {
-                            limitSelect.addEventListener('change', function () {
+                            limitSelect.onchange = function () {
                                 const val = this.value;
                                 if (val === 'all') {
                                     maxVisible = 'all';
@@ -600,34 +592,34 @@ switch ($unitAktif) {
                                     currentIndex = Math.max(0, fullLabels.length - maxVisible);
                                 }
                                 updateChartDataWindow();
-                            });
+                            };
                         }
 
                         const btnPrev = document.getElementById(`btn_prev_${indexId}`);
                         if (btnPrev) {
-                            btnPrev.addEventListener('click', () => {
+                            btnPrev.onclick = () => {
                                 if (maxVisible !== 'all') {
                                     currentIndex = Math.max(0, currentIndex - shiftStep);
                                     updateChartDataWindow();
                                 }
-                            });
+                            };
                         }
 
                         const btnNext = document.getElementById(`btn_next_${indexId}`);
                         if (btnNext) {
-                            btnNext.addEventListener('click', () => {
+                            btnNext.onclick = () => {
                                 if (maxVisible !== 'all') {
                                     currentIndex = Math.min(fullLabels.length - maxVisible, currentIndex + shiftStep);
                                     updateChartDataWindow();
                                 }
-                            });
+                            };
                         }
 
                         const tooltipCb = document.getElementById(`toggle_tooltip_${indexId}`);
-                        if (tooltipCb) tooltipCb.addEventListener('change', () => myChart.update(0));
+                        if (tooltipCb) tooltipCb.onchange = () => myChart.update(0);
 
                         const datalabelsCb = document.getElementById(`toggle_datalabels_${indexId}`);
-                        if (datalabelsCb) datalabelsCb.addEventListener('change', () => myChart.update(0));
+                        if (datalabelsCb) datalabelsCb.onchange = () => myChart.update(0);
                     }
                 } else {
                     if (loadingEl) {
@@ -645,8 +637,32 @@ switch ($unitAktif) {
             }
         }
 
-        listPeralatan.forEach(function (namaMotor, index) {
-            fetchAndRenderChart(namaMotor, index);
+        // =========================================================================
+        // JQUERY EVENT LISTENER: PENDETEKSI ANIMASI BUKA/TUTUP CARD
+        // =========================================================================
+        $(document).on('expanded.lte.cardwidget', '.card', function () {
+            let cardId = $(this).attr('id');
+            if (cardId && cardId.startsWith('card_')) {
+                let indexId = cardId.replace('card_', '');
+                let namaMotor = listPeralatan[indexId];
+
+                // Tampilkan Tombol & Checkbox
+                document.getElementById(`chart_tools_${indexId}`).style.display = 'inline-block';
+
+                // Tarik Data & Render Chart
+                fetchAndRenderChart(namaMotor, indexId);
+            }
         });
+
+        $(document).on('collapsed.lte.cardwidget', '.card', function () {
+            let cardId = $(this).attr('id');
+            if (cardId && cardId.startsWith('card_')) {
+                let indexId = cardId.replace('card_', '');
+
+                // Sembunyikan Tombol & Checkbox
+                document.getElementById(`chart_tools_${indexId}`).style.display = 'none';
+            }
+        });
+
     });
 </script>

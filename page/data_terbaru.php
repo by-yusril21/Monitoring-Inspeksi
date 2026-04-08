@@ -147,7 +147,7 @@ if ($hasil_settings) {
         if (u === 'D6KV') return 'PLTU UNIT D MOTOR 6kV';
         if (u === 'D380' || u === 'D380V') return 'PLTU UNIT D MOTOR 380V';
         if (u === 'UTILITY') return 'PLTU UNIT UTILITY';
-        return 'PLTU UNIT ' + unitKode; // Fallback jika kode tidak dikenal
+        return 'PLTU UNIT ' + unitKode;
     }
 
     // =========================================================================
@@ -158,7 +158,6 @@ if ($hasil_settings) {
         if (!table) return;
 
         const cloneTable = table.cloneNode(true);
-
         let tableHTML = cloneTable.outerHTML;
 
         const colWidths = [
@@ -207,7 +206,7 @@ if ($hasil_settings) {
     }
 
     // =========================================================================
-    // FUNGSI 2: EXPORT KE PDF DENGAN KOP SURAT & WATERMARK
+    // FUNGSI 2: EXPORT KE PDF
     // =========================================================================
     function exportToPDF(tableId, fileName, unitLengkap) {
         if (!window.jspdf || !window.jspdf.jsPDF) {
@@ -215,63 +214,49 @@ if ($hasil_settings) {
             return;
         }
 
-        // Setup PDF (A4 Landscape, satuan centimeter)
         const doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'cm', format: 'a4' });
-
         const table = document.getElementById(tableId);
         if (!table) return;
-
         const cloneTable = table.cloneNode(true);
 
-        // Ambil Data Kop Surat dari Span Tersembunyi
         let judul1Text = document.getElementById("judul-1-pdf").innerText.trim();
         let judul2Text = document.getElementById("judul-2-pdf").innerText.trim();
         let logoBase64 = document.getElementById("logo-base64-pdf").innerText.trim();
         let currentUser = document.getElementById("nama-user-login").innerText.trim();
 
-        // Buat String Waktu
         let today = new Date();
         let dateString = ("0" + today.getDate()).slice(-2) + "/" + ("0" + (today.getMonth() + 1)).slice(-2) + "/" + today.getFullYear();
         let timeString = ("0" + today.getHours()).slice(-2) + ":" + ("0" + today.getMinutes()).slice(-2) + ":" + ("0" + today.getSeconds()).slice(-2);
         let infoString = "Tanggal unduh data : " + dateString + " " + timeString + " | Oleh : " + currentUser;
-
-        // UPDATE: Subjudul PDF menggunakan nama unit yang sudah diformat lengkap
         let subHeaderString = "UNIT : " + unitLengkap;
 
-        // 1. Tulis Judul 1
         doc.setFontSize(10);
         doc.setFont("helvetica", "bold");
         doc.text(judul1Text, 0.5, 1.0);
 
-        // 2. Tulis Judul 2
         doc.setFontSize(9);
         doc.text(judul2Text, 0.5, 1.4);
 
-        // 3. Tulis Info Waktu
         doc.setFontSize(8);
         doc.setFont("helvetica", "normal");
         doc.text(infoString, 0.5, 1.8);
 
-        // 4. Masukkan Logo Header Kanan Atas
         if (logoBase64 && logoBase64.indexOf("data:image") === 0) {
             doc.addImage(logoBase64, 'PNG', 27.5, 0.3, 1.6, 1.6);
         }
 
-        // 5. Buat Garis Pembatas (Warna Emas)
         doc.setLineWidth(0.05);
         doc.setDrawColor(205, 164, 52);
-        doc.line(0.5, 2.1, 29.2, 2.1); // Garis horizontal sepanjang kertas di Y=2.1cm
+        doc.line(0.5, 2.1, 29.2, 2.1);
 
-        // 6. Subjudul Unit (Menggunakan nama unit panjang)
         doc.setFontSize(8);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(85, 85, 85);
         doc.text(subHeaderString, 0.5, 2.5);
 
-        // 7. Render Tabel AutoTable
         doc.autoTable({
             html: cloneTable,
-            startY: 2.7, // Mulai menggambar tabel di Y = 2.7cm (di bawah area Kop Surat)
+            startY: 2.7,
             margin: { top: 1, right: 0.5, bottom: 1, left: 0.5 },
             styles: {
                 fontSize: 4,
@@ -289,40 +274,16 @@ if ($hasil_settings) {
                 fontStyle: 'bold',
                 fontSize: 4
             },
-            // MENGUNCI LEBAR KOLOM
             columnStyles: {
-                0: { cellWidth: 2.4 },  // Motor
-                1: { cellWidth: 1.2 },  // Date
-                2: { cellWidth: 2 },    // Update By
-                3: { cellWidth: 1.2 },  // Aksi
-                4: { cellWidth: 1.1 },  // Section No
-                5: { cellWidth: 0.5 },  // Vib DE H
-                6: { cellWidth: 0.5 },  // Vib DE V
-                7: { cellWidth: 0.5 },  // Vib DE Ax
-                8: { cellWidth: 0.5 },  // Vib DE gE
-                9: { cellWidth: 0.5 },  // Vib NDE H
-                10: { cellWidth: 0.5 }, // Vib NDE V
-                11: { cellWidth: 0.5 }, // Vib NDE Ax
-                12: { cellWidth: 0.5 }, // Vib NDE gE
-                13: { cellWidth: 0.5 }, // Temp DE
-                14: { cellWidth: 0.5 }, // Temp NDE
-                15: { cellWidth: 0.7 }, // Temp Ruang
-                16: { cellWidth: 0.5 }, // Arus R
-                17: { cellWidth: 0.5 }, // Arus S
-                18: { cellWidth: 0.5 }, // Arus T
-                19: { cellWidth: 1 },   // Beban Gen
-                20: { cellWidth: 1 },   // Damper
-                21: { cellWidth: 1 },   // Bunyi
-                22: { cellWidth: 1 },   // Panel
-                23: { cellWidth: 1.2 }, // Lengkap
-                24: { cellWidth: 1 },   // Bersih
-                25: { cellWidth: 1 },   // Grounding
-                26: { cellWidth: 1 },   // Regreasing
-                27: { cellWidth: 5.5 }  // Action
+                0: { cellWidth: 2.4 }, 1: { cellWidth: 1.2 }, 2: { cellWidth: 2 }, 3: { cellWidth: 1.2 },
+                4: { cellWidth: 1.1 }, 5: { cellWidth: 0.5 }, 6: { cellWidth: 0.5 }, 7: { cellWidth: 0.5 },
+                8: { cellWidth: 0.5 }, 9: { cellWidth: 0.5 }, 10: { cellWidth: 0.5 }, 11: { cellWidth: 0.5 },
+                12: { cellWidth: 0.5 }, 13: { cellWidth: 0.5 }, 14: { cellWidth: 0.5 }, 15: { cellWidth: 0.7 },
+                16: { cellWidth: 0.5 }, 17: { cellWidth: 0.5 }, 18: { cellWidth: 0.5 }, 19: { cellWidth: 1 },
+                20: { cellWidth: 1 }, 21: { cellWidth: 1 }, 22: { cellWidth: 1 }, 23: { cellWidth: 1.2 },
+                24: { cellWidth: 1 }, 25: { cellWidth: 1 }, 26: { cellWidth: 1 }, 27: { cellWidth: 5.5 }
             },
             theme: 'grid',
-
-            // 8. HOOK UNTUK WATERMARK (Digambar pada setiap halaman)
             didDrawPage: function (data) {
                 if (logoBase64 && logoBase64.indexOf("data:image") === 0) {
                     doc.setGState(new doc.GState({ opacity: 0.1 }));
@@ -336,7 +297,162 @@ if ($hasil_settings) {
     }
 
     // =========================================================================
-    // EVENT LISTENER UTAMA (RENDER TABLE & FETCH API)
+    // FUNGSI UTAMA FETCH API DATA
+    // =========================================================================
+    async function fetchUnitData(unit) {
+        const loadingEl = document.getElementById(`loading_${unit}`);
+
+        // Tampilkan efek loading saat data ditarik
+        if (loadingEl) {
+            loadingEl.classList.remove('d-none');
+            loadingEl.classList.add('d-flex');
+        }
+
+        try {
+            const targetUrl = `api/fetch_latest_data.php?unit=${unit}`;
+            const response = await fetch(targetUrl);
+            const result = await response.json();
+
+            // Sembunyikan loading setelah data diterima
+            if (loadingEl) {
+                loadingEl.classList.remove('d-flex');
+                loadingEl.classList.add('d-none');
+            }
+
+            if (result.status === 'success') {
+                const dataArray = result.data;
+                const listMotor = window.dataMotor[unit];
+
+                listMotor.forEach(motorName => {
+                    const safeId = motorName.replace(/[^a-zA-Z0-9]/g, '_');
+                    const rowElement = document.getElementById(`row_${unit}_${safeId}`);
+
+                    const motorData = dataArray.find(item => item['NAMA MOTOR'] === motorName);
+
+                    if (motorData && rowElement) {
+                        const waktu = motorData['TIMESTAMP'] || '-';
+                        const email = motorData['EMAIL ADDRESS'] || '-';
+                        const status = motorData['STATUS'] || '-';
+                        const section = motorData['SECTION NO'] || '-';
+
+                        const vibDE_H = motorData['VIB DE H'] || '-';
+                        const vibDE_V = motorData['VIB DE V'] || '-';
+                        const vibDE_Ax = motorData['VIB DE Ax'] || motorData['VIB DE AX'] || '-';
+                        const vibDE_gE = motorData['VIB DE gE'] || motorData['VIB DE GE'] || '-';
+
+                        const vibNDE_H = motorData['VIB NDE H'] || '-';
+                        const vibNDE_V = motorData['VIB NDE V'] || '-';
+                        const vibNDE_Ax = motorData['VIB NDE Ax'] || motorData['VIB NDE AX'] || '-';
+                        const vibNDE_gE = motorData['VIB NDE gE'] || motorData['VIB NDE GE'] || '-';
+
+                        const tempDE = motorData['TEMP DE (°C)'] || '-';
+                        const tempNDE = motorData['TEMP NDE (°C)'] || '-';
+                        const suhuRuang = motorData['SUHU RUANG/VENTILASI'] || '-';
+
+                        const arusR = motorData['ARUS R'] || '-';
+                        const arusS = motorData['ARUS S'] || '-';
+                        const arusT = motorData['ARUS T'] || '-';
+
+                        const beban = motorData['BEBAN GEN'] || '-';
+                        const damper = motorData['DAMPER (%)'] || '-';
+
+                        const regreasing = motorData['REGREASING'] || '-';
+                        const actions = motorData['ACTIONS'] || '-';
+
+                        const formatCond = (val) => {
+                            if (!val || val === '-') return '-';
+                            const v = val.toUpperCase();
+                            if (v === 'GOOD') return `<span class="text-success font-weight-bold">${val}</span>`;
+                            if (v === 'FAIR') return `<span class="text-warning font-weight-bold">${val}</span>`;
+                            if (v === 'POOR') return `<span class="text-danger font-weight-bold">${val}</span>`;
+                            return val;
+                        };
+
+                        const bunyi = formatCond(motorData['BUNYI BEARING'] || '-');
+                        const panel = formatCond(motorData['PANEL LOKAL'] || '-');
+                        const kelengkapan = formatCond(motorData['KELENGKAPAN'] || '-');
+                        const kebersihan = formatCond(motorData['KEBERSIHAN'] || '-');
+                        const grounding = formatCond(motorData['GROUNDING'] || '-');
+
+                        let badgeStatus = `<span>${status}</span>`;
+                        const statusUpper = status.toUpperCase();
+                        if (statusUpper.includes('NORMAL')) badgeStatus = `<span class="text-success font-weight-bold">${status}</span>`;
+                        else if (statusUpper.includes('WARNING')) badgeStatus = `<span class="text-warning font-weight-bold">${status}</span>`;
+                        else if (statusUpper.includes('DANGER') || statusUpper.includes('ALARM')) badgeStatus = `<span class="text-danger font-weight-bold">${status}</span>`;
+
+                        rowElement.innerHTML = `
+                            <td class="font-weight-bold text-dark sticky-motor text-left-custom">${motorName}</td>
+                            <td class="text-muted">${waktu}</td>
+                            <td>${email}</td>
+                            <td>${badgeStatus}</td>
+                            <td>${section}</td>
+                            
+                            <td>${vibDE_H}</td>
+                            <td>${vibDE_V}</td>
+                            <td>${vibDE_Ax}</td>
+                            <td>${vibDE_gE}</td>
+                            
+                            <td>${vibNDE_H}</td>
+                            <td>${vibNDE_V}</td>
+                            <td>${vibNDE_Ax}</td>
+                            <td>${vibNDE_gE}</td>
+                            
+                            <td>${tempDE}</td>
+                            <td>${tempNDE}</td>
+                            <td>${suhuRuang}</td>
+                            
+                            <td>${arusR}</td>
+                            <td>${arusS}</td>
+                            <td>${arusT}</td>
+
+                            <td>${beban}</td>
+                            <td>${damper}</td>
+                            
+                            <td>${bunyi}</td>
+                            <td>${panel}</td>
+                            <td>${kelengkapan}</td>
+                            <td>${kebersihan}</td>
+                            <td>${grounding}</td>
+                            <td><span class="border rounded px-2 py-1 bg-light">${regreasing}</span></td>
+                            <td class="text-left-custom col-action" style="white-space: normal; min-width: 250px;">${actions}</td>
+                        `;
+                    } else if (!motorData && rowElement) {
+                        rowElement.innerHTML = `
+                            <td class="font-weight-bold text-muted sticky-motor text-left-custom">${motorName}</td>
+                            <td colspan="27" class="text-center text-warning text-sm">
+                                <i class="fas fa-info-circle mr-1"></i> Belum ada riwayat pengukuran
+                            </td>
+                        `;
+                    }
+                });
+
+            } else if (result.status === 'empty') {
+                const tbody = document.getElementById(`tbody_${unit}`);
+                if (tbody) {
+                    tbody.innerHTML = `<tr><td colspan="28" class="text-center text-muted py-4"><i class="fas fa-folder-open fa-2x mb-2"></i><br>Database Master untuk unit ini masih kosong.</td></tr>`;
+                }
+            } else {
+                const tbody = document.getElementById(`tbody_${unit}`);
+                if (tbody) {
+                    tbody.innerHTML = `<tr><td colspan="28" class="text-center text-danger py-4"><i class="fas fa-exclamation-circle fa-2x mb-2"></i><br>Gagal memuat: ${result.message}</td></tr>`;
+                }
+            }
+
+        } catch (error) {
+            console.error(`Error fetch Unit ${unit}:`, error);
+            if (loadingEl) {
+                loadingEl.classList.remove('d-flex');
+                loadingEl.classList.add('d-none');
+            }
+            const tbody = document.getElementById(`tbody_${unit}`);
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="28" class="text-center text-danger py-4"><i class="fas fa-wifi fa-2x mb-2"></i><br>Gagal terhubung ke server/API.</td></tr>`;
+            }
+        }
+    }
+
+    // =========================================================================
+    // EVENT LISTENER UTAMA 
     // =========================================================================
     document.addEventListener("DOMContentLoaded", function () {
 
@@ -350,32 +466,34 @@ if ($hasil_settings) {
         const container = document.getElementById('rekap-container');
         container.innerHTML = "";
 
-        // 1. GENERATE TABEL KOSONG UNTUK SETIAP UNIT
+        // 1. GENERATE TABEL KOSONG (KONDISI AWAL TERTUTUP/COLLAPSED)
         units.forEach(unit => {
             const listMotor = window.dataMotor[unit];
             if (listMotor.length === 0) return;
 
-            // UPDATE: Dapatkan nama unit lengkap
             const formatUnitLengkap = formatUnitName(unit);
 
             let cardHTML = `
-            <div class="card card-outline card-info mb-4 shadow-sm" style="border-radius: 10px; overflow: hidden;">
+            <div class="card card-outline card-info mb-4 shadow-sm collapsed-card" id="card_${unit}" style="border-radius: 10px; overflow: hidden;">
                 <div class="card-header bg-white pt-3 pb-2">
                     <h3 class="card-title font-weight-bold text-dark" style="font-size: 1.1rem;">
                         <i class="fas fa-server text-info mr-2"></i> ${formatUnitLengkap}
                     </h3>
                     <div class="card-tools">
                         
-                        <button type="button" class="btn btn-success btn-sm mr-1 shadow-sm" onclick="exportToExcel('table_${unit}', 'Data_Terbaru_Unit_${unit}')">
-                            <i class="fas fa-file-excel mr-1"></i> Excel
-                        </button>
-                        
-                        <button type="button" class="btn btn-danger btn-sm mr-3 shadow-sm" onclick="exportToPDF('table_${unit}', 'Data_Terbaru_Unit_${unit}', '${formatUnitLengkap}')">
-                            <i class="fas fa-file-pdf mr-1"></i> PDF
-                        </button>
+                        <span id="export_btns_${unit}" style="display: none;">
+                            <button type="button" class="btn btn-success btn-sm mr-1 shadow-sm" onclick="exportToExcel('table_${unit}', 'Data_Terbaru_Unit_${unit}')">
+                                <i class="fas fa-file-excel mr-1"></i> Excel
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm mr-3 shadow-sm" onclick="exportToPDF('table_${unit}', 'Data_Terbaru_Unit_${unit}', '${formatUnitLengkap}')">
+                                <i class="fas fa-file-pdf mr-1"></i> PDF
+                            </button>
+                        </span>
 
-                        <span class="badge badge-info mr-2"><i class="fas fa-arrows-alt-h mr-1"></i> Geser ke kanan</span>
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                        <span class="badge badge-info mr-2">View</span>
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-plus"></i>
+                        </button>
                     </div>
                 </div>
                 
@@ -399,10 +517,10 @@ if ($hasil_settings) {
                                     
                                     <th rowspan="3" style="min-width: 80px;">Bunyi<br>Motor</th>
                                     <th rowspan="3" style="min-width: 80px;">Kondisi<br>Panel</th>
-                                    <th rowspan="3" style="min-width: 80px;">Kelengkapan<br>Motor</th>
-                                    <th rowspan="3" style="min-width: 80px;">Kebersihan<br>Motor</th>
-                                    <th rowspan="3" style="min-width: 80px;">Grounding<br>Motor</th>
-                                    <th rowspan="3" style="min-width: 80px;">Regreasing<br>Bearing</th>
+                                    <th rowspan="3" style="min-width: 80px;">Kelengkapan</th>
+                                    <th rowspan="3" style="min-width: 80px;">Kebersihan</th>
+                                    <th rowspan="3" style="min-width: 80px;">Grounding</th>
+                                    <th rowspan="3" style="min-width: 80px;">Regreasing</th>
                                     
                                     <th rowspan="3" style="min-width: 350px;" class="text-left-custom col-action">Action</th>
                                 </tr>
@@ -440,7 +558,7 @@ if ($hasil_settings) {
                                 <tr id="row_${unit}_${safeId}">
                                     <td class="font-weight-bold text-dark sticky-motor text-left-custom">${motor}</td>
                                     <td colspan="27" class="text-muted text-center">
-                                        <i class="fas fa-ellipsis-h text-black-50"></i> Menunggu sinkronisasi...
+                                        <i class="fas fa-ellipsis-h text-black-50"></i> Menunggu instruksi...
                                     </td>
                                 </tr>`;
             });
@@ -451,7 +569,7 @@ if ($hasil_settings) {
                     </div>
                 </div>
                 
-                <div class="overlay" id="loading_${unit}" style="flex-direction: column; background-color: rgba(255,255,255,0.85);">
+                <div class="overlay d-none" id="loading_${unit}" style="flex-direction: column; background-color: rgba(255,255,255,0.85);">
                     <i class="fas fa-sync-alt fa-spin fa-3x text-info"></i>
                     <div class="mt-3 text-info font-weight-bold" style="letter-spacing: 1px;">Mengambil Data...</div>
                 </div>
@@ -461,157 +579,44 @@ if ($hasil_settings) {
             container.innerHTML += cardHTML;
         });
 
-        async function fetchUnitData(unit) {
-            const loadingEl = document.getElementById(`loading_${unit}`);
+        // =========================================================================
+        // JQUERY EVENT LISTENER: PENDETEKSI ANIMASI ADMINLTE
+        // =========================================================================
+        // Event dipicu TEPAT setelah kotak selesai terbuka 100%
+        $(document).on('expanded.lte.cardwidget', '.card', function () {
+            let cardId = $(this).attr('id');
+            if (cardId && cardId.startsWith('card_')) {
+                let unit = cardId.replace('card_', '');
 
-            try {
-                const targetUrl = `api/fetch_latest_data.php?unit=${unit}`;
-                const response = await fetch(targetUrl);
-                const result = await response.json();
+                // 1. Tampilkan Tombol Export
+                document.getElementById(`export_btns_${unit}`).style.display = 'inline-block';
 
-                if (loadingEl) {
-                    loadingEl.classList.add('d-none');
-                }
-
-                if (result.status === 'success') {
-                    const dataArray = result.data;
-                    const listMotor = window.dataMotor[unit];
-
-                    listMotor.forEach(motorName => {
-                        const safeId = motorName.replace(/[^a-zA-Z0-9]/g, '_');
-                        const rowElement = document.getElementById(`row_${unit}_${safeId}`);
-
-                        const motorData = dataArray.find(item => item['NAMA MOTOR'] === motorName);
-
-                        if (motorData && rowElement) {
-                            const waktu = motorData['TIMESTAMP'] || '-';
-                            const email = motorData['EMAIL ADDRESS'] || '-';
-                            const status = motorData['STATUS'] || '-';
-                            const section = motorData['SECTION NO'] || '-';
-
-                            const vibDE_H = motorData['VIB DE H'] || '-';
-                            const vibDE_V = motorData['VIB DE V'] || '-';
-                            const vibDE_Ax = motorData['VIB DE Ax'] || motorData['VIB DE AX'] || '-';
-                            const vibDE_gE = motorData['VIB DE gE'] || motorData['VIB DE GE'] || '-';
-
-                            const vibNDE_H = motorData['VIB NDE H'] || '-';
-                            const vibNDE_V = motorData['VIB NDE V'] || '-';
-                            const vibNDE_Ax = motorData['VIB NDE Ax'] || motorData['VIB NDE AX'] || '-';
-                            const vibNDE_gE = motorData['VIB NDE gE'] || motorData['VIB NDE GE'] || '-';
-
-                            const tempDE = motorData['TEMP DE (°C)'] || '-';
-                            const tempNDE = motorData['TEMP NDE (°C)'] || '-';
-                            const suhuRuang = motorData['SUHU RUANG/VENTILASI'] || '-';
-
-                            const arusR = motorData['ARUS R'] || '-';
-                            const arusS = motorData['ARUS S'] || '-';
-                            const arusT = motorData['ARUS T'] || '-';
-
-                            const beban = motorData['BEBAN GEN'] || '-';
-                            const damper = motorData['DAMPER (%)'] || '-';
-
-                            const regreasing = motorData['REGREASING'] || '-';
-                            const actions = motorData['ACTIONS'] || '-';
-
-                            const formatCond = (val) => {
-                                if (!val || val === '-') return '-';
-                                const v = val.toUpperCase();
-                                if (v === 'GOOD') return `<span class="text-success font-weight-bold">${val}</span>`;
-                                if (v === 'FAIR') return `<span class="text-warning font-weight-bold">${val}</span>`;
-                                if (v === 'POOR') return `<span class="text-danger font-weight-bold">${val}</span>`;
-                                return val;
-                            };
-
-                            const bunyi = formatCond(motorData['BUNYI BEARING'] || '-');
-                            const panel = formatCond(motorData['PANEL LOKAL'] || '-');
-                            const kelengkapan = formatCond(motorData['KELENGKAPAN'] || '-');
-                            const kebersihan = formatCond(motorData['KEBERSIHAN'] || '-');
-                            const grounding = formatCond(motorData['GROUNDING'] || '-');
-
-                            let badgeStatus = `<span>${status}</span>`;
-                            const statusUpper = status.toUpperCase();
-                            if (statusUpper.includes('NORMAL')) badgeStatus = `<span class="text-success font-weight-bold">${status}</span>`;
-                            else if (statusUpper.includes('WARNING')) badgeStatus = `<span class="text-warning font-weight-bold">${status}</span>`;
-                            else if (statusUpper.includes('DANGER') || statusUpper.includes('ALARM')) badgeStatus = `<span class="text-danger font-weight-bold">${status}</span>`;
-
-                            rowElement.innerHTML = `
-                                <td class="font-weight-bold text-dark sticky-motor text-left-custom">${motorName}</td>
-                                <td class="text-muted">${waktu}</td>
-                                <td>${email}</td>
-                                <td>${badgeStatus}</td>
-                                <td>${section}</td>
-                                
-                                <td>${vibDE_H}</td>
-                                <td>${vibDE_V}</td>
-                                <td>${vibDE_Ax}</td>
-                                <td>${vibDE_gE}</td>
-                                
-                                <td>${vibNDE_H}</td>
-                                <td>${vibNDE_V}</td>
-                                <td>${vibNDE_Ax}</td>
-                                <td>${vibNDE_gE}</td>
-                                
-                                <td>${tempDE}</td>
-                                <td>${tempNDE}</td>
-                                <td>${suhuRuang}</td>
-                                
-                                <td>${arusR}</td>
-                                <td>${arusS}</td>
-                                <td>${arusT}</td>
-
-                                <td>${beban}</td>
-                                <td>${damper}</td>
-                                
-                                <td>${bunyi}</td>
-                                <td>${panel}</td>
-                                <td>${kelengkapan}</td>
-                                <td>${kebersihan}</td>
-                                <td>${grounding}</td>
-                                <td><span class="border rounded px-2 py-1 bg-light">${regreasing}</span></td>
-                                <td class="text-left-custom col-action" style="white-space: normal; min-width: 250px;">${actions}</td>
-                            `;
-                        } else if (!motorData && rowElement) {
-                            rowElement.innerHTML = `
-                                <td class="font-weight-bold text-muted sticky-motor text-left-custom">${motorName}</td>
-                                <td colspan="27" class="text-center text-warning text-sm">
-                                    <i class="fas fa-info-circle mr-1"></i> Belum ada riwayat pengukuran
-                                </td>
-                            `;
-                        }
-                    });
-
-                } else if (result.status === 'empty') {
-                    const tbody = document.getElementById(`tbody_${unit}`);
-                    if (tbody) {
-                        tbody.innerHTML = `<tr><td colspan="28" class="text-center text-muted py-4"><i class="fas fa-folder-open fa-2x mb-2"></i><br>Database Master untuk unit ini masih kosong.</td></tr>`;
-                    }
-                } else {
-                    const tbody = document.getElementById(`tbody_${unit}`);
-                    if (tbody) {
-                        tbody.innerHTML = `<tr><td colspan="28" class="text-center text-danger py-4"><i class="fas fa-exclamation-circle fa-2x mb-2"></i><br>Gagal memuat: ${result.message}</td></tr>`;
-                    }
-                }
-
-            } catch (error) {
-                console.error(`Error fetch Unit ${unit}:`, error);
-                if (loadingEl) {
-                    loadingEl.classList.add('d-none');
-                }
-                const tbody = document.getElementById(`tbody_${unit}`);
-                if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="28" class="text-center text-danger py-4"><i class="fas fa-wifi fa-2x mb-2"></i><br>Gagal terhubung ke server/API.</td></tr>`;
-                }
+                // 2. Langsung Tarik Data dari API
+                fetchUnitData(unit);
             }
-        }
-
-        units.forEach(unit => {
-            fetchUnitData(unit);
         });
 
+        // Event dipicu TEPAT setelah kotak selesai tertutup 100%
+        $(document).on('collapsed.lte.cardwidget', '.card', function () {
+            let cardId = $(this).attr('id');
+            if (cardId && cardId.startsWith('card_')) {
+                let unit = cardId.replace('card_', '');
+
+                // Sembunyikan Tombol Export agar UI bersih
+                document.getElementById(`export_btns_${unit}`).style.display = 'none';
+            }
+        });
+
+        // =========================================================================
+        // INTERVAL AUTO-REFRESH (Hanya untuk Card yang sedang Terbuka)
+        // =========================================================================
         setInterval(() => {
-            console.log("Melakukan auto-refresh data...");
             units.forEach(unit => {
-                fetchUnitData(unit);
+                const card = document.getElementById(`card_${unit}`);
+                // Hanya memakan bandwidth server API jika kotak sedang dipantau User
+                if (card && !card.classList.contains('collapsed-card')) {
+                    fetchUnitData(unit);
+                }
             });
         }, 300000);
 
