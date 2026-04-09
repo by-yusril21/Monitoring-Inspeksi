@@ -57,7 +57,6 @@ if (isset($_GET['page']) && file_exists(filename: "page/" . $_GET['page'] . ".ph
 <script src="dist/js/gauge-motor.js"></script>
 <script src="dist/js/termometer-motor.js"></script>
 <script src="dist/js/kondisi-motor.js"></script>
-<script src="dist/js/regreasing-motor.js"></script>
 <script src="dist/js/navbar.js"></script>
 <script src="dist/js/action-motor.js"></script>
 <script src="dist/js/jadwal-regreasing.js"></script>

@@ -4,14 +4,16 @@
 function exportToExcel(tableID, filename = "") {
   const tableSelect = document.getElementById(tableID);
   if (!tableSelect) {
-      alert("Tabel tidak ditemukan!");
-      return;
+    alert("Tabel tidak ditemukan!");
+    return;
   }
 
   // Membuat format tanggal YYYY-MM-DD untuk nama file
   const today = new Date();
-  const dateStr = today.toISOString().split('T')[0];
-  const finalFilename = filename ? `${filename}_${dateStr}.xls` : `Data_Regreasing_${dateStr}.xls`;
+  const dateStr = today.toISOString().split("T")[0];
+  const finalFilename = filename
+    ? `${filename}_${dateStr}.xls`
+    : `Data_Regreasing_${dateStr}.xls`;
 
   const html = `
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
@@ -43,7 +45,6 @@ function exportToExcel(tableID, filename = "") {
 // Fungsi Tarik Data dari PROXY SERVER
 // =========================================================================
 document.addEventListener("DOMContentLoaded", function () {
-  
   async function loadDataMotor(kodeUnit, tableId) {
     // Safety check: Pastikan tabel ada di halaman
     const tableEl = document.getElementById(tableId);
@@ -60,7 +61,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const dataRekap = await response.json();
 
       if (dataRekap.error || dataRekap.status === "error") {
-        throw new Error(dataRekap.message || dataRekap.error || "Gagal memuat data dari server proxy");
+        throw new Error(
+          dataRekap.message ||
+            dataRekap.error ||
+            "Gagal memuat data dari server proxy",
+        );
       }
 
       const dataMotorMap = {};
@@ -115,9 +120,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
     } catch (error) {
-      console.error(`Error saat memproses data regreasing untuk ${tableId}:`, error);
+      console.error(
+        `Error saat memproses data regreasing untuk ${tableId}:`,
+        error,
+      );
       tableRows.forEach((tr) => {
-        tr.querySelector(".terakhir-regreasing").innerHTML = `<span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Gagal memuat</span>`;
+        tr.querySelector(".terakhir-regreasing").innerHTML =
+          `<span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Gagal memuat</span>`;
         tr.querySelector(".jadwal-selanjutnya").innerHTML = "-";
         tr.querySelector(".sisa-waktu").innerHTML = "-";
         tr.querySelector(".status-updater").innerHTML = "-";
