@@ -11,7 +11,9 @@ $dataMotor = [
   'C380' => [],
   'D6KV' => [],
   'D380' => [],
-  'UTILITY' => []
+  'UTILITY6KV' => [],
+  'UTILITY380' => []
+
 ];
 
 // Ambil data dari database
@@ -34,8 +36,10 @@ if ($result) {
       $dataMotor['D6KV'] = array_values($list_array);
     if ($row['setting_key'] == 'motor_list_d380')
       $dataMotor['D380'] = array_values($list_array);
-    if ($row['setting_key'] == 'motor_list_utility')
-      $dataMotor['UTILITY'] = array_values($list_array);
+    if ($row['setting_key'] == 'motor_list_utility6kv')
+      $dataMotor['UTILITY6KV'] = array_values($list_array);
+    if ($row['setting_key'] == 'motor_list_utility380')
+      $dataMotor['UTILITY380'] = array_values($list_array);
   }
 }
 

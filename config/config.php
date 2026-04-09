@@ -12,7 +12,9 @@ $SCRIPT_URLS = [
     "C380" => "",
     "D6KV" => "",
     "D380" => "",
-    "UTILITY" => ""
+    "UTILITY6KV" => "",
+    "UTILITY380" => ""
+
 ];
 
 // 3. Ambil konfigurasi API dari tabel settings
@@ -35,8 +37,10 @@ if (isset($conn)) {
                 $SCRIPT_URLS['D6KV'] = $val;
             } else if ($key == 'script_url_d380') {
                 $SCRIPT_URLS['D380'] = $val;
-            } else if ($key == 'script_url_utility') {
-                $SCRIPT_URLS['UTILITY'] = $val;
+            } else if ($key == 'script_url_utility6kv') {
+                $SCRIPT_URLS['UTILITY6KV'] = $val;
+            } else if ($key == 'script_url_utility380') {
+                $SCRIPT_URLS['UTILITY380'] = $val;
             }
         }
     }

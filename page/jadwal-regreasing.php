@@ -6,11 +6,15 @@ if (session_status() == PHP_SESSION_NONE) {
 // 1. Panggil koneksi database
 require 'config/database.php';
 
-// 2. Siapkan variabel array kosong dengan nama yang baru (Sesuai permintaan Anda)
+// 2. Siapkan variabel array kosong dengan nama yang baru
 $pltu_unit_c_motor_6kv = [];
 $pltu_unit_c_motor_380v = [];
 $pltu_unit_d_motor_6kv = [];
 $pltu_unit_d_motor_380v = [];
+
+// TAMBAHAN BARU: Variabel penampung untuk Unit Utility
+$pltu_unit_utility_motor_6kv = [];
+$pltu_unit_utility_motor_380v = [];
 
 // 3. Ambil data HANYA yang dicentang di Filter Regreasing
 $query = "SELECT setting_key, setting_value FROM settings WHERE setting_key LIKE 'regreasing_filter_%'";
@@ -26,6 +30,10 @@ if ($result) {
         if ($row['setting_key'] == 'regreasing_filter_c380') $pltu_unit_c_motor_380v = array_values($list_array);
         if ($row['setting_key'] == 'regreasing_filter_d6kv') $pltu_unit_d_motor_6kv = array_values($list_array);
         if ($row['setting_key'] == 'regreasing_filter_d380') $pltu_unit_d_motor_380v = array_values($list_array);
+        
+        // TAMBAHAN BARU: Membaca kunci filter untuk Unit Utility
+        if ($row['setting_key'] == 'regreasing_filter_utility6kv') $pltu_unit_utility_motor_6kv = array_values($list_array);
+        if ($row['setting_key'] == 'regreasing_filter_utility380') $pltu_unit_utility_motor_380v = array_values($list_array);
     }
 }
 ?>
@@ -64,8 +72,8 @@ if ($result) {
                                     <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-info-circle mb-2 fa-2x text-lightblue"></i><br>Belum ada motor yang dijadwalkan.<br>Silakan centang motor di menu <b>Settings > Filter Jadwal Regreasing</b>.</td></tr>
                                 <?php } else { ?>
                                     <?php foreach ($pltu_unit_c_motor_6kv as $motor): ?>
-                                        <tr class="data-row" data-motor="<?php echo $motor; ?>">
-                                            <td><b><?php echo $motor; ?></b></td>
+                                        <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
+                                            <td><b><?php echo htmlspecialchars($motor); ?></b></td>
                                             <td class="status-updater">--</td>
                                             <td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td>
                                             <td class="jadwal-selanjutnya">--</td>
@@ -109,8 +117,8 @@ if ($result) {
                                     <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-info-circle mb-2 fa-2x text-lightblue"></i><br>Belum ada motor yang dijadwalkan.<br>Silakan centang motor di menu <b>Settings > Filter Jadwal Regreasing</b>.</td></tr>
                                 <?php } else { ?>
                                     <?php foreach ($pltu_unit_d_motor_6kv as $motor): ?>
-                                        <tr class="data-row" data-motor="<?php echo $motor; ?>">
-                                            <td><b><?php echo $motor; ?></b></td>
+                                        <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
+                                            <td><b><?php echo htmlspecialchars($motor); ?></b></td>
                                             <td class="status-updater">--</td>
                                             <td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td>
                                             <td class="jadwal-selanjutnya">--</td>
@@ -154,8 +162,8 @@ if ($result) {
                                     <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-info-circle mb-2 fa-2x text-lightblue"></i><br>Belum ada motor yang dijadwalkan.<br>Silakan centang motor di menu <b>Settings > Filter Jadwal Regreasing</b>.</td></tr>
                                 <?php } else { ?>
                                     <?php foreach ($pltu_unit_c_motor_380v as $motor): ?>
-                                        <tr class="data-row" data-motor="<?php echo $motor; ?>">
-                                            <td><b><?php echo $motor; ?></b></td>
+                                        <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
+                                            <td><b><?php echo htmlspecialchars($motor); ?></b></td>
                                             <td class="status-updater">--</td>
                                             <td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td>
                                             <td class="jadwal-selanjutnya">--</td>
@@ -199,8 +207,98 @@ if ($result) {
                                     <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-info-circle mb-2 fa-2x text-lightblue"></i><br>Belum ada motor yang dijadwalkan.<br>Silakan centang motor di menu <b>Settings > Filter Jadwal Regreasing</b>.</td></tr>
                                 <?php } else { ?>
                                     <?php foreach ($pltu_unit_d_motor_380v as $motor): ?>
-                                        <tr class="data-row" data-motor="<?php echo $motor; ?>">
-                                            <td><b><?php echo $motor; ?></b></td>
+                                        <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
+                                            <td><b><?php echo htmlspecialchars($motor); ?></b></td>
+                                            <td class="status-updater">--</td>
+                                            <td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td>
+                                            <td class="jadwal-selanjutnya">--</td>
+                                            <td class="sisa-waktu">--</td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-outline card-info">
+                <div class="card-header">
+                    <h3 class="card-title"><b>PLTU UNIT UTILITY - MOTOR 6kV</b></h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-success btn-sm mr-2"
+                            onclick="exportToExcel('table-unit-utility-6kv', 'Jadwal_Regreasing_Unit_Utility_6KV')">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover table-bordered m-0 table-jadwal" id="table-unit-utility-6kv">
+                            <thead>
+                                <tr>
+                                    <th>NAMA MOTOR</th>
+                                    <th>UPDATED BY</th>
+                                    <th>TERAKHIR REGREASING</th>
+                                    <th>JADWAL SELANJUTNYA</th>
+                                    <th>SISA WAKTU</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (empty($pltu_unit_utility_motor_6kv)) { ?>
+                                    <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-info-circle mb-2 fa-2x text-lightblue"></i><br>Belum ada motor yang dijadwalkan.<br>Silakan centang motor di menu <b>Settings > Filter Jadwal Regreasing</b>.</td></tr>
+                                <?php } else { ?>
+                                    <?php foreach ($pltu_unit_utility_motor_6kv as $motor): ?>
+                                        <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
+                                            <td><b><?php echo htmlspecialchars($motor); ?></b></td>
+                                            <td class="status-updater">--</td>
+                                            <td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td>
+                                            <td class="jadwal-selanjutnya">--</td>
+                                            <td class="sisa-waktu">--</td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-outline card-info">
+                <div class="card-header">
+                    <h3 class="card-title"><b>PLTU UNIT UTILITY - MOTOR 380V</b></h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-success btn-sm mr-2"
+                            onclick="exportToExcel('table-unit-utility-380v', 'Jadwal_Regreasing_Unit_Utility_380V')">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover table-bordered m-0 table-jadwal" id="table-unit-utility-380v">
+                            <thead>
+                                <tr>
+                                    <th>NAMA MOTOR</th>
+                                    <th>UPDATED BY</th>
+                                    <th>TERAKHIR REGREASING</th>
+                                    <th>JADWAL SELANJUTNYA</th>
+                                    <th>SISA WAKTU</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (empty($pltu_unit_utility_motor_380v)) { ?>
+                                    <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-info-circle mb-2 fa-2x text-lightblue"></i><br>Belum ada motor yang dijadwalkan.<br>Silakan centang motor di menu <b>Settings > Filter Jadwal Regreasing</b>.</td></tr>
+                                <?php } else { ?>
+                                    <?php foreach ($pltu_unit_utility_motor_380v as $motor): ?>
+                                        <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
+                                            <td><b><?php echo htmlspecialchars($motor); ?></b></td>
                                             <td class="status-updater">--</td>
                                             <td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td>
                                             <td class="jadwal-selanjutnya">--</td>

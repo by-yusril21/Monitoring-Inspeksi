@@ -141,4 +141,8 @@ document.addEventListener("DOMContentLoaded", function () {
   loadDataMotor("D6KV", "table-unit-d-6kv");
   loadDataMotor("C380", "table-unit-c-380v");
   loadDataMotor("D380", "table-unit-d-380v");
+
+  // TAMBAHAN UNTUK UTILITY
+  loadDataMotor("UTILITY6KV", "table-unit-utility-6kv");
+  loadDataMotor("UTILITY380", "table-unit-utility-380v");
 });

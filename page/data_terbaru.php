@@ -146,7 +146,8 @@ if ($hasil_settings) {
         if (u === 'C380' || u === 'C380V') return 'PLTU UNIT C MOTOR 380V';
         if (u === 'D6KV') return 'PLTU UNIT D MOTOR 6kV';
         if (u === 'D380' || u === 'D380V') return 'PLTU UNIT D MOTOR 380V';
-        if (u === 'UTILITY') return 'PLTU UNIT UTILITY';
+        if (u === 'UTILITY6KV') return 'PLTU UNIT UTILITY MOTOR 6kV';
+        if (u === 'UTILITY380') return 'PLTU UNIT UTILITY MOTOR 380V';
         return 'PLTU UNIT ' + unitKode;
     }
 

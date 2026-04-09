@@ -56,12 +56,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         unset($_POST['form_update_chart']); 
     }
 
-    // Jika Form Filter Regreasing yang disubmit
+    // Jika Form Filter Regreasing yang disubmit (UPDATE: Tambah 2 Parameter Utility)
     if (isset($_POST['form_update_regreasing'])) {
         if (!isset($_POST['regreasing_filter_c6kv'])) $_POST['regreasing_filter_c6kv'] = '';
         if (!isset($_POST['regreasing_filter_c380'])) $_POST['regreasing_filter_c380'] = '';
         if (!isset($_POST['regreasing_filter_d6kv'])) $_POST['regreasing_filter_d6kv'] = '';
         if (!isset($_POST['regreasing_filter_d380'])) $_POST['regreasing_filter_d380'] = '';
+        
+        // Menampung nilai kosong jika user tidak mencentang satupun motor Utility
+        if (!isset($_POST['regreasing_filter_utility6kv'])) $_POST['regreasing_filter_utility6kv'] = '';
+        if (!isset($_POST['regreasing_filter_utility380'])) $_POST['regreasing_filter_utility380'] = '';
+        
         unset($_POST['form_update_regreasing']); 
     }
 
@@ -224,9 +229,7 @@ if ($result) {
                                                         
                                                         <?php 
                                                         if ($key === 'chart_hidden_parameters') { 
-                                                            // ===============================================
-                                                            // ARRAY PARAMETER 16 DATA BARU
-                                                            // ===============================================
+                                                            // UPDATE KE 16 PARAMETER AGAR TIDAK HILANG!
                                                             $daftar_parameter = [
                                                                 'DE_H'  => 'Vib. DE (H)',
                                                                 'DE_V'  => 'Vib. DE (V)',
@@ -320,6 +323,7 @@ if ($result) {
                                             <div class="card-body pt-0 text-left">
                                                 <p class="text-muted text-sm mb-4 pb-2 border-bottom">
                                                     Kelola daftar motor yang akan muncul di dropdown halaman SCADA. <b>Pastikan setiap nama motor berada di baris baru (tekan Enter).</b>
+                                                    <br><i class="text-info">*Catatan:</i>
                                                 </p>
                                                 
                                                 <div class="row">
@@ -371,6 +375,7 @@ if ($result) {
                                                 </p>
 
                                                 <?php 
+                                                // UPDATE PENTING: Tambahkan Utility ke dalam mapping!
                                                 $mapping_filter = [
                                                     'regreasing_filter_c6kv' => [
                                                         'master' => 'motor_list_c6kv', 
@@ -387,6 +392,15 @@ if ($result) {
                                                     'regreasing_filter_d380' => [
                                                         'master' => 'motor_list_d380', 
                                                         'judul'  => 'Filter Regreasing Motor 380V PLTU Unit D'
+                                                    ],
+                                                    // TAMBAHAN UNIT UTILITY
+                                                    'regreasing_filter_utility6kv' => [
+                                                        'master' => 'motor_list_utility6kv', 
+                                                        'judul'  => 'Filter Regreasing Motor 6kV PLTU Unit Utility'
+                                                    ],
+                                                    'regreasing_filter_utility380' => [
+                                                        'master' => 'motor_list_utility380', 
+                                                        'judul'  => 'Filter Regreasing Motor 380V PLTU Unit Utility'
                                                     ]
                                                 ];
 
@@ -394,7 +408,10 @@ if ($result) {
                                                     $master_key = $data_map['master'];
                                                     $nama_display = $data_map['judul'];
                                                     
-                                                    $master_raw = isset($konfigurasi[$master_key]) ? $konfigurasi[$master_key]['setting_value'] : '';
+                                                    // Jika database master belum diinput, abaikan agar tidak error
+                                                    if (!isset($konfigurasi[$master_key])) continue;
+
+                                                    $master_raw = $konfigurasi[$master_key]['setting_value'];
                                                     $master_array = array_filter(array_map('trim', explode("\n", $master_raw)));
 
                                                     $checked_raw = isset($konfigurasi[$filter_key]) ? $konfigurasi[$filter_key]['setting_value'] : '';
@@ -410,8 +427,8 @@ if ($result) {
                                                             ?>
                                                             <div class="col-md-4 mb-2">
                                                                 <div class="custom-control custom-checkbox">
-                                                                    <input type="checkbox" class="custom-control-input" id="reg_<?php echo $unique_id; ?>" name="<?php echo $filter_key; ?>[]" value="<?php echo $m; ?>" <?php echo $isSel; ?>>
-                                                                    <label class="custom-control-label font-weight-normal" for="reg_<?php echo $unique_id; ?>"><?php echo $m; ?></label>
+                                                                    <input type="checkbox" class="custom-control-input" id="reg_<?php echo $unique_id; ?>" name="<?php echo $filter_key; ?>[]" value="<?php echo htmlspecialchars($m); ?>" <?php echo $isSel; ?>>
+                                                                    <label class="custom-control-label font-weight-normal" for="reg_<?php echo $unique_id; ?>"><?php echo htmlspecialchars($m); ?></label>
                                                                 </div>
                                                             </div>
                                                             <?php } ?>

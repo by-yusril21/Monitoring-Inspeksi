@@ -33,7 +33,8 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
           <option value="C380">PLTU UNIT C - MOTOR 380V</option>
           <option value="D6KV">PLTU UNIT D - MOTOR 6KV</option>
           <option value="D380">PLTU UNIT D - MOTOR 380V</option>
-          <option value="UTILITY">PLTU UNIT UTILITY</option>
+          <option value="UTILITY6KV">PLTU UNIT UTILITY - MOTOR 6KV</option>
+          <option value="UTILITY380">PLTU UNIT UTILITY - MOTOR 380V</option>
         </select>
         <select id="pilihMotor" class="form-control form-control-sm mr-1" style="width: 230px;" disabled>
           <option value="">-- Pilih Motor --</option>
@@ -69,8 +70,12 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
             class="btn <?= ($activeUnit == 'D380') ? 'btn-info text-white' : 'btn-outline-info' ?> btn-sm mr-2 font-weight-bold shadow-sm">
             MOTOR 380V UNIT D
           </a>
-          <a href="?page=chart&unit=UTILITY"
-            class="btn <?= ($activeUnit == 'UTILITY') ? 'btn-secondary text-white' : 'btn-outline-secondary' ?> btn-sm mr-2 font-weight-bold shadow-sm">
+          <a href="?page=chart&unit=UTILITY6KV"
+            class="btn <?= ($activeUnit == 'UTILITY6KV') ? 'btn-secondary text-white' : 'btn-outline-secondary' ?> btn-sm mr-2 font-weight-bold shadow-sm">
+            MOTOR 6kV UTILITY
+          </a>
+          <a href="?page=chart&unit=UTILITY380"
+            class="btn <?= ($activeUnit == 'UTILITY380') ? 'btn-secondary text-white' : 'btn-outline-secondary' ?> btn-sm mr-2 font-weight-bold shadow-sm">
             MOTOR 380V UTILITY
           </a>
         </div>
