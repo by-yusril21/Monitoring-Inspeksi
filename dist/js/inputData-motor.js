@@ -4,7 +4,7 @@
  * - AUTH: Mengirim username login secara otomatis.
  * - SYNC TABLE: Section No diambil otomatis dari Baris Terakhir Tabel.
  * - TRIGGER: Button Click (Anti Auto-Submit).
- * - LOGIC: Strict Validation & Auto Refresh via PROXY PHP.
+ * - LOGIC: Strict Validation untuk 28 Kolom & Auto Refresh via PROXY PHP.
  */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ============================================================
-  // FITUR: SYNC SECTION NO DARI TABEL
+  // FITUR: SYNC SECTION NO DARI TABEL (Format 28 Kolom)
   // ============================================================
   function syncSectionFromTable() {
     if (!inputSectionNo) return;
@@ -137,26 +137,35 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!pesanError && isPreventive) {
         const formData = new FormData(formInput);
 
-        // [DIPERBAIKI] Validasi kini mengecek kedua vibrasi
+        // Validasi input angka (Sensor & Meteran)
         const numericFields = [
-          "vibrasi_de",
-          "vibrasi_nde",
+          "vibrasi_de_h",
+          "vibrasi_de_v",
+          "vibrasi_de_ax",
+          "vibrasi_de_ge",
+          "vibrasi_nde_h",
+          "vibrasi_nde_v",
+          "vibrasi_nde_ax",
+          "vibrasi_nde_ge",
           "temp_de",
           "temp_nde",
           "suhu_ruang",
+          "load_current_r",
+          "load_current_s",
+          "load_current_t",
           "beban_gen",
           "damper",
-          "load_current",
         ];
 
         for (let name of numericFields) {
           let val = formData.get(name);
           if (val === null || val.trim() === "") {
-            pesanError = `Data Teknis (Angka) belum lengkap!`;
+            pesanError = `Data Teknis (Angka) belum lengkap! Cek kembali sensor/meteran.`;
             break;
           }
         }
 
+        // Validasi input Dropdown (Kondisi Fisik)
         if (!pesanError) {
           const dropdownFields = [
             "bunyi",
@@ -169,7 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
           for (let name of dropdownFields) {
             let val = formData.get(name);
             if (val === null || val === "") {
-              pesanError = `Pilihan Dropdown belum dipilih semua!`;
+              pesanError = `Pilihan Kondisi Fisik / Dropdown belum dipilih semua!`;
               break;
             }
           }
@@ -194,13 +203,13 @@ document.addEventListener("DOMContentLoaded", function () {
             let val = formData.get(name);
             return val && val.trim() !== "" ? val : "-";
           } else {
-            return "--";
+            return "--"; // Jika bukan PREVENTIVE, diisi strip agar di tabel terlihat kosong
           }
         };
 
         const currentUser = userLoggedIn ? userLoggedIn.value : "Guest";
 
-        // [DIPERBAIKI] Menyisipkan nilai Vibrasi DE dan NDE ke Payload
+        // Mengemas seluruh 28 data ke dalam JSON payload
         const payload = {
           unit: valUnit,
           targetSheet: valMotor,
@@ -208,14 +217,28 @@ document.addEventListener("DOMContentLoaded", function () {
           email: currentUser,
           sectionNo: inputSectionNo ? inputSectionNo.value || "-" : "-",
           actions: getGeneral("action"),
-          vibrasiDE: getTeknis("vibrasi_de"),
-          vibrasiNDE: getTeknis("vibrasi_nde"),
+
+          vibrasi_de_h: getTeknis("vibrasi_de_h"),
+          vibrasi_de_v: getTeknis("vibrasi_de_v"),
+          vibrasi_de_ax: getTeknis("vibrasi_de_ax"),
+          vibrasi_de_ge: getTeknis("vibrasi_de_ge"),
+
+          vibrasi_nde_h: getTeknis("vibrasi_nde_h"),
+          vibrasi_nde_v: getTeknis("vibrasi_nde_v"),
+          vibrasi_nde_ax: getTeknis("vibrasi_nde_ax"),
+          vibrasi_nde_ge: getTeknis("vibrasi_nde_ge"),
+
           tempDE: getTeknis("temp_de"),
           tempNDE: getTeknis("temp_nde"),
           suhuRuang: getTeknis("suhu_ruang"),
+
+          current_r: getTeknis("load_current_r"),
+          current_s: getTeknis("load_current_s"),
+          current_t: getTeknis("load_current_t"),
+
           beban: getTeknis("beban_gen"),
           damper: getTeknis("damper"),
-          amper: getTeknis("load_current"),
+
           bunyi: getTeknis("bunyi"),
           panel: getTeknis("panel"),
           kelengkapan: getTeknis("lengkap"),
@@ -242,9 +265,11 @@ document.addEventListener("DOMContentLoaded", function () {
             writeLog("SUKSES: Tersimpan di Database.", "SUCCESS");
             toastr.success("Data monitoring berhasil disimpan.");
 
+            // Reset formulir setelah berhasil terkirim
             formInput.reset();
             updateFormLayout();
 
+            // Refresh tabel otomatis
             const btnRefresh = document.getElementById("btnRefresh");
             if (btnRefresh) btnRefresh.click();
             else if (window.jQuery) $("#btnRefresh").trigger("click");

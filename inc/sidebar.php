@@ -84,7 +84,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
         <li class="nav-item">
           <a href="?page=dashboard" class="nav-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">
             <i class="nav-icon fas fa-tachometer-alt"></i>
-            <p>Dashboard</p>
+            <p>Home</p>
           </a>
         </li>
 

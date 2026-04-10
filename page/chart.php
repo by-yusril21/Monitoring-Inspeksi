@@ -56,8 +56,11 @@ switch ($unitAktif) {
     case 'D380':
         $judul_unit = "PLTU UNIT D MOTOR 380V";
         break;
-    case 'UTILITY':
-        $judul_unit = "PLTU UNIT UTILITY";
+    case 'UTILITY6KV':
+        $judul_unit = "PLTU UNIT UTILITY MOTOR 6kV";
+        break;
+    case 'UTILITY380':
+        $judul_unit = "PLTU UNIT UTILITY MOTOR 380V";
         break;
     default:
         $judul_unit = "Unit Tidak Dikenal";

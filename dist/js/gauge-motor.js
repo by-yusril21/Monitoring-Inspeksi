@@ -1,6 +1,6 @@
 /**
  * File: gauge-motor.js
- * Deskripsi: Menangani visualisasi ECharts (Jarum), VibeTube, dan Sinkronisasi Tabel
+ * Deskripsi: Menangani visualisasi ECharts (Jarum 5 Parameter), VibeTube 8 Tabung, dan Sinkronisasi Tabel 28 Kolom
  */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -17,11 +17,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const gaugeInstances = {};
 
-  // --- INISIALISASI VIBETUBE ---
-  const vibeDE = new VibeTube("vibe-de-container", "BEHRING DE");
-  const vibeNDE = new VibeTube("vibe-nde-container", "BEHRING NDE");
+  // --- INISIALISASI 8 VIBETUBE ---
+  const vibeDE_H = new VibeTube("vibe-de-h-container", "H");
+  const vibeDE_V = new VibeTube("vibe-de-v-container", "V");
+  const vibeDE_Ax = new VibeTube("vibe-de-ax-container", "Ax");
+  const vibeDE_gE = new VibeTube("vibe-de-ge-container", "gE");
 
-  // --- FUNGSI INISIALISASI ECHARTS (Dipertahankan) ---
+  const vibeNDE_H = new VibeTube("vibe-nde-h-container", "H");
+  const vibeNDE_V = new VibeTube("vibe-nde-v-container", "V");
+  const vibeNDE_Ax = new VibeTube("vibe-nde-ax-container", "Ax");
+  const vibeNDE_gE = new VibeTube("vibe-nde-ge-container", "gE");
+
+  // --- FUNGSI INISIALISASI ECHARTS ---
   function initMotorGauge(domId, title, unit, min, max) {
     const chartDom = document.getElementById(domId);
     if (!chartDom) return;
@@ -77,10 +84,12 @@ document.addEventListener("DOMContentLoaded", function () {
     gaugeInstances[domId] = myChart;
   }
 
-  // Hanya memanggil 3 ECharts (Karena Vibrasi sekarang pakai VibeTube)
+  // --- [UPDATE] Inisialisasi 5 Gauge Utama ---
   initMotorGauge("gauge-beban-gen", "Beban", "MW", 0, 100);
   initMotorGauge("gauge-damper", "Damper", "%", 0, 100);
-  initMotorGauge("gauge-load-current", "Arus", "A", 0, 300);
+  initMotorGauge("gauge-load-current-r", "Arus", "A", 0, 300);
+  initMotorGauge("gauge-load-current-s", "Arus", "A", 0, 300);
+  initMotorGauge("gauge-load-current-t", "Arus", "A", 0, 300);
 
   window.addEventListener("resize", function () {
     Object.values(gaugeInstances).forEach((chart) => chart.resize());
@@ -132,11 +141,9 @@ document.addEventListener("DOMContentLoaded", function () {
           if (match) {
             let parsed = parseFloat(match[0]);
             if (!isNaN(parsed)) {
-              // --- [DIPERBAIKI] MEMOTONG STRING UNTUK MENGAMBIL TANGGAL SAJA ---
               let rawTime = allData[i][1]
                 ? String(allData[i][1])
                 : "Waktu Tidak Diketahui";
-              // Jika ada spasi (pemisah antara tanggal dan jam), ambil bagian depannya saja (tanggal)
               let timeVal = rawTime.includes(" ")
                 ? rawTime.split(" ")[0]
                 : rawTime;
@@ -158,38 +165,88 @@ document.addEventListener("DOMContentLoaded", function () {
       if (table.data().any()) {
         const allData = table.rows().data();
 
-        // 1. UPDATE VIBETUBE (Kolom 5 & 6)
-        const dataDE = getLastValidData(allData, 5);
-        const dataNDE = getLastValidData(allData, 6);
+        // 1. UPDATE VIBETUBE (Kolom 5 s/d 12)
+        const data_DE_H = getLastValidData(allData, 5);
+        const data_DE_V = getLastValidData(allData, 6);
+        const data_DE_Ax = getLastValidData(allData, 7);
+        const data_DE_gE = getLastValidData(allData, 8);
 
-        vibeDE.update(dataDE.value, dataDE.timestamp);
-        vibeNDE.update(dataNDE.value, dataNDE.timestamp);
+        const data_NDE_H = getLastValidData(allData, 9);
+        const data_NDE_V = getLastValidData(allData, 10);
+        const data_NDE_Ax = getLastValidData(allData, 11);
+        const data_NDE_gE = getLastValidData(allData, 12);
 
-        // 2. UPDATE ECHARTS LAINNYA (Index disesuaikan menjadi 10, 11, 12)
+        vibeDE_H.update(data_DE_H.value, data_DE_H.timestamp);
+        vibeDE_V.update(data_DE_V.value, "-");
+        vibeDE_Ax.update(data_DE_Ax.value, "-");
+        vibeDE_gE.update(data_DE_gE.value, "-");
+
+        vibeNDE_H.update(data_NDE_H.value, data_NDE_H.timestamp);
+        vibeNDE_V.update(data_NDE_V.value, "-");
+        vibeNDE_Ax.update(data_NDE_Ax.value, "-");
+        vibeNDE_gE.update(data_NDE_gE.value, "-");
+
+        // --- [UPDATE] MENGISI 5 GAUGE ECHARTS ---
+
+        // Beban Generator ada di Kolom 19
         updateGaugeValue(
           "gauge-beban-gen",
           "time-beban-gen",
-          getLastValidData(allData, 10),
+          getLastValidData(allData, 19),
         );
+
+        // Opening Damper ada di Kolom 20
         updateGaugeValue(
           "gauge-damper",
           "time-damper",
-          getLastValidData(allData, 11),
+          getLastValidData(allData, 20),
+        );
+
+        // Arus (R, S, T) ada di Kolom 16, 17, 18
+        updateGaugeValue(
+          "gauge-load-current-r",
+          "time-load-current-r",
+          getLastValidData(allData, 16),
         );
         updateGaugeValue(
-          "gauge-load-current",
-          "time-load-current",
-          getLastValidData(allData, 12),
+          "gauge-load-current-s",
+          "time-load-current-s",
+          getLastValidData(allData, 17),
+        );
+        updateGaugeValue(
+          "gauge-load-current-t",
+          "time-load-current-t",
+          getLastValidData(allData, 18),
         );
       } else {
         const emptyData = { value: 0, timestamp: "-" };
 
-        vibeDE.update(0, "-");
-        vibeNDE.update(0, "-");
+        vibeDE_H.update(0, "-");
+        vibeDE_V.update(0, "-");
+        vibeDE_Ax.update(0, "-");
+        vibeDE_gE.update(0, "-");
+        vibeNDE_H.update(0, "-");
+        vibeNDE_V.update(0, "-");
+        vibeNDE_Ax.update(0, "-");
+        vibeNDE_gE.update(0, "-");
 
         updateGaugeValue("gauge-beban-gen", "time-beban-gen", emptyData);
         updateGaugeValue("gauge-damper", "time-damper", emptyData);
-        updateGaugeValue("gauge-load-current", "time-load-current", emptyData);
+        updateGaugeValue(
+          "gauge-load-current-r",
+          "time-load-current-r",
+          emptyData,
+        );
+        updateGaugeValue(
+          "gauge-load-current-s",
+          "time-load-current-s",
+          emptyData,
+        );
+        updateGaugeValue(
+          "gauge-load-current-t",
+          "time-load-current-t",
+          emptyData,
+        );
       }
     }
   }

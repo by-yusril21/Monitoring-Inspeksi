@@ -5,28 +5,7 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 // Catatan: Array $columns ini bisa dibiarkan saja jika dipakai di tempat lain...
-$columns = [
-    "No",
-    "TIMESTAMP",
-    "EMAIL UPDATE",
-    "AKSI",
-    "SECTION NO",
-    "VIBRASI BEARING DE",
-    "VIBRASI BEARING NDE",
-    "TEMP. BEARING DE",
-    "TEMP. BEARING NDE",
-    "SUHU RUANGAN",
-    "BEBAN GENERATOR",
-    "OPENING DAMPER",
-    "LOAD CURRENT",
-    "BUNYI MOTOR",
-    "PANEL LOCAL",
-    "KELENGKAPAN",
-    "KEBERSIHAN",
-    "GROUNDING",
-    "REGREASING",
-    "ACTIONS"
-];
+
 
 // --- TAMBAHAN BARU: Query untuk mengambil Setting PDF dari Database ---
 // Pastikan file koneksi ($conn) sudah di-include sebelum baris ini
@@ -163,6 +142,61 @@ if ($q_pdf) {
         text-align: center !important;
         padding: 8px 5px !important;
     }
+
+    /* Styling Tambahan untuk Unified Card (Kotak Utama) */
+    .unified-dashboard-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e9ecef;
+    }
+
+    /* Styling Khusus untuk Card Kondisi Motor */
+    .status-card-modern {
+        background: #ffffff;
+        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .status-card-modern:hover {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+    }
+
+    .border-left-good {
+        border-left: 4px solid #28a745 !important;
+    }
+
+    .border-left-fair {
+        border-left: 4px solid #ffc107 !important;
+    }
+
+    .border-left-poor {
+        border-left: 4px solid #dc3545 !important;
+    }
+
+    .border-left-empty {
+        border-left: 4px solid #6c757d !important;
+    }
+
+    .icon-wrapper-cond {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: #f4f6f9;
+        color: #495057;
+        font-size: 15px;
+    }
+
+    /* Penyesuaian tinggi Gauge Card agar presisi & simetris di dalam Grid Baru */
+    .modern-gauge-card {
+        width: 100% !important;
+        margin: 0 !important;
+        height: 100%;
+    }
 </style>
 
 <div class="content-wrapper">
@@ -203,7 +237,7 @@ if ($q_pdf) {
                                     <th class="align-middle" rowspan="3" style="min-width: 50px;">Opening<br>Damper(%)
                                     </th>
 
-                                    
+
 
                                     <th class="align-middle" rowspan="3" style="min-width: 50px;">Bunyi<br>Motor</th>
                                     <th class="align-middle" rowspan="3" style="min-width: 50px;">Kondisi<br>Panel</th>
@@ -270,113 +304,152 @@ if ($q_pdf) {
     <section id="section-gauge" class="section-full">
         <div class="container-fluid px-custom-5 h-100 py-3" style="overflow-y: auto;">
 
-            <div class="dashboard-horizontal-split">
+            <div class="unified-dashboard-card p-3">
 
-                <div class="gauge-main-container bg-white">
-                    <div class="gauge-dashboard-title">
-                        <i class="fas fa-industry mr-2 text-primary"></i>
-                        Live Parameter Status: <span id="label-motor-gauge" class="text-danger">Pilih Motor...</span>
-                    </div>
+                <div class="row">
 
-                    <div class="gauge-layout-vertical">
+                    <div class="col-xl-6 col-lg-12 border-right pr-xl-3 mb-2">
 
-                        <div class="modern-thermo-container">
+                        <div class="modern-thermo-container mb-2">
 
-                            <div class="modern-thermo-card">
-                                <div class="th-header">
+                            <div class="modern-thermo-card" style="padding: 10px;">
+                                <div class="th-header" style="margin-bottom: 0px;">
                                     <div class="th-icon"><i class="fas fa-cogs"></i></div>
                                     <div class="th-title-group">
-                                        <div class="th-title">Bearing DE</div>
-                                        <div class="th-subtitle"><span class="th-dot green"></span> Temp</div>
+                                        <div class="th-title" style="font-size: 0.8rem;">Bearing DE</div>
+                                        <div class="th-subtitle" style="font-size: 0.65rem;"><span
+                                                class="th-dot green"></span> Temp</div>
                                     </div>
                                 </div>
-                                <div class="th-body">
+                                <div class="th-body" style="padding: 5px 0;">
                                     <div id="thermo-de" class="th-svg"></div>
-                                    <div id="val-de" class="th-value">0.0 °C</div>
-                                </div>
-                                <div id="status-box-de" class="th-footer">
-                                    <div id="status-text-de" class="th-status"><i class="fas fa-check-circle"></i>
-                                        Normal</div>
-                                    <div id="time-temp-de" class="th-time">--/--/----</div>
-                                </div>
-                            </div>
-
-                            <div class="modern-thermo-card">
-                                <div class="th-header">
-                                    <div class="th-icon"><i class="fas fa-cogs"></i></div>
-                                    <div class="th-title-group">
-                                        <div class="th-title">Bearing NDE</div>
-                                        <div class="th-subtitle"><span class="th-dot green"></span> Temp</div>
+                                    <div id="val-de" class="th-value" style="font-size: 1rem; margin-top: 5px;">0.0 °C
                                     </div>
                                 </div>
-                                <div class="th-body">
-                                    <div id="thermo-nde" class="th-svg"></div>
-                                    <div id="val-nde" class="th-value">0.0 °C</div>
-                                </div>
-                                <div id="status-box-nde" class="th-footer">
-                                    <div id="status-text-nde" class="th-status"><i class="fas fa-check-circle"></i>
-                                        Normal</div>
-                                    <div id="time-temp-nde" class="th-time">--/--/----</div>
+                                <div id="status-box-de" class="th-footer d-flex justify-content-center"
+                                    style="padding: 6px; font-size: 0.7rem;">
+                                    <div id="time-temp-de" class="th-time font-weight-bold text-muted">--/--/----</div>
                                 </div>
                             </div>
 
-                            <div class="modern-thermo-card">
-                                <div class="th-header">
+                            <div class="modern-thermo-card" style="padding: 10px;">
+                                <div class="th-header" style="margin-bottom: 0px;">
+                                    <div class="th-icon"><i class="fas fa-cogs"></i></div>
+                                    <div class="th-title-group">
+                                        <div class="th-title" style="font-size: 0.8rem;">Bearing NDE</div>
+                                        <div class="th-subtitle" style="font-size: 0.65rem;"><span
+                                                class="th-dot green"></span> Temp</div>
+                                    </div>
+                                </div>
+                                <div class="th-body" style="padding: 5px 0;">
+                                    <div id="thermo-nde" class="th-svg"></div>
+                                    <div id="val-nde" class="th-value" style="font-size: 1rem; margin-top: 5px;">0.0 °C
+                                    </div>
+                                </div>
+                                <div id="status-box-nde" class="th-footer d-flex justify-content-center"
+                                    style="padding: 6px; font-size: 0.7rem;">
+                                    <div id="time-temp-nde" class="th-time font-weight-bold text-muted">--/--/----</div>
+                                </div>
+                            </div>
+
+                            <div class="modern-thermo-card" style="padding: 10px;">
+                                <div class="th-header" style="margin-bottom: 0px;">
                                     <div class="th-icon" style="color: #3498db;"><i class="fas fa-thermometer-half"></i>
                                     </div>
                                     <div class="th-title-group">
-                                        <div class="th-title">Suhu Ruangan</div>
-                                        <div class="th-subtitle"><span class="th-dot blue"></span> Temp</div>
+                                        <div class="th-title" style="font-size: 0.8rem;">Suhu Ruangan</div>
+                                        <div class="th-subtitle" style="font-size: 0.65rem;"><span
+                                                class="th-dot blue"></span> Temp</div>
                                     </div>
                                 </div>
-                                <div class="th-body">
+                                <div class="th-body" style="padding: 5px 0;">
                                     <div id="thermo-winding" class="th-svg"></div>
-                                    <div id="val-winding" class="th-value">0.0 °C</div>
+                                    <div id="val-winding" class="th-value" style="font-size: 1rem; margin-top: 5px;">0.0
+                                        °C</div>
                                 </div>
-                                <div id="status-box-winding" class="th-footer">
-                                    <div id="status-text-winding" class="th-status"><i class="fas fa-check-circle"></i>
-                                        Normal</div>
-                                    <div id="time-suhu-ruang" class="th-time">--/--/----</div>
+                                <div id="status-box-winding" class="th-footer d-flex justify-content-center"
+                                    style="padding: 6px; font-size: 0.7rem;">
+                                    <div id="time-suhu-ruang" class="th-time font-weight-bold text-muted">--/--/----
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
 
-
-                        <div class="modern-vibe-card">
-
-                            <div class="vibe-row-container">
+                        <div class="modern-vibe-card mb-2"
+                            style="border: none; box-shadow: none; background: transparent; padding: 0;">
+                            <div class="vibe-row-container"
+                                style="background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
 
                                 <div class="vibe-section">
                                     <div class="vibe-indicator"></div>
-                                    <div class="vibe-content">
-                                        <div class="vibe-info-row">
-                                            <span class="vibe-label">BEARING DE</span>
+                                    <div class="vibe-content" style="width: 100%;">
+                                        <div class="vibe-info-row mb-1">
+                                            <span class="vibe-label" style="font-size: 0.75rem;">VIBRASI BRG. DE <small
+                                                    class="text-muted">(mm/s)</small></span>
                                         </div>
-                                        <div class="vibe-tube-row">
-                                            <div id="vibe-de-container" class="vibe-tube-wrapper"></div>
+                                        <div class="vibe-tube-row flex-column align-items-start">
+                                            <div class="d-flex align-items-center mb-1 w-100">
+                                                <span
+                                                    style="width: 25px; font-size: 10px; font-weight: bold; color: #555;">H</span>
+                                                <div id="vibe-de-h-container" class="vibe-tube-wrapper"></div>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-1 w-100">
+                                                <span
+                                                    style="width: 25px; font-size: 10px; font-weight: bold; color: #555;">V</span>
+                                                <div id="vibe-de-v-container" class="vibe-tube-wrapper"></div>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-1 w-100">
+                                                <span
+                                                    style="width: 25px; font-size: 10px; font-weight: bold; color: #555;">Ax</span>
+                                                <div id="vibe-de-ax-container" class="vibe-tube-wrapper"></div>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-1 w-100">
+                                                <span
+                                                    style="width: 25px; font-size: 10px; font-weight: bold; color: #555;">gE</span>
+                                                <div id="vibe-de-ge-container" class="vibe-tube-wrapper"></div>
+                                            </div>
                                         </div>
-                                        <div class="vibe-time-individual">
+                                        <div class="vibe-time-individual mt-1" style="font-size: 0.65rem;">
                                             <i class="far fa-clock"></i> <span
-                                                id="ext-time-vibe-de-container">--/--/----</span>
+                                                id="ext-time-vibe-de-h-container">--/--/----</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="vibe-vertical-divider"></div>
+                                <div class="vibe-vertical-divider" style="margin: 0 10px;"></div>
 
                                 <div class="vibe-section">
                                     <div class="vibe-indicator"></div>
-                                    <div class="vibe-content">
-                                        <div class="vibe-info-row">
-                                            <span class="vibe-label">BEARING NDE</span>
+                                    <div class="vibe-content" style="width: 100%;">
+                                        <div class="vibe-info-row mb-1">
+                                            <span class="vibe-label" style="font-size: 0.75rem;">VIBRASI BRG. NDE <small
+                                                    class="text-muted">(mm/s)</small></span>
                                         </div>
-                                        <div class="vibe-tube-row">
-                                            <div id="vibe-nde-container" class="vibe-tube-wrapper"></div>
+                                        <div class="vibe-tube-row flex-column align-items-start">
+                                            <div class="d-flex align-items-center mb-1 w-100">
+                                                <span
+                                                    style="width: 25px; font-size: 10px; font-weight: bold; color: #555;">H</span>
+                                                <div id="vibe-nde-h-container" class="vibe-tube-wrapper"></div>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-1 w-100">
+                                                <span
+                                                    style="width: 25px; font-size: 10px; font-weight: bold; color: #555;">V</span>
+                                                <div id="vibe-nde-v-container" class="vibe-tube-wrapper"></div>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-1 w-100">
+                                                <span
+                                                    style="width: 25px; font-size: 10px; font-weight: bold; color: #555;">Ax</span>
+                                                <div id="vibe-nde-ax-container" class="vibe-tube-wrapper"></div>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-1 w-100">
+                                                <span
+                                                    style="width: 25px; font-size: 10px; font-weight: bold; color: #555;">gE</span>
+                                                <div id="vibe-nde-ge-container" class="vibe-tube-wrapper"></div>
+                                            </div>
                                         </div>
-                                        <div class="vibe-time-individual">
+                                        <div class="vibe-time-individual mt-1" style="font-size: 0.65rem;">
                                             <i class="far fa-clock"></i> <span
-                                                id="ext-time-vibe-nde-container">--/--/----</span>
+                                                id="ext-time-vibe-nde-h-container">--/--/----</span>
                                         </div>
                                     </div>
                                 </div>
@@ -384,145 +457,187 @@ if ($q_pdf) {
                             </div>
                         </div>
 
-                        <div class="modern-gauge-container">
+                    </div>
 
-                            <div class="modern-gauge-card">
-                                <div class="gauge-card-header">
-                                    <span>Load Generator</span>
-                                </div>
-                                <div id="gauge-beban-gen" class="modern-gauge-chart"></div>
-                                <div class="gauge-card-footer">
-                                    <span id="time-beban-gen">Data Kosong</span>
+                    <div class="col-xl-6 col-lg-12 pl-xl-3 mb-2">
+
+                        <div class="row justify-content-center">
+
+                            <div class="col-sm-6 col-6 mb-3">
+                                <div class="modern-gauge-card" style="padding: 10px;">
+                                    <div class="gauge-card-header mb-0"><span style="font-size: 0.75rem;">Load
+                                            Gen</span></div>
+                                    <div id="gauge-beban-gen" class="modern-gauge-chart" style="min-height: 120px;">
+                                    </div>
+                                    <div class="gauge-card-footer mt-0"><span id="time-beban-gen"
+                                            style="font-size: 0.65rem;">Data Kosong</span></div>
                                 </div>
                             </div>
 
-                            <div class="modern-gauge-card">
-                                <div class="gauge-card-header">
-                                    <span>Opening Damper</span>
-                                </div>
-                                <div id="gauge-damper" class="modern-gauge-chart"></div>
-                                <div class="gauge-card-footer">
-                                    <span id="time-damper">Data Kosong</span>
+                            <div class="col-sm-6 col-6 mb-3">
+                                <div class="modern-gauge-card" style="padding: 10px;">
+                                    <div class="gauge-card-header mb-0"><span style="font-size: 0.75rem;">Damper</span>
+                                    </div>
+                                    <div id="gauge-damper" class="modern-gauge-chart" style="min-height: 120px;"></div>
+                                    <div class="gauge-card-footer mt-0"><span id="time-damper"
+                                            style="font-size: 0.65rem;">Data Kosong</span></div>
                                 </div>
                             </div>
 
-                            <div class="modern-gauge-card">
-                                <div class="gauge-card-header">
-                                    <span>Load Current</span>
+                            <div class="col-md-4 col-4 mb-2">
+                                <div class="modern-gauge-card px-1" style="padding: 5px;">
+                                    <div class="gauge-card-header mb-0"><span style="font-size: 0.7rem;">Current
+                                            (R)</span></div>
+                                    <div id="gauge-load-current-r" class="modern-gauge-chart"
+                                        style="min-height: 100px;"></div>
+                                    <div class="gauge-card-footer mt-0"><span id="time-load-current-r"
+                                            style="font-size: 0.6rem;">Data Kosong</span></div>
                                 </div>
-                                <div id="gauge-load-current" class="modern-gauge-chart"></div>
-                                <div class="gauge-card-footer">
-                                    <span id="time-load-current">Data Kosong</span>
+                            </div>
+
+                            <div class="col-md-4 col-4 mb-2">
+                                <div class="modern-gauge-card px-1" style="padding: 5px;">
+                                    <div class="gauge-card-header mb-0"><span style="font-size: 0.7rem;">Current
+                                            (S)</span></div>
+                                    <div id="gauge-load-current-s" class="modern-gauge-chart"
+                                        style="min-height: 100px;"></div>
+                                    <div class="gauge-card-footer mt-0"><span id="time-load-current-s"
+                                            style="font-size: 0.6rem;">Data Kosong</span></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 col-4 mb-2">
+                                <div class="modern-gauge-card px-1" style="padding: 5px;">
+                                    <div class="gauge-card-header mb-0"><span style="font-size: 0.7rem;">Current
+                                            (T)</span></div>
+                                    <div id="gauge-load-current-t" class="modern-gauge-chart"
+                                        style="min-height: 100px;"></div>
+                                    <div class="gauge-card-footer mt-0"><span id="time-load-current-t"
+                                            style="font-size: 0.6rem;">Data Kosong</span></div>
                                 </div>
                             </div>
 
                         </div>
 
-
                     </div>
                 </div>
+                <div class="row mt-2 pt-3 border-top">
+                    <div class="col-12">
 
-                <div class="condition-main-container bg-white">
-                    <div class="gauge-dashboard-title">
-                        <i class="fas fa-clipboard-check mr-2 text-success"></i> Kondisi Motor
-                    </div>
+                        <div class="row mb-2">
+                            <div class="col-xl col-lg-4 col-md-6 col-12 mb-2">
+                                <div class="status-card-modern p-2 rounded h-100" id="card-bunyi">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-wrapper-cond mr-2"
+                                            style="width: 30px; height: 30px; font-size: 13px;"><i
+                                                class="fas fa-volume-up"></i></div>
+                                        <div class="flex-grow-1">
+                                            <div class="text-muted font-weight-bold text-uppercase"
+                                                style="font-size: 0.65rem;">Bunyi Motor</div>
+                                            <div class="text-secondary mt-1" style="font-size: 0.6rem;"><i
+                                                    class="far fa-clock"></i> <span id="date-bunyi">--/--/----</span>
+                                            </div>
+                                        </div>
+                                        <div><span id="stat-bunyi" class="badge badge-secondary px-2 py-1"
+                                                style="font-size: 0.65rem;">--</span></div>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <table class="condition-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Diupdate Oleh</th>
-                                <th>Tanggal Update</th>
-                                <th style="text-align: center;">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="cond-label">Bunyi Motor</td>
-                                <td id="updater-bunyi" class="cond-name">--</td>
-                                <td id="date-bunyi" class="cond-date">--/--/----</td>
-                                <td style="text-align: center;"><span id="stat-bunyi"
-                                        class="status-badge status-good"></span></td>
-                            </tr>
-                            <tr>
-                                <td class="cond-label">Panel Local</td>
-                                <td id="updater-panel" class="cond-name">--</td>
-                                <td id="date-panel" class="cond-date">--/--/----</td>
-                                <td style="text-align: center;"><span id="stat-panel"
-                                        class="status-badge status-fair"></span></td>
-                            </tr>
-                            <tr>
-                                <td class="cond-label">Kelengkapan</td>
-                                <td id="updater-lengkap" class="cond-name">--</td>
-                                <td id="date-lengkap" class="cond-date">--/--/----</td>
-                                <td style="text-align: center;"><span id="stat-lengkap"
-                                        class="status-badge status-good"></span></td>
-                            </tr>
-                            <tr>
-                                <td class="cond-label">Kebersihan</td>
-                                <td id="updater-bersih" class="cond-name">--</td>
-                                <td id="date-bersih" class="cond-date">--/--/----</td>
-                                <td style="text-align: center;"><span id="stat-bersih"
-                                        class="status-badge status-poor"></span></td>
-                            </tr>
-                            <tr>
-                                <td class="cond-label">Grounding</td>
-                                <td id="updater-ground" class="cond-name">--</td>
-                                <td id="date-ground" class="cond-date">--/--/----</td>
-                                <td style="text-align: center;"><span id="stat-ground"
-                                        class="status-badge status-good"></span></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                            <div class="col-xl col-lg-4 col-md-6 col-12 mb-2">
+                                <div class="status-card-modern p-2 rounded h-100" id="card-panel">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-wrapper-cond mr-2"
+                                            style="width: 30px; height: 30px; font-size: 13px;"><i
+                                                class="fas fa-server"></i></div>
+                                        <div class="flex-grow-1">
+                                            <div class="text-muted font-weight-bold text-uppercase"
+                                                style="font-size: 0.65rem;">Panel Local</div>
+                                            <div class="text-secondary mt-1" style="font-size: 0.6rem;"><i
+                                                    class="far fa-clock"></i> <span id="date-panel">--/--/----</span>
+                                            </div>
+                                        </div>
+                                        <div><span id="stat-panel" class="badge badge-secondary px-2 py-1"
+                                                style="font-size: 0.65rem;">--</span></div>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div class="condition-divider" style="margin: 15px 0 10px 0;"></div>
+                            <div class="col-xl col-lg-4 col-md-6 col-12 mb-2">
+                                <div class="status-card-modern p-2 rounded h-100" id="card-lengkap">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-wrapper-cond mr-2"
+                                            style="width: 30px; height: 30px; font-size: 13px;"><i
+                                                class="fas fa-boxes"></i></div>
+                                        <div class="flex-grow-1">
+                                            <div class="text-muted font-weight-bold text-uppercase"
+                                                style="font-size: 0.65rem;">Kelengkapan</div>
+                                            <div class="text-secondary mt-1" style="font-size: 0.6rem;"><i
+                                                    class="far fa-clock"></i> <span id="date-lengkap">--/--/----</span>
+                                            </div>
+                                        </div>
+                                        <div><span id="stat-lengkap" class="badge badge-secondary px-2 py-1"
+                                                style="font-size: 0.65rem;">--</span></div>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div class="gauge-dashboard-title"
-                        style="font-size: 0.85rem; border: none; text-align: left; margin-bottom: 5px;">
-                        <i class="fas fa-oil-can mr-2 text-info"></i> Jadwal Pemeliharaan
-                    </div>
+                            <div class="col-xl col-lg-6 col-md-6 col-12 mb-2">
+                                <div class="status-card-modern p-2 rounded h-100" id="card-bersih">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-wrapper-cond mr-2"
+                                            style="width: 30px; height: 30px; font-size: 13px;"><i
+                                                class="fas fa-broom"></i></div>
+                                        <div class="flex-grow-1">
+                                            <div class="text-muted font-weight-bold text-uppercase"
+                                                style="font-size: 0.65rem;">Kebersihan</div>
+                                            <div class="text-secondary mt-1" style="font-size: 0.6rem;"><i
+                                                    class="far fa-clock"></i> <span id="date-bersih">--/--/----</span>
+                                            </div>
+                                        </div>
+                                        <div><span id="stat-bersih" class="badge badge-secondary px-2 py-1"
+                                                style="font-size: 0.65rem;">--</span></div>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <table class="condition-table regreasing-table">
-                        <thead>
-                            <tr>
-                                <th>Item</th>
-                                <th style="text-align: left;">Update By</th>
-                                <th>Tgl Terakhir</th>
-                                <th>Jadwal Next</th>
-                                <th>Sisa Waktu</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="cond-label">Regreasing</td>
-                                <td id="updater-regrease" class="cond-name" style="font-weight: 600; color: #34495e;">--
-                                </td>
-                                <td id="date-regrease-last" class="cond-date">--/--/----</td>
-                                <td id="date-regrease-next" class="cond-date">--/--/----</td>
-                                <td id="time-left-regrease" class="cond-date"
-                                    style="font-weight: bold; color: #d9534f;">-- Hari</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="condition-divider" style="margin: 15px 0 10px 0;"></div>
-
-                    <div class="gauge-dashboard-title"
-                        style="font-size: 0.85rem; border: none; text-align: left; margin-bottom: 5px;">
-                        <i class="fas fa-clipboard-list mr-2 text-warning"></i> Action
-                    </div>
-
-                    <div class="action-box"
-                        style="background-color: #f8f9fa; border-left: 4px solid #ffc107; padding: 10px; border-radius: 4px; margin-bottom: 15px; max-height: 120px; overflow-y: auto; overflow-x: hidden;">
-                        <p id="teks-action"
-                            style="margin: 0 0 8px 0; font-size: 0.85rem; color: #333; line-height: 1.4; font-style: italic; word-wrap: break-word;">
-                            "Belum ada data action yang direkam."
-                        </p>
-                        <div style="font-size: 0.75rem; color: #6c757d; text-align: right; margin-top: auto;">
-                            <i class="far fa-calendar-alt mr-1"></i> <span id="tanggal-action">--/--/----</span>
+                            <div class="col-xl col-lg-6 col-md-12 col-12 mb-2">
+                                <div class="status-card-modern p-2 rounded h-100" id="card-ground">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-wrapper-cond mr-2"
+                                            style="width: 30px; height: 30px; font-size: 13px;"><i
+                                                class="fas fa-plug"></i></div>
+                                        <div class="flex-grow-1">
+                                            <div class="text-muted font-weight-bold text-uppercase"
+                                                style="font-size: 0.65rem;">Grounding</div>
+                                            <div class="text-secondary mt-1" style="font-size: 0.6rem;"><i
+                                                    class="far fa-clock"></i> <span id="date-ground">--/--/----</span>
+                                            </div>
+                                        </div>
+                                        <div><span id="stat-ground" class="badge badge-secondary px-2 py-1"
+                                                style="font-size: 0.65rem;">--</span></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
+                        <div class="d-flex align-items-start p-2"
+                            style="background-color: #fffdf5; border: 1px solid #ffeeba; border-left: 4px solid #ffc107; border-radius: 6px;">
+                            <div class="mr-2 mt-1"><i class="fas fa-tools text-warning fa-lg"></i></div>
+                            <div class="flex-grow-1" style="max-height: 80px; overflow-y: auto;">
+                                <p id="teks-action"
+                                    style="margin: 0 0 4px 0; font-size: 0.85rem; color: #343a40; font-weight: 500; font-style: italic;">
+                                    "Belum ada data action yang direkam."
+                                </p>
+                                <div style="font-size: 0.7rem; color: #856404; text-align: right;">
+                                    <i class="far fa-calendar-alt mr-1"></i> <span id="tanggal-action">--/--/----</span>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -530,6 +645,7 @@ if ($q_pdf) {
     <section id="section-input" class="section-full">
         <div class="container-fluid px-custom-5 h-100 py-3">
             <div class="card card-custom bg-white shadow-sm">
+
                 <div class="card-header py-2 bg-light">
                     <h3 class="card-title text-sm font-weight-bold">
                         <i class="fas fa-plus-circle mr-1 text-primary"></i> INPUT DATA INSPEKSI
@@ -542,7 +658,8 @@ if ($q_pdf) {
                     $role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
                     echo $user . ($role ? ' / ' . $role : '');
                     ?>">
-                    <div class="row">
+
+                    <div class="row mb-1">
                         <div class="col-md-3">
                             <div class="form-group mb-2">
                                 <label class="form-label-custom font-weight-bold">PILIH SALAH SATU</label>
@@ -567,44 +684,88 @@ if ($q_pdf) {
 
                     <div id="parameterSection">
                         <hr class="my-2">
+
                         <div class="row">
+
                             <?php
-                            // [DIPERBAIKI] Memisahkan Vibrasi menjadi DE dan NDE
-                            $allInputs = [
-                                ["vibrasi_de", "Vibrasi Bearing DE", "number"],
-                                ["vibrasi_nde", "Vibrasi Bearing NDE", "number"],
-                                ["temp_de", "Temp. Bearing DE", "number"],
-                                ["temp_nde", "Temp. Bearing NDE", "number"],
-                                ["suhu_ruang", "Suhu Ruangan", "number"],
-                                ["beban_gen", "Beban Generator", "number"],
-                                ["damper", "Opening Damper", "number"],
-                                ["load_current", "Load Current", "number"],
-                                ["bunyi", "Bunyi Motor", "select", ["GOOD", "FAIR", "POOR"]],
-                                ["panel", "Panel Local", "select", ["GOOD", "FAIR", "POOR"]],
-                                ["lengkap", "Kelengkapan", "select", ["GOOD", "FAIR", "POOR"]],
-                                ["bersih", "Kebersihan", "select", ["GOOD", "FAIR", "POOR"]],
-                                ["ground", "Grounding", "select", ["GOOD", "FAIR", "POOR"]],
-                                ["regrease", "Regreasing", "select", ["BELUM", "SELESAI"]]
+                            // 1. Data Vibrasi
+                            $vibInputs = [
+                                ["vibrasi_de_h", "Vib DE (H)"],
+                                ["vibrasi_de_v", "Vib DE (V)"],
+                                ["vibrasi_de_ax", "Vib DE (Ax)"],
+                                ["vibrasi_de_ge", "Vib DE (gE)"],
+                                ["vibrasi_nde_h", "Vib NDE (H)"],
+                                ["vibrasi_nde_v", "Vib NDE (V)"],
+                                ["vibrasi_nde_ax", "Vib NDE (Ax)"],
+                                ["vibrasi_nde_ge", "Vib NDE (gE)"]
                             ];
-                            foreach ($allInputs as $item): ?>
+                            foreach ($vibInputs as $item): ?>
                                 <div class="col-xl-2 col-lg-3 col-md-4 col-6">
                                     <div class="form-group mb-2">
-                                        <label class="form-label-custom"><?= $item[1] ?></label>
-                                        <?php if ($item[2] == "number"): ?>
-                                            <input type="number" step="0.01" name="<?= $item[0] ?>"
-                                                class="form-control form-control-sm border-secondary" placeholder="-">
-                                        <?php else: ?>
-                                            <select name="<?= $item[0] ?>"
-                                                class="form-control form-control-sm border-secondary">
-                                                <option value="" selected disabled>- Pilih -</option>
-                                                <?php foreach ($item[3] as $opt): ?>
-                                                    <option value="<?= $opt ?>"><?= $opt ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        <?php endif; ?>
+                                        <label class="form-label-custom text-info"><?= $item[1] ?></label>
+                                        <input type="number" step="0.01" name="<?= $item[0] ?>"
+                                            class="form-control form-control-sm border-secondary" placeholder="-">
                                     </div>
                                 </div>
                             <?php endforeach; ?>
+
+                            <?php
+                            // 2. Data Elektrikal & Suhu
+                            $elecInputs = [
+                                ["temp_de", "Temp DE (°C)"],
+                                ["temp_nde", "Temp NDE (°C)"],
+                                ["suhu_ruang", "Suhu Ruang (°C)"],
+                                ["load_current_r", "Current R (A)"],
+                                ["load_current_s", "Current S (A)"],
+                                ["load_current_t", "Current T (A)"],
+                                ["beban_gen", "Beban Gen (MW)"],
+                                ["damper", "Damper (%)"]
+                            ];
+                            foreach ($elecInputs as $item): ?>
+                                <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+                                    <div class="form-group mb-2">
+                                        <label class="form-label-custom text-success"><?= $item[1] ?></label>
+                                        <input type="number" step="0.01" name="<?= $item[0] ?>"
+                                            class="form-control form-control-sm border-secondary" placeholder="-">
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+
+                            <?php
+                            // 3. Data Kondisi Fisik
+                            $fisikInputs = [
+                                ["bunyi", "Bunyi Motor"],
+                                ["panel", "Panel Local"],
+                                ["lengkap", "Kelengkapan"],
+                                ["bersih", "Kebersihan"],
+                                ["ground", "Grounding"]
+                            ];
+                            foreach ($fisikInputs as $item): ?>
+                                <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+                                    <div class="form-group mb-2">
+                                        <label class="form-label-custom text-danger"><?= $item[1] ?></label>
+                                        <select name="<?= $item[0] ?>"
+                                            class="form-control form-control-sm border-secondary">
+                                            <option value="" selected disabled>- Pilih -</option>
+                                            <option value="GOOD">GOOD</option>
+                                            <option value="FAIR">FAIR</option>
+                                            <option value="POOR">POOR</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+
+                            <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+                                <div class="form-group mb-2">
+                                    <label class="form-label-custom text-warning">Regreasing</label>
+                                    <select name="regrease" class="form-control form-control-sm border-secondary">
+                                        <option value="" selected disabled>- Pilih -</option>
+                                        <option value="BELUM">BELUM</option>
+                                        <option value="SELESAI">SELESAI</option>
+                                    </select>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
@@ -619,7 +780,6 @@ if ($q_pdf) {
                                     style="min-height: 120px;"
                                     placeholder="Isi keterangan action di sini..."></textarea>
                             </div>
-
                             <button type="button" id="btnKirim"
                                 class="btn btn-primary btn-sm btn-block shadow-sm font-weight-bold">
                                 <i class="fas fa-paper-plane mr-1"></i> KIRIM DATA MONITORING
@@ -640,10 +800,12 @@ if ($q_pdf) {
                             </div>
                         </div>
                     </div>
+
                 </form>
             </div>
         </div>
     </section>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>

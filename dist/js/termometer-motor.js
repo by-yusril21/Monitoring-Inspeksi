@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
       tubeBorderColor = "#999999";
     var mercuryColor;
 
+    // Logika Warna Cairan Merkuri
     if (currentTemp < 40) mercuryColor = "rgb(72, 235, 39)";
     else if (currentTemp >= 40 && currentTemp < 80)
       mercuryColor = "rgb(240, 169, 15)";
@@ -61,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("offset", "90%")
       .style("stop-color", mercuryColor);
 
-    // --- [BARU] GRADIEN UNTUK ZONA (MEMUDAR KE KANAN) ---
+    // --- GRADIEN UNTUK ZONA (MEMUDAR KE KANAN) ---
     // Gradien High (Merah)
     var highGradId = "highGrad-" + containerId;
     var highGrad = defs
@@ -177,11 +178,11 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("y", scale(120))
       .attr("width", 38)
       .attr("height", scale(80) - scale(120))
-      .style("fill", "url(#" + highGradId + ")") // Panggil Gradien
+      .style("fill", "url(#" + highGradId + ")")
       .style("rx", 3);
     svg
       .append("text")
-      .attr("x", width / 2 + tubeWidth / 2 + 20) // Geser x sedikit ke 20
+      .attr("x", width / 2 + tubeWidth / 2 + 20)
       .attr("y", scale(100))
       .text("High")
       .style("fill", "#c0392b")
@@ -197,11 +198,11 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("y", scale(80))
       .attr("width", 38)
       .attr("height", scale(40) - scale(80))
-      .style("fill", "url(#" + medGradId + ")") // Panggil Gradien
+      .style("fill", "url(#" + medGradId + ")")
       .style("rx", 3);
     svg
       .append("text")
-      .attr("x", width / 2 + tubeWidth / 2 + 20) // Geser x sedikit ke 20
+      .attr("x", width / 2 + tubeWidth / 2 + 20)
       .attr("y", scale(60))
       .text("Medium")
       .style("fill", "#d35400")
@@ -217,11 +218,11 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("y", scale(40))
       .attr("width", 38)
       .attr("height", scale(0) - scale(40))
-      .style("fill", "url(#" + lowGradId + ")") // Panggil Gradien
+      .style("fill", "url(#" + lowGradId + ")")
       .style("rx", 3);
     svg
       .append("text")
-      .attr("x", width / 2 + tubeWidth / 2 + 20) // Geser x sedikit ke 20
+      .attr("x", width / 2 + tubeWidth / 2 + 20)
       .attr("y", scale(20))
       .text("Low")
       .style("fill", "#32739f")
@@ -301,52 +302,55 @@ document.addEventListener("DOMContentLoaded", function () {
       .attr("x2", -3);
   }
 
-  // UPDATE SELURUH ELEMEN DI DALAM CARD (Nilai, Warna, Status Box)
+  // UPDATE SELURUH ELEMEN DI DALAM CARD
   function updateThermometerUI(prefix, dataObj) {
     let temp = isNaN(dataObj.value) ? 0 : dataObj.value;
 
     // 1. Gambar Termometer D3.js
     drawThermometer("thermo-" + prefix, temp);
 
-    // 2. Tentukan Warna dan Status
-    let color, bgColor, statusText, icon;
+    // 2. Tentukan Warna Latar Belakang Kotak Waktu
+    let color, bgColor;
     if (temp < 40) {
       color = "#27ae60"; // Hijau (Normal)
       bgColor = "#eafaf1";
-      statusText = "Normal";
-      icon = "fa-check-circle";
     } else if (temp >= 40 && temp < 80) {
       color = "#f39c12"; // Orange (Warning)
       bgColor = "#fef5e7";
-      statusText = "Warning";
-      icon = "fa-exclamation-triangle";
     } else {
       color = "#e74c3c"; // Merah (Critical)
       bgColor = "#fdedec";
-      statusText = "Critical";
-      icon = "fa-times-circle";
     }
 
     // 3. Terapkan ke HTML
     let valElem = document.getElementById("val-" + prefix);
     let boxElem = document.getElementById("status-box-" + prefix);
-    let txtElem = document.getElementById("status-text-" + prefix);
-    let timeElem =
-      document.getElementById("time-temp-" + prefix) ||
-      document.getElementById("time-suhu-ruang");
 
+    // Cari elemen waktu
+    let timeElemId = "time-temp-" + prefix;
+    if (prefix === "winding") timeElemId = "time-suhu-ruang";
+    let timeElem = document.getElementById(timeElemId);
+
+    // Update Teks Suhu
     if (valElem) {
       valElem.innerText = temp.toFixed(1) + " °C";
       valElem.style.color = color;
     }
-    if (boxElem && txtElem) {
+
+    // Update Background Kotak Footer
+    if (boxElem) {
       boxElem.style.backgroundColor = bgColor;
-      txtElem.innerHTML = `<i class="fas ${icon}"></i> ${statusText}`;
-      txtElem.style.color = color;
     }
+
+    // Update Waktu dan tambahkan icon jam dinamis
     if (timeElem) {
-      timeElem.innerText =
-        dataObj.timestamp !== "-" ? dataObj.timestamp : "Data Kosong";
+      if (dataObj.timestamp !== "-") {
+        timeElem.innerHTML = `<i class="far fa-clock mr-1"></i> ${dataObj.timestamp}`;
+        timeElem.style.color = color; // Samakan warna jam dengan warna status suhu
+      } else {
+        timeElem.innerHTML = `<i class="fas fa-exclamation-triangle mr-1"></i> Data Kosong`;
+        timeElem.style.color = "#6c757d"; // Warna abu-abu jika kosong
+      }
     }
   }
 
@@ -375,15 +379,18 @@ document.addEventListener("DOMContentLoaded", function () {
     return { value: 0, timestamp: "-" };
   }
 
-  // SINKRONISASI DARI DATATABLE
+  // SINKRONISASI DARI DATATABLE KE D3.JS
   function syncThermometerFromTable() {
     if (typeof $ !== "undefined" && $.fn.DataTable.isDataTable("#example1")) {
       const table = $("#example1").DataTable();
       if (table.data().any()) {
         const allData = table.rows().data();
-        updateThermometerUI("de", getLastValidData(allData, 7));
-        updateThermometerUI("nde", getLastValidData(allData, 8));
-        updateThermometerUI("winding", getLastValidData(allData, 9));
+
+        // --- UPDATE INDEX KOLOM UNTUK 28 KOLOM ---
+        // Temp DE = Kolom 13, Temp NDE = Kolom 14, Suhu Ruang = Kolom 15
+        updateThermometerUI("de", getLastValidData(allData, 13));
+        updateThermometerUI("nde", getLastValidData(allData, 14));
+        updateThermometerUI("winding", getLastValidData(allData, 15));
       } else {
         const emptyData = { value: 0, timestamp: "-" };
         updateThermometerUI("de", emptyData);

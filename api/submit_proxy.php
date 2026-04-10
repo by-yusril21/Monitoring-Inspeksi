@@ -2,7 +2,7 @@
 // File: api/submit_proxy.php
 header('Content-Type: application/json');
 
-// 1. Panggil file konfigurasi rahasia
+// 1. Panggil file konfigurasi
 require_once '../config/cek_session.php';
 require_once '../config/config.php';
 
@@ -23,8 +23,7 @@ if (!array_key_exists($unit, $SCRIPT_URLS) || empty($SCRIPT_URLS[$unit])) {
     exit;
 }
 
-// 4. Susun Payload untuk Google Apps Script
-// Menggunakan isset() agar jika ada data yang kosong, PHP tidak mengeluarkan pesan Error/Warning
+// 4. Susun Payload untuk Google Apps Script (Menerjemahkan variabel JS ke format doPost Apps Script)
 $payloadForGoogle = [
     "token" => isset($API_TOKEN) ? $API_TOKEN : '',
     "targetSheet" => isset($data['targetSheet']) ? $data['targetSheet'] : '',
@@ -33,16 +32,33 @@ $payloadForGoogle = [
     "sectionNo" => isset($data['sectionNo']) ? $data['sectionNo'] : '-',
     "actions" => isset($data['actions']) ? $data['actions'] : '-',
 
-    // [DIPERBAIKI] Vibrasi sudah dipecah menjadi dua (DE & NDE)
-    "vibrasiDE" => isset($data['vibrasiDE']) ? $data['vibrasiDE'] : '-',
-    "vibrasiNDE" => isset($data['vibrasiNDE']) ? $data['vibrasiNDE'] : '-',
+    // VIBRASI DE (Mencocokkan dengan data.vibrasiDE_H dll)
+    "vibrasiDE_H" => isset($data['vibrasi_de_h']) ? $data['vibrasi_de_h'] : '-',
+    "vibrasiDE_V" => isset($data['vibrasi_de_v']) ? $data['vibrasi_de_v'] : '-',
+    "vibrasiDE_Ax" => isset($data['vibrasi_de_ax']) ? $data['vibrasi_de_ax'] : '-',
+    "vibrasiDE_gE" => isset($data['vibrasi_de_ge']) ? $data['vibrasi_de_ge'] : '-',
 
+    // VIBRASI NDE (Mencocokkan dengan data.vibrasiNDE_H dll)
+    "vibrasiNDE_H" => isset($data['vibrasi_nde_h']) ? $data['vibrasi_nde_h'] : '-',
+    "vibrasiNDE_V" => isset($data['vibrasi_nde_v']) ? $data['vibrasi_nde_v'] : '-',
+    "vibrasiNDE_Ax" => isset($data['vibrasi_nde_ax']) ? $data['vibrasi_nde_ax'] : '-',
+    "vibrasiNDE_gE" => isset($data['vibrasi_nde_ge']) ? $data['vibrasi_nde_ge'] : '-',
+
+    // SUHU
     "tempDE" => isset($data['tempDE']) ? $data['tempDE'] : '-',
     "tempNDE" => isset($data['tempNDE']) ? $data['tempNDE'] : '-',
     "suhuRuang" => isset($data['suhuRuang']) ? $data['suhuRuang'] : '-',
+
+    // BEBAN & DAMPER
     "beban" => isset($data['beban']) ? $data['beban'] : '-',
     "damper" => isset($data['damper']) ? $data['damper'] : '-',
-    "amper" => isset($data['amper']) ? $data['amper'] : '-',
+
+    // CURRENT / ARUS (Mencocokkan dengan data.amperR, amperS, amperT)
+    "amperR" => isset($data['current_r']) ? $data['current_r'] : '-',
+    "amperS" => isset($data['current_s']) ? $data['current_s'] : '-',
+    "amperT" => isset($data['current_t']) ? $data['current_t'] : '-',
+
+    // KONDISI FISIK
     "bunyi" => isset($data['bunyi']) ? $data['bunyi'] : '-',
     "panel" => isset($data['panel']) ? $data['panel'] : '-',
     "kelengkapan" => isset($data['kelengkapan']) ? $data['kelengkapan'] : '-',
