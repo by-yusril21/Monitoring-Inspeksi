@@ -200,6 +200,7 @@ if ($q_pdf) {
 </style>
 
 <div class="content-wrapper">
+
     <section id="section-tabel" class="vh-100 d-flex flex-column py-3">
         <div class="container-fluid px-3 h-100">
             <div class="card h-100 mb-0 shadow-sm">
@@ -614,12 +615,6 @@ if ($q_pdf) {
     <section id="section-input" class="section-full">
         <div class="container-fluid px-custom-5 h-100 py-3">
             <div class="card card-custom bg-white shadow-sm">
-
-                <div class="card-header py-2 bg-light">
-                    <h3 class="card-title text-sm font-weight-bold">
-                        <i class="fas fa-plus-circle mr-1 text-primary"></i> INPUT DATA INSPEKSI
-                    </h3>
-                </div>
 
                 <form id="formInputMotor" class="p-3">
                     <input type="hidden" id="userLoggedIn" value="<?php

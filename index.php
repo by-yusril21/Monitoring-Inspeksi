@@ -44,6 +44,9 @@ if (isset($_GET['page']) && file_exists(filename: "page/" . $_GET['page'] . ".ph
 <script src="plugins/toastr/toastr.min.js"></script>
 <script src="plugins/d3-min/d3.min.js"></script>
 <script src="plugins/VibeTube/VibeTube.js"></script>
+<script src="plugins/toastr/toastr.min.js"></script>
+<script src="plugins/sweetalert2/sweetalert2.min.js"></script>
+<script src="plugins/d3-min/d3.min.js"></script>
 
 
 
