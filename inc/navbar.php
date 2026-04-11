@@ -2,11 +2,11 @@
 /* navbar.php — AdminLTE 3 + Bootstrap 4 native */
 
 // 1. Tangkap nilai ?page= dari URL
-$currentPage = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
+$currentPage = isset($_GET['page']) ? $_GET['page'] : 'home';
 
-// 2. Buat variabel penanda untuk Dashboard & Chart
+// 2. Buat variabel penanda untuk home & Chart
 // Karena menggunakan index.php, kita cukup cek dari parameter $currentPage
-$isDashboard = ($currentPage === 'dashboard');
+$ishome = ($currentPage === 'home');
 $isChart = ($currentPage === 'chart');
 
 // 3. Menentukan unit chart mana yang sedang aktif (Default: C6KV)
@@ -25,7 +25,7 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
       <i class="fas fa-bars"></i>
     </a>
 
-    <?php if ($isDashboard): ?>
+    <?php if ($ishome): ?>
       <div class="d-none d-md-flex align-items-center">
         <select id="pilihUnit" class="form-control form-control-sm mr-1" style="width:220px;">
           <option value="">-- Pilih Unit --</option>
@@ -84,7 +84,7 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
 
     <ul class="navbar-nav d-flex flex-row align-items-center ml-auto mb-0">
 
-      <?php if ($isDashboard): ?>
+      <?php if ($ishome): ?>
         <li class="nav-item">
           <a href="javascript:void(0)" class="nav-link nav-menu-link text-primary px-2" data-target-id="section-tabel"
             onclick="scrollToSection('section-tabel')">
@@ -141,7 +141,7 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
     </ul>
   </div>
 
-  <?php if ($isDashboard): ?>
+  <?php if ($ishome): ?>
     <div class="collapse w-100 d-md-none" id="filterCollapse">
       <div class="px-3 py-2 border-top border-primary bg-light w-100">
         <select id="pilihUnitMobile" class="form-control form-control-sm mb-2 w-100">

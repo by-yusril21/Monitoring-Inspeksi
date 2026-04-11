@@ -1,203 +1,185 @@
 /* =======================================================
-   tabel-motor.css (Tema Abu-Abu Sederhana & Bersih)
+   tabel-motor.css (Tema Bersih, Posisi Rapi, & Lebar Kolom Terkunci)
    ======================================================= */
 
-/* --- SECTION & LAYOUT TABEL --- */
-.section-tabel {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.table-responsive-custom {
-  flex: 1;
-  overflow-y: auto;
-  background: white;
-}
-
-/* --- SETUP GLOBAL --- */
+/* --- 1. SETUP GLOBAL --- */
 .content-wrapper {
   background-color: #f4f6f9 !important;
 }
 .content-header {
-  display: none;
+  display: none; /* Sembunyikan judul halaman agar area tabel luas */
 }
 
-/* --- LAYOUT TOOLBAR DATATABLES --- */
-.dataTables_wrapper .row:first-child {
-  padding: 10px;
-  background-color: white;
-  border-bottom: none !important;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-/* --- ELEMEN TOOLBAR --- */
-.dataTables_length,
-.dataTables_filter,
-.dt-buttons {
-  display: inline-block !important;
+/* --- 2. RESET BAWAAN DATATABLES AGAR RATA KIRI (TOOLBAR) --- */
+div.dataTables_wrapper div.dataTables_filter,
+div.dataTables_wrapper div.dataTables_length {
+  text-align: left !important;
   margin-bottom: 0 !important;
-  vertical-align: middle;
 }
 
-.dataTables_filter {
-  margin-right: 10px !important;
-}
-.dataTables_length {
-  margin-right: 10px !important;
-}
-
-.form-control-sm,
-.btn-sm,
-.custom-select-sm,
-.dataTables_filter input,
-.dataTables_length select {
-  height: 32px !important;
-  line-height: 1.5;
-  font-size: 14px !important;
-}
-
-#pilihUnit,
-#pilihMotor {
-  font-weight: bold !important;
-  color: #333 !important;
-  font-size: 15px !important;
-  height: 34px !important;
-}
-
-/* --- RESET TABEL DATATABLES --- */
-table.dataTable {
-  margin-top: 0 !important;
+div.dataTables_wrapper div.dataTables_filter label,
+div.dataTables_wrapper div.dataTables_length label {
+  display: flex !important;
+  align-items: center !important;
   margin-bottom: 0 !important;
-  border-collapse: collapse !important;
+  font-weight: 500;
+  color: #555;
 }
 
-.dataTables_scrollHeadInner {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+/* Kotak Input Search */
+div.dataTables_wrapper div.dataTables_filter input {
+  margin-left: 8px !important;
+  margin-right: 8px !important;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  padding: 4px 8px;
 }
 
-/* --- TAMPILKAN & PERCANTIK SCROLLBAR HORIZONTAL --- */
-.dataTables_scrollBody {
-  border-top: none !important;
+/* Kotak Pilihan Show Entries (Dilebarkan) */
+div.dataTables_wrapper div.dataTables_length select {
+  margin-left: 8px !important;
+  margin-right: 8px !important;
+  height: 32px;
+  min-width: 75px !important; /* KUNCI PERBAIKAN: Memaksa lebar minimal agar teks tidak tertumpuk */
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  padding: 4px 8px;
 }
 
-/* Kustomisasi bentuk scrollbar agar cocok dengan tema */
-.dataTables_scrollBody::-webkit-scrollbar {
-  height: 8px; /* Ketebalan scrollbar horizontal */
-}
-
-.dataTables_scrollBody::-webkit-scrollbar-track {
-  background: #f4f6f9; /* Warna jalur scrollbar */
-}
-
-.dataTables_scrollBody::-webkit-scrollbar-thumb {
-  background: #c1c1c1; /* Warna tombol scrollbar */
-  border-radius: 4px; /* Membuat ujungnya membulat */
-}
-
-.dataTables_scrollBody::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8; /* Warna saat di-hover */
-}
-
-/* --- HEADER WARNA ABU-ABU SEDERHANA --- */
-.table-bordered {
-  border: 1px solid #dee2e6 !important;
-}
-.table-bordered th,
-.table-bordered td {
-  border: 1px solid #dee2e6 !important;
-}
-
-/* Aturan Umum Header */
-.table thead th {
+/* --- 3. PEWARNAAN HEADER (3 TINGKAT ABU-ABU) --- */
+.dataTables_scrollHead .table thead th {
   vertical-align: middle !important;
   text-align: center !important;
-  color: #333333 !important;
-  padding: 2px 10px !important; /* Angka 3px untuk jarak Atas-Bawah, 10px Kiri-Kanan */
-  font-size: 14px !important;
-  white-space: nowrap !important;
+  color: #333;
+  padding: 8px 10px !important;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
-/* Warna Judul Baris Atas (Abu-abu Medium) */
 .dataTables_scrollHead .table thead tr:first-child th {
-  background-color: #e7e7e7 !important;
-  font-weight: bold !important;
-  border-color: #acacac !important; /* Border abu-abu tegas */
+  background-color: #e2e6ea !important;
+  font-weight: 700;
 }
-
-/* Warna Judul Baris Bawah (DE, NDE, Ruang - Abu-abu Terang) */
 .dataTables_scrollHead .table thead tr:nth-child(2) th {
-  background-color: #f4f4f4 !important;
-  font-weight: 600 !important;
-  font-size: 13px !important;
-  border-color: #cbcbcb !important;
+  background-color: #f1f3f5 !important;
+  font-weight: 600;
+}
+.dataTables_scrollHead .table thead tr:nth-child(3) th {
+  background-color: #f8f9fa !important;
+  font-weight: 600;
+  font-size: 12px;
+  color: #495057;
 }
 
-/* --- PENGAMAN SINKRONISASI KOLOM (GHOST HEADER FIX) --- */
+/* --- 4. GHOST HEADER FIX (Menyembunyikan baris kosong tanpa merusak border) --- */
 .dataTables_scrollBody thead th {
+  background-color: transparent !important;
+  color: transparent !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
   border-top: none !important;
   border-bottom: none !important;
   height: 0 !important;
-  color: transparent !important;
-  white-space: nowrap !important;
 }
 
-/* --- ISI TABEL & EFEK HOVER --- */
+/* --- 5. ISI TABEL (BODY) --- */
 .table tbody td {
   vertical-align: middle !important;
   padding: 6px 10px !important;
-  color: #444;
-  font-size: 14px !important;
-  text-align: center;
+  color: #495057;
+  font-size: 13px;
+  text-align: center; /* Default rata tengah */
 }
 
-/* KOLOM ACTIONS (BISA WRAP TEXT KE BAWAH) */
-#example1 tbody td:last-child,
-.dataTables_scrollHead #example1 thead tr:first-child th:last-child {
-  white-space: normal !important;
+/* Kolom No */
+.table tbody td:first-child {
+  font-weight: 600;
+  background-color: #fcfcfc;
+}
+
+/* Efek Hover Baris */
+.table-hover tbody tr:hover td {
+  background-color: #e9ecef !important;
+}
+
+/* =======================================================
+   6. MENGUNCI LEBAR KOLOM SECARA PAKSA (ABSOLUT)
+   (Berpasangan dengan className di file .js)
+   ======================================================= */
+table.dataTable th.col-no,
+table.dataTable td.col-no {
+  width: 20px !important;
+  min-width: 20px !important;
+  max-width: 20px !important;
+}
+table.dataTable th.col-date,
+table.dataTable td.col-date {
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+}
+table.dataTable th.col-update,
+table.dataTable td.col-update {
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
+}
+table.dataTable th.col-aksi,
+table.dataTable td.col-aksi {
+  width: 80px !important;
+  min-width: 80px !important;
+  max-width: 80px !important;
+}
+table.dataTable th.col-vib,
+table.dataTable td.col-vib {
+  width: 40px !important;
+  min-width: 40px !important;
+  max-width: 40px !important;
+  padding-left: 1px !important;
+  padding-right: 1px !important; /* Ruang agar angka tak terpotong */
+}
+table.dataTable th.col-temp,
+table.dataTable td.col-temp {
+  width: 50px !important;
+  min-width: 50px !important;
+  max-width: 50px !important;
+  padding-left: 1px !important;
+  padding-right: 1px !important;
+}
+table.dataTable th.col-load,
+table.dataTable td.col-load {
+  width: 80px !important;
+  min-width: 80px !important;
+  max-width: 80px !important;
+}
+table.dataTable th.col-kondisi,
+table.dataTable td.col-kondisi {
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
+}
+table.dataTable th.col-action,
+table.dataTable td.col-action {
+  width: 300px !important;
   min-width: 300px !important;
-  max-width: 500px !important;
-  word-break: break-word;
-  line-height: 1.4 !important;
+  max-width: 300px !important;
+  white-space: normal !important; /* Izinkan teks paragraf turun ke bawah */
   text-align: left !important;
 }
 
-/* HOVER EFEK (Abu-abu sangat muda) */
-.table-hover tbody tr:hover td {
-  background-color: #f4f6f9 !important;
-  transition: background-color 0.1s ease-in-out;
+/* --- 7. KUSTOMISASI SCROLLBAR (Modern Style) --- */
+.dataTables_scrollBody::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
 }
-
-/* Kolom No dibuat rata tengah */
-table.dataTable tbody td:first-child {
-  text-align: center !important;
+.dataTables_scrollBody::-webkit-scrollbar-track {
+  background: #f1f3f5;
 }
-
-/* Label Entries & Search */
-.dataTables_length label,
-.dataTables_filter label {
-  font-weight: normal !important;
-  margin-bottom: 0 !important;
-  font-size: 14px !important;
+.dataTables_scrollBody::-webkit-scrollbar-thumb {
+  background: #cbd3da;
+  border-radius: 4px;
 }
-
-#my-filter-placeholder {
-  position: relative;
-  z-index: 10;
-}
-#btnRefresh {
-  position: relative;
-  z-index: 11;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.dataTables_wrapper .row {
-  width: 100%;
-  margin: 0;
+.dataTables_scrollBody::-webkit-scrollbar-thumb:hover {
+  background: #adb5bd;
 }

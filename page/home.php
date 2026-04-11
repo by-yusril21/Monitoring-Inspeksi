@@ -200,109 +200,75 @@ if ($q_pdf) {
 </style>
 
 <div class="content-wrapper">
-    <section id="section-tabel" class="vh-100 d-flex flex-column py-2">
-        <div class="container-fluid px-1 h-100">
-            <div class="card shadow-none border h-100 mb-0">
-                <div class="card-body p-0 flex-fill d-flex flex-column">
-                    <div class="table-responsive flex-fill" style="overflow-y: auto;">
+    <section id="section-tabel" class="vh-100 d-flex flex-column py-3">
+        <div class="container-fluid px-3 h-100">
+            <div class="card h-100 mb-0 shadow-sm">
 
-                        <span id="nama-user-login"
-                            style="display: none;"><?php echo htmlspecialchars($username_login ?? 'User'); ?></span>
-                        <span id="judul-1-pdf"
-                            style="display: none;"><?php echo htmlspecialchars($pdf_data['pdf_judul_1'] ?? 'DOKUMEN RANGKUMAN DATA PMC SCHEDULE BULANAN MOTOR 6kV DAN 380V'); ?></span>
-                        <span id="judul-2-pdf"
-                            style="display: none;"><?php echo htmlspecialchars($pdf_data['pdf_judul_2'] ?? 'PT Semen Tonasa - Electrical of Power Plant Elins Maintenance'); ?></span>
-                        <span id="logo-base64-pdf"
-                            style="display: none;"><?php echo htmlspecialchars($pdf_data['pdf_logo_base64'] ?? ''); ?></span>
+                <div class=" card-body p-2 d-flex flex-column" id="area-tabel"
+                    style="opacity: 0; transition: opacity 0.5s ease-in-out;">
+                    <span id="nama-user-login"
+                        style="display: none;"><?php echo htmlspecialchars($username_login ?? 'User'); ?></span>
+                    <span id="judul-1-pdf"
+                        style="display: none;"><?php echo htmlspecialchars($pdf_data['pdf_judul_1'] ?? 'DOKUMEN RANGKUMAN DATA PMC SCHEDULE BULANAN MOTOR 6kV DAN 380V'); ?></span>
+                    <span id="judul-2-pdf"
+                        style="display: none;"><?php echo htmlspecialchars($pdf_data['pdf_judul_2'] ?? 'PT Semen Tonasa - Electrical of Power Plant Elins Maintenance'); ?></span>
+                    <span id="logo-base64-pdf"
+                        style="display: none;"><?php echo htmlspecialchars($pdf_data['pdf_logo_base64'] ?? ''); ?></span>
 
-                        <table id="example1"
-                            class="table table-bordered table-striped table-hover table-sm text-nowrap m-0 text-center">
+                    <table id="example1" class="table table-bordered table-hover table-sm text-center w-100">
+                        <thead class="align-middle">
+                            <tr>
+                                <th class="align-middle" rowspan="3">No</th>
+                                <th class="align-middle" rowspan="3">Date</th>
+                                <th class="align-middle" rowspan="3">Update By</th>
+                                <th class="align-middle" rowspan="3">Aksi</th>
+                                <th class="align-middle" rowspan="3">Section<br>No</th>
+                                <th class="align-middle text-center" colspan="8">Vibrasi (mm/s)</th>
+                                <th class="align-middle text-center" colspan="3">Temp (°C)</th>
+                                <th class="align-middle text-center" colspan="3">Load Current (A)</th>
+                                <th class="align-middle" rowspan="3">Load Generetor<br>(MW)</th>
+                                <th class="align-middle" rowspan="3">Opening<br>Damper (%)</th>
+                                <th class="align-middle" rowspan="3">Bunyi<br>Motor</th>
+                                <th class="align-middle" rowspan="3">Kondisi<br>Panel</th>
+                                <th class="align-middle" rowspan="3">Kelengkapan<br>Motor</th>
+                                <th class="align-middle" rowspan="3">Kebersihan<br>Motor</th>
+                                <th class="align-middle" rowspan="3">Grounding<br>Motor</th>
+                                <th class="align-middle" rowspan="3">Regreasing<br>Bearing</th>
+                                <th class="align-middle" rowspan="3">Action</th>
+                            </tr>
+                            <tr>
+                                <th class="align-middle text-center" colspan="4">DE</th>
+                                <th class="align-middle text-center" colspan="4">NDE</th>
+                                <th class="align-middle" rowspan="2">DE</th>
+                                <th class="align-middle" rowspan="2">NDE</th>
+                                <th class="align-middle" rowspan="2">Ruang</th>
+                                <th class="align-middle" rowspan="2">R</th>
+                                <th class="align-middle" rowspan="2">S</th>
+                                <th class="align-middle" rowspan="2">T</th>
+                            </tr>
+                            <tr>
+                                <th class="align-middle">H</th>
+                                <th class="align-middle">V</th>
+                                <th class="align-middle">Ax</th>
+                                <th class="align-middle">gE</th>
+                                <th class="align-middle">H</th>
+                                <th class="align-middle">V</th>
+                                <th class="align-middle">Ax</th>
+                                <th class="align-middle">gE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
 
-                            <thead class="bg-light text-dark align-middle">
-                                <tr>
-                                    <th class="align-middle" rowspan="3" style="min-width: 20px;">No</th>
-                                    <th class="align-middle" rowspan="3" style="min-width: 140px;">Date</th>
-                                    <th class="align-middle" rowspan="3" style="min-width: 160px;">Update By</th>
-                                    <th class="align-middle" rowspan="3" style="min-width: 70px;">Aksi</th>
-                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Section<br>No</th>
-
-                                    <th class="align-middle" colspan="8">Vibrasi (mm/s)</th>
-
-                                    <th class="align-middle" colspan="3">Temp (°C)</th>
-
-                                    <th class="align-middle" colspan="3">Load<br>Current(A)</th>
-
-                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Load Gene<br>rator(MW)
-                                    </th>
-                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Opening<br>Damper(%)
-                                    </th>
-
-
-
-                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Bunyi<br>Motor</th>
-                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Kondisi<br>Panel</th>
-                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Kelengkapan<br>Motor
-                                    </th>
-                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Kebersihan<br>Motor
-                                    </th>
-                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Grounding<br>Motor
-                                    </th>
-                                    <th class="align-middle" rowspan="3" style="min-width: 50px;">Regreasing<br>Motor
-                                    </th>
-                                    <th class="align-middle" rowspan="3" style="min-width: 300px;">Action</th>
-                                </tr>
-
-                                <tr>
-                                    <th class="align-middle" colspan="4">DE</th>
-                                    <th class="align-middle" colspan="4">NDE</th>
-
-                                    <th class="align-middle" rowspan="2"
-                                        style="width: 30px; min-width: 30px; max-width: 30px;">DE</th>
-                                    <th class="align-middle" rowspan="2"
-                                        style="width: 30px; min-width: 30px; max-width: 30px;">NDE</th>
-                                    <th class="align-middle" rowspan="2"
-                                        style="width: 30px; min-width: 30px; max-width: 30px;">Ruang</th>
-
-                                    <th class="align-middle" rowspan="2"
-                                        style="width: 30px; min-width: 30px; max-width: 30px;">R</th>
-                                    <th class="align-middle" rowspan="2"
-                                        style="width: 30px; min-width: 30px; max-width: 30px;">S</th>
-                                    <th class="align-middle" rowspan="2"
-                                        style="width: 30px; min-width: 30px; max-width: 30px;">T</th>
-                                </tr>
-
-                                <tr>
-                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">H
-                                    </th>
-                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">V
-                                    </th>
-                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">Ax
-                                    </th>
-                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">gE
-                                    </th>
-
-                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">H
-                                    </th>
-                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">V
-                                    </th>
-                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">Ax
-                                    </th>
-                                    <th class="align-middle" style="width: 30px; min-width: 30px; max-width: 30px;">gE
-                                    </th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <section id="section-gauge" class="section-full">
-        <div class="container-fluid px-custom-5 h-100 py-3" style="overflow-y: auto;">
+        <div class="container-fluid h-100 py-3"
+            style="max-width: 1366px; margin: 0 auto; overflow-y: auto; overflow-x: hidden;">
 
             <div class="unified-dashboard-card p-3">
 
@@ -489,7 +455,8 @@ if ($q_pdf) {
                                     <div class="gauge-card-header mb-0"><span style="font-size: 0.7rem;">Current
                                             (R)</span></div>
                                     <div id="gauge-load-current-r" class="modern-gauge-chart"
-                                        style="min-height: 100px;"></div>
+                                        style="min-height: 100px;">
+                                    </div>
                                     <div class="gauge-card-footer mt-0"><span id="time-load-current-r"
                                             style="font-size: 0.6rem;">Data Kosong</span></div>
                                 </div>
@@ -500,7 +467,8 @@ if ($q_pdf) {
                                     <div class="gauge-card-header mb-0"><span style="font-size: 0.7rem;">Current
                                             (S)</span></div>
                                     <div id="gauge-load-current-s" class="modern-gauge-chart"
-                                        style="min-height: 100px;"></div>
+                                        style="min-height: 100px;">
+                                    </div>
                                     <div class="gauge-card-footer mt-0"><span id="time-load-current-s"
                                             style="font-size: 0.6rem;">Data Kosong</span></div>
                                 </div>
@@ -511,7 +479,8 @@ if ($q_pdf) {
                                     <div class="gauge-card-header mb-0"><span style="font-size: 0.7rem;">Current
                                             (T)</span></div>
                                     <div id="gauge-load-current-t" class="modern-gauge-chart"
-                                        style="min-height: 100px;"></div>
+                                        style="min-height: 100px;">
+                                    </div>
                                     <div class="gauge-card-footer mt-0"><span id="time-load-current-t"
                                             style="font-size: 0.6rem;">Data Kosong</span></div>
                                 </div>
@@ -521,7 +490,7 @@ if ($q_pdf) {
 
                     </div>
                 </div>
-                <div class="row mt-2 pt-3 border-top">
+                <div class="row mt-1 pt-2 border-top">
                     <div class="col-12">
 
                         <div class="row mb-2">
@@ -530,7 +499,7 @@ if ($q_pdf) {
                                     <div class="d-flex align-items-center">
                                         <div class="icon-wrapper-cond mr-2"
                                             style="width: 30px; height: 30px; font-size: 13px;"><i
-                                                class="fas fa-volume-up"></i></div>
+                                                class="fas fa-server"></i></div>
                                         <div class="flex-grow-1">
                                             <div class="text-muted font-weight-bold text-uppercase"
                                                 style="font-size: 0.65rem;">Bunyi Motor</div>
@@ -552,7 +521,7 @@ if ($q_pdf) {
                                                 class="fas fa-server"></i></div>
                                         <div class="flex-grow-1">
                                             <div class="text-muted font-weight-bold text-uppercase"
-                                                style="font-size: 0.65rem;">Panel Local</div>
+                                                style="font-size: 0.65rem;">Kondisi Panel Local</div>
                                             <div class="text-secondary mt-1" style="font-size: 0.6rem;"><i
                                                     class="far fa-clock"></i> <span id="date-panel">--/--/----</span>
                                             </div>
@@ -568,10 +537,10 @@ if ($q_pdf) {
                                     <div class="d-flex align-items-center">
                                         <div class="icon-wrapper-cond mr-2"
                                             style="width: 30px; height: 30px; font-size: 13px;"><i
-                                                class="fas fa-boxes"></i></div>
+                                                class="fas fa-server"></i></div>
                                         <div class="flex-grow-1">
                                             <div class="text-muted font-weight-bold text-uppercase"
-                                                style="font-size: 0.65rem;">Kelengkapan</div>
+                                                style="font-size: 0.65rem;">Kelengkapan Motor</div>
                                             <div class="text-secondary mt-1" style="font-size: 0.6rem;"><i
                                                     class="far fa-clock"></i> <span id="date-lengkap">--/--/----</span>
                                             </div>
@@ -587,10 +556,10 @@ if ($q_pdf) {
                                     <div class="d-flex align-items-center">
                                         <div class="icon-wrapper-cond mr-2"
                                             style="width: 30px; height: 30px; font-size: 13px;"><i
-                                                class="fas fa-broom"></i></div>
+                                                class="fas fa-server"></i></div>
                                         <div class="flex-grow-1">
                                             <div class="text-muted font-weight-bold text-uppercase"
-                                                style="font-size: 0.65rem;">Kebersihan</div>
+                                                style="font-size: 0.65rem;">Kebersihan Motor</div>
                                             <div class="text-secondary mt-1" style="font-size: 0.6rem;"><i
                                                     class="far fa-clock"></i> <span id="date-bersih">--/--/----</span>
                                             </div>
@@ -606,10 +575,10 @@ if ($q_pdf) {
                                     <div class="d-flex align-items-center">
                                         <div class="icon-wrapper-cond mr-2"
                                             style="width: 30px; height: 30px; font-size: 13px;"><i
-                                                class="fas fa-plug"></i></div>
+                                                class="fas fa-server"></i></div>
                                         <div class="flex-grow-1">
                                             <div class="text-muted font-weight-bold text-uppercase"
-                                                style="font-size: 0.65rem;">Grounding</div>
+                                                style="font-size: 0.65rem;">Grounding Motor</div>
                                             <div class="text-secondary mt-1" style="font-size: 0.6rem;"><i
                                                     class="far fa-clock"></i> <span id="date-ground">--/--/----</span>
                                             </div>

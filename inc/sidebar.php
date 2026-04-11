@@ -66,8 +66,8 @@
 </style>
 
 <?php
-// Mengambil nama halaman dari URL, jika kosong default ke dashboard
-$current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
+// Mengambil nama halaman dari URL, jika kosong default ke home
+$current_page = isset($_GET['page']) ? $_GET['page'] : 'home';
 ?>
 
 <aside class="main-sidebar main-sidebar-custom elevation-4">
@@ -82,7 +82,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
         <li class="nav-item">
-          <a href="?page=dashboard" class="nav-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">
+          <a href="?page=home" class="nav-link <?php echo ($current_page == 'home') ? 'active' : ''; ?>">
             <i class="nav-icon fas fa-tachometer-alt"></i>
             <p>Home</p>
           </a>
@@ -108,6 +108,14 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
             class="nav-link <?= (isset($_GET['page']) && $_GET['page'] == 'data_terbaru') ? 'active' : '' ?>">
             <i class="nav-icon fas fa-table"></i>
             <p>Rekap Data Terbaru</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="index.php?page=buat_qrcode"
+            class="nav-link <?= (isset($_GET['page']) && $_GET['page'] == 'buat_qrcode') ? 'active' : '' ?>">
+            <i class="nav-icon fas fa-qrcode"></i>
+            <p>Generator QR Code</p>
           </a>
         </li>
 

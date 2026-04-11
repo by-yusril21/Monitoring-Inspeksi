@@ -1,23 +1,16 @@
 /* =======================================================
    tabel-motor.js
-   Inisialisasi DataTable + Fungsi Load Data dari Sheet + Ekspor PDF Proporsional
-   Membutuhkan: config.js (dimuat lebih dulu)
+   Inisialisasi DataTable Bawaan (Aman, Bersih, Sejajar, & Tata Letak Rapi)
    ======================================================= */
 
-/* -------------------------------------------------------
-   Helper: ambil index kolom berdasarkan keyword
-   (DIPERBAIKI: Menggunakan Exact Match terlebih dahulu, lalu Filter Kata)
-   ------------------------------------------------------- */
 function getColIndex(headers, keywords) {
   if (!Array.isArray(keywords)) keywords = [keywords];
-
   for (let i = 0; i < headers.length; i++) {
     const h = String(headers[i]).toUpperCase().trim();
     for (let k of keywords) {
       if (h === k.toUpperCase().trim()) return i;
     }
   }
-
   for (let i = 0; i < headers.length; i++) {
     const h = String(headers[i]).toUpperCase();
     for (let k of keywords) {
@@ -31,16 +24,10 @@ function getColIndex(headers, keywords) {
   return -1;
 }
 
-/* -------------------------------------------------------
-   Helper: ambil nilai aman dari row
-   ------------------------------------------------------- */
 function safeGet(row, index) {
   return index < 0 || !row[index] ? "-" : row[index];
 }
 
-/* -------------------------------------------------------
-   loadDataFromSheet — dibuat global (window)
-   ------------------------------------------------------- */
 window.loadDataFromSheet = function (unit, sheetName) {
   if (!unit || !sheetName) return;
 
@@ -74,14 +61,12 @@ window.loadDataFromSheet = function (unit, sheetName) {
         toastr.success(`Memuat ${rows.length} data.`);
       }
 
-      /* ── Mapping kolom General ── */
-      const idxTime = getColIndex(headers, "Timestamp");
-      const idxEmail = getColIndex(headers, "Email");
+      const idxTime = getColIndex(headers, ["Timestamp", "WAKTU"]);
+      const idxEmail = getColIndex(headers, ["Email", "EMAIL ADDRESS"]);
       const idxUnit = getColIndex(headers, ["PILIH SALAH SATU", "AKSI"]);
       const idxSection1 = getColIndex(headers, "SECTION NO");
       const idxSection2 = getColIndex(headers, "SECTION NO 2");
 
-      /* ── UPDATE: Mapping kolom Vibrasi (Dipecah jadi 8) ── */
       const idxVibDE_H = getColIndex(headers, [
         "VIBRASI DE H",
         "VIB DE H",
@@ -124,18 +109,18 @@ window.loadDataFromSheet = function (unit, sheetName) {
         "VIBRASI BEARING NDE GE",
       ]);
 
-      /* ── Mapping kolom Temp, Beban, Damper ── */
       const idxTempDE = getColIndex(headers, [
         "TEMPERATURE BEARING DE",
         "TEMP. BEARING DE",
+        "TEMP DE",
       ]);
       const idxTempNDE = getColIndex(headers, [
         "TEMPERATURE BEARING NDE",
         "TEMP. BEARING NDE",
+        "TEMP NDE",
       ]);
       const idxSuhu = getColIndex(headers, ["SUHU RUANGAN", "VENTILASI"]);
 
-      /* ── UPDATE: Mapping kolom Current (Dipecah jadi 3) ── */
       const idxCurr_R = getColIndex(headers, [
         "CURRENT R",
         "LOAD CURRENT R",
@@ -152,19 +137,21 @@ window.loadDataFromSheet = function (unit, sheetName) {
         "ARUS T",
       ]);
 
-      const idxBeban = getColIndex(headers, "BEBAN GENERATOR");
-      const idxDamper = getColIndex(headers, "OPENING DAMPER");
+      const idxBeban = getColIndex(headers, ["BEBAN GENERATOR", "BEBAN"]);
+      const idxDamper = getColIndex(headers, ["OPENING DAMPER", "DAMPER"]);
 
-      /* ── Mapping Status Visual ── */
-      const idxBunyi = getColIndex(headers, "BUNYI MOTOR");
-      const idxPanel = getColIndex(headers, "PANEL LOCAL");
-      const idxKelengkapan = getColIndex(headers, "KELENGKAPAN");
-      const idxKebersihan = getColIndex(headers, "KEBERSIHAN");
+      const idxBunyi = getColIndex(headers, ["BUNYI MOTOR", "BUNYI"]);
+      const idxPanel = getColIndex(headers, ["PANEL LOCAL", "PANEL"]);
+      const idxKelengkapan = getColIndex(headers, ["KELENGKAPAN"]);
+      const idxKebersihan = getColIndex(headers, ["KEBERSIHAN"]);
       const idxGrounding = getColIndex(headers, ["GROUNDING", "PENTANAHAN"]);
-      const idxRegreasing = getColIndex(headers, "REGREASING");
-      const idxAction = getColIndex(headers, "ACTIONS");
+      const idxRegreasing = getColIndex(headers, ["REGREASING", "REGREASE"]);
+      const idxAction = getColIndex(headers, [
+        "ACTIONS",
+        "ACTION",
+        "KETERANGAN",
+      ]);
 
-      /* ── Format baris (Total 28 Kolom) ── */
       const formattedData = rows.map((row, index) => {
         let valSection = safeGet(row, idxSection1);
         if (!valSection || valSection === "-" || valSection === "") {
@@ -178,35 +165,40 @@ window.loadDataFromSheet = function (unit, sheetName) {
           safeGet(row, idxEmail),
           safeGet(row, idxUnit),
           valSection,
-          safeGet(row, idxVibDE_H), // 5
-          safeGet(row, idxVibDE_V), // 6
-          safeGet(row, idxVibDE_Ax), // 7
-          safeGet(row, idxVibDE_gE), // 8
-          safeGet(row, idxVibNDE_H), // 9
-          safeGet(row, idxVibNDE_V), // 10
-          safeGet(row, idxVibNDE_Ax), // 11
-          safeGet(row, idxVibNDE_gE), // 12
-          safeGet(row, idxTempDE), // 13
-          safeGet(row, idxTempNDE), // 14
-          safeGet(row, idxSuhu), // 15
-          safeGet(row, idxCurr_R), // 18
-          safeGet(row, idxCurr_S), // 19
-          safeGet(row, idxCurr_T), // 20
-          safeGet(row, idxBeban), // 16
-          safeGet(row, idxDamper), // 17
-          safeGet(row, idxBunyi), // 21
-          safeGet(row, idxPanel), // 22
-          safeGet(row, idxKelengkapan), // 23
-          safeGet(row, idxKebersihan), // 24
-          safeGet(row, idxGrounding), // 25
-          safeGet(row, idxRegreasing), // 26
+          safeGet(row, idxVibDE_H),
+          safeGet(row, idxVibDE_V),
+          safeGet(row, idxVibDE_Ax),
+          safeGet(row, idxVibDE_gE),
+          safeGet(row, idxVibNDE_H),
+          safeGet(row, idxVibNDE_V),
+          safeGet(row, idxVibNDE_Ax),
+          safeGet(row, idxVibNDE_gE),
+          safeGet(row, idxTempDE),
+          safeGet(row, idxTempNDE),
+          safeGet(row, idxSuhu),
+          safeGet(row, idxCurr_R),
+          safeGet(row, idxCurr_S),
+          safeGet(row, idxCurr_T),
+          safeGet(row, idxBeban),
+          safeGet(row, idxDamper),
+          safeGet(row, idxBunyi),
+          safeGet(row, idxPanel),
+          safeGet(row, idxKelengkapan),
+          safeGet(row, idxKebersihan),
+          safeGet(row, idxGrounding),
+          safeGet(row, idxRegreasing),
           actionVal && actionVal !== "-"
             ? actionVal
-            : '<span class="badge badge-success">Tercatat</span>', // 27
+            : '<span class="badge badge-success">Tercatat</span>',
         ];
       });
 
       dt.rows.add(formattedData).draw();
+
+      // Penyesuaian presisi tinggi setelah data dirender
+      setTimeout(() => {
+        dt.columns.adjust();
+      }, 150);
     })
     .catch((error) => {
       console.error("Error:", error);
@@ -214,29 +206,40 @@ window.loadDataFromSheet = function (unit, sheetName) {
     });
 };
 
-/* =======================================================
-   Inisialisasi DataTable & Export PDF Custom
-   ======================================================= */
 $(document).ready(function () {
-  $("#example1").DataTable({
+  const table = $("#example1").DataTable({
+    // --- PENGATURAN TATA LETAK TOOLBAR (DOM) AMAN ---
+    // --- PENGATURAN TATA LETAK TOOLBAR (SOLUSI AMPUH COL-AUTO) ---
+    // --- PENGATURAN TATA LETAK TOOLBAR (JARAK DIRAPATKAN) ---
     dom:
-      "<'row m-0 bg-white border-bottom-0 p-2 align-items-center'" +
-      "<'col-sm-12 col-md-6 d-flex align-items-center' <'#my-filter-placeholder'>>" +
-      "<'col-sm-12 col-md-6 d-flex justify-content-end align-items-center' f l B >>" +
-      "<'row m-0'<'col-12 p-0'tr>>" +
-      "<'row m-0 p-2 bg-white'<'col-md-5'i><'col-md-7'p>>",
+      // PERHATIKAN: 'mb-3' diubah menjadi 'mb-1' di bawah ini
+      "<'row mb-1 align-items-center'<'col-auto pr-0'f><'col-auto pl-0'l><'col d-flex justify-content-end'B>>" +
+      "<'row'<'col-sm-12'tr>>" +
+      "<'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
 
-    responsive: false,
-    scrollX: true,
-    lengthChange: true,
-    autoWidth: false,
-    searching: true,
+    scrollX: true, // Mengaktifkan scroll horizontal
+    scrollY: "50vh", // Scroll vertikal dinamis
+    scrollCollapse: true,
     paging: true,
-    info: true,
-    processing: true,
+    lengthChange: true,
+    searching: true,
     ordering: false,
+    info: true,
+    autoWidth: false, // Wajib false agar columnDefs width bekerja
 
-    columnDefs: [{ defaultContent: "-", targets: "_all" }],
+    // --- KUSTOMISASI LEBAR KOLOM (SUNTIK CLASS CSS) ---
+    columnDefs: [
+      { defaultContent: "-", targets: "_all" },
+      { className: "col-no", targets: 0 },
+      { className: "col-date", targets: 1 },
+      { className: "col-update", targets: 2 },
+      { className: "col-aksi", targets: [3, 4] },
+      { className: "col-vib", targets: [5, 6, 7, 8, 9, 10, 11, 12] },
+      { className: "col-temp", targets: [13, 14, 15, 16, 17, 18] },
+      { className: "col-load", targets: [19, 20] },
+      { className: "col-kondisi", targets: [21, 22, 23, 24, 25, 26] },
+      { className: "col-action", targets: 27 },
+    ],
 
     lengthMenu: [
       [10, 25, 50, 100, -1],
@@ -245,64 +248,31 @@ $(document).ready(function () {
 
     buttons: [
       {
-        extend: "excel",
         text: '<i class="fas fa-file-excel"></i> Excel',
-        className: "btn btn-success btn-sm",
-        exportOptions: {
-          // UPDATE: Render index kolom 0 sampai 27 (28 kolom)
-          columns: [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-            19, 20, 21, 22, 23, 24, 25, 26, 27,
-          ],
+        className: "btn btn-success btn-sm ml-2",
+        action: function (e, dt, node, config) {
+          // Ambil data unit & motor dari localStorage atau select
+          const unit = localStorage.getItem("mon_selectedUnit") || "Unit";
+          const motor = localStorage.getItem("mon_selectedMotor") || "Motor";
+
+          // Jalankan fungsi ekspor manual
+          exportMotorToExcel(unit, motor);
         },
       },
+
       {
         extend: "pdfHtml5",
         text: '<i class="fas fa-file-pdf"></i> PDF',
-        className: "btn btn-danger btn-sm",
+        className: "btn btn-danger btn-sm ml-1",
         orientation: "landscape",
         pageSize: "A4",
         exportOptions: {
-          // UPDATE: Render index kolom 0 sampai 27 (28 kolom)
           columns: [
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
             19, 20, 21, 22, 23, 24, 25, 26, 27,
           ],
+          // HAPUS fungsi format.header yang lama karena itu meratakan header
           format: {
-            header: function (data, columnIdx) {
-              // UPDATE: Penamaan header untuk PDF harus persis 28 item agar tidak error
-              const customHeaders = [
-                "No",
-                "Date",
-                "Update By",
-                "Aksi",
-                "Section\nNo",
-                "Vib DE\nH",
-                "Vib DE\nV",
-                "Vib DE\nAx",
-                "Vib DE\ngE",
-                "Vib NDE\nH",
-                "Vib NDE\nV",
-                "Vib NDE\nAx",
-                "Vib NDE\ngE",
-                "Temp\nDE",
-                "Temp\nNDE",
-                "Temp\nRuang",
-                "Load\nCurrent R",
-                "Load\nCurrent S",
-                "Load\nCurrent T",
-                "Beban\nGenerator(MW)",
-                "Opening\nDamper",
-                "Bunyi\nMotor",
-                "Kondisi\nPanel",
-                "kelengkapan\nMotor",
-                "Kebersihan\nMotor",
-                "Grounding\nMotor",
-                "Regreasing\nMotor",
-                "Action",
-              ];
-              return customHeaders[columnIdx];
-            },
             body: function (data, row, column, node) {
               return data ? data.toString().replace(/<[^>]*>?/gm, "") : data;
             },
@@ -445,6 +415,7 @@ $(document).ready(function () {
 
           doc.content.splice(0, 0, customHeader);
 
+          // === UKURAN FONT ASLI ANDA TETAP DIPERTAHANKAN ===
           doc.defaultStyle.fontSize = 4;
           doc.styles.tableHeader.fontSize = 3.5;
           doc.styles.tableHeader.fillColor = "#1a3b5c";
@@ -452,36 +423,241 @@ $(document).ready(function () {
           doc.defaultStyle.alignment = "center";
           doc.pageMargins = [20, 20, 20, 20];
 
-          // UPDATE: Mengatur lebar 28 kolom agar pas dan presisi di kertas PDF Landscape (Total = 100%)
+          // === KUNCI PERBAIKAN: MEMBUAT HEADER 3 BARIS UNTUK PDF ===
+          const headerRow1 = [
+            {
+              text: "No",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+            {
+              text: "Date",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+            {
+              text: "Update By",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+            {
+              text: "Aksi",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+            {
+              text: "Section\nNo",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+            { text: "Vibrasi (mm/s)", colSpan: 8, style: "tableHeader" },
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            { text: "Temp (°C)", colSpan: 3, style: "tableHeader" },
+            "",
+            "",
+            { text: "Load Current (A)", colSpan: 3, style: "tableHeader" },
+            "",
+            "",
+            {
+              text: "Load Generator\n(MW)",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+            {
+              text: "Opening\nDamper (%)",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+            {
+              text: "Bunyi\nMotor",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+            {
+              text: "Kondisi\nPanel",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+            {
+              text: "Kelengkapan\nMotor",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+            {
+              text: "Kebersihan\nMotor",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+            {
+              text: "Grounding\nMotor",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+            {
+              text: "Regreasing\nBearing",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+            {
+              text: "Action",
+              rowSpan: 3,
+              style: "tableHeader",
+              margin: [0, 4, 0, 0],
+            },
+          ];
+
+          const headerRow2 = [
+            "",
+            "",
+            "",
+            "",
+            "",
+            { text: "DE", colSpan: 4, style: "tableHeader" },
+            "",
+            "",
+            "",
+            { text: "NDE", colSpan: 4, style: "tableHeader" },
+            "",
+            "",
+            "",
+            {
+              text: "DE",
+              rowSpan: 2,
+              style: "tableHeader",
+              margin: [0, 2, 0, 0],
+            },
+            {
+              text: "NDE",
+              rowSpan: 2,
+              style: "tableHeader",
+              margin: [0, 2, 0, 0],
+            },
+            {
+              text: "Ruang",
+              rowSpan: 2,
+              style: "tableHeader",
+              margin: [0, 2, 0, 0],
+            },
+            {
+              text: "R",
+              rowSpan: 2,
+              style: "tableHeader",
+              margin: [0, 2, 0, 0],
+            },
+            {
+              text: "S",
+              rowSpan: 2,
+              style: "tableHeader",
+              margin: [0, 2, 0, 0],
+            },
+            {
+              text: "T",
+              rowSpan: 2,
+              style: "tableHeader",
+              margin: [0, 2, 0, 0],
+            },
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+          ];
+
+          const headerRow3 = [
+            "",
+            "",
+            "",
+            "",
+            "",
+            { text: "H", style: "tableHeader" },
+            { text: "V", style: "tableHeader" },
+            { text: "Ax", style: "tableHeader" },
+            { text: "gE", style: "tableHeader" },
+            { text: "H", style: "tableHeader" },
+            { text: "V", style: "tableHeader" },
+            { text: "Ax", style: "tableHeader" },
+            { text: "gE", style: "tableHeader" },
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+          ];
+
+          // Menghapus header bawaan (1 baris) yang berantakan
+          doc.content[1].table.body.splice(0, 1);
+
+          // Menyisipkan susunan 3 baris kita yang rapi
+          doc.content[1].table.body.unshift(headerRow3);
+          doc.content[1].table.body.unshift(headerRow2);
+          doc.content[1].table.body.unshift(headerRow1);
+
+          // Memberitahu PDFMake bahwa 3 baris pertama adalah Header (agar berulang jika ada halaman 2)
+          doc.content[1].table.headerRows = 3;
+          // =======================================================
+
           doc.content[1].table.widths = [
             "1%",
             "5%",
             "8%",
             "5%",
-            "4%", // 1-5
+            "4%",
             "2%",
             "2%",
             "2%",
-            "2%", // Vib DE
             "2%",
             "2%",
             "2%",
-            "2%", // Vib NDE
             "2%",
             "2%",
-            "2%", // Temp
             "2%",
-            "2%", // Gen, Damper
+            "2%",
+            "2%",
+            "2%",
+            "2%",
             "2%",
             "3%",
-            "3%", // Arus R S T
+            "3%",
             "3%",
             "3%",
             "3.5%",
             "3%",
             "3%",
-            "3%", // Visual & Status
-            "25%", // Action
+            "3%",
+            "25%",
           ];
 
           doc.content[1].layout = {
@@ -520,11 +696,18 @@ $(document).ready(function () {
     },
 
     initComplete: function () {
+      // 1. Memindahkan Filter/Search (Kode yang sudah ada)
       const filterContent = $("#my-filter-source").html();
       if (filterContent) {
         $("#my-filter-placeholder").html(filterContent);
         $("#my-filter-source").remove();
       }
+
+      // 2. KUNCI PERBAIKAN: Munculkan tabel dengan mulus (Fade-in)
+      // Memberi sedikit jeda 0.1 detik agar DataTables benar-benar selesai menghitung
+      setTimeout(function () {
+        $("#area-tabel").css("opacity", "1");
+      }, 100);
     },
   });
 
@@ -533,4 +716,109 @@ $(document).ready(function () {
     const motor = localStorage.getItem("mon_selectedMotor");
     if (unit && motor) window.loadDataFromSheet(unit, motor);
   });
+
+  $(window).on("resize", function () {
+    if ($.fn.DataTable.isDataTable("#example1")) {
+      table.columns.adjust();
+    }
+  });
 });
+
+function exportMotorToExcel(unit, motor) {
+  // 1. Ambil Header dan Body
+  const headerHTML = $(".dataTables_scrollHeadInner table thead").html();
+  const bodyHTML = $(".dataTables_scrollBody table tbody").html();
+
+  if (!headerHTML || !bodyHTML) {
+    toastr.error("Gagal mengambil struktur tabel.");
+    return;
+  }
+
+  // 2. DEFISINISIKAN LEBAR KOLOM (Agar kolom Date tidak jadi ############)
+  // Urutan sesuai 28 kolom Anda
+  const colWidths = [
+    40, // No
+    180, // Date (Dilebarkan agar muat)
+    250, // Update By
+    150, // Aksi
+    150, // Section No
+    50,
+    50,
+    50,
+    50, // Vib DE
+    50,
+    50,
+    50,
+    50, // Vib NDE
+    60,
+    60,
+    60, // Temp
+    120,
+    120,
+    120, // Current
+    150,
+    150, // Load, Damper
+    120,
+    120,
+    120,
+    120,
+    120,
+    120, // Kondisi Fisik
+    500, // Action
+  ];
+
+  let colgroup = "<colgroup>";
+  colWidths.forEach((w) => {
+    colgroup += `<col style="width: ${w}px;">`;
+  });
+  colgroup += "</colgroup>";
+
+  // 3. Rakit tabel dengan Colgroup
+  const fullTableHTML = `
+        <table border="1">
+            ${colgroup}
+            <thead>${headerHTML}</thead>
+            <tbody>${bodyHTML}</tbody>
+        </table>`;
+
+  // 4. Bersihkan TH kosong sisa DataTables
+  let cleanHTML = fullTableHTML.replace(/<th[^>]*><\/th>/g, "");
+
+  const template = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                table { border-collapse: collapse; table-layout: fixed; } /* KUNCI: table-layout fixed agar lebar kolom dipatuhi */
+                th, td { 
+                    border: 1px solid black; 
+                    padding: 5px; 
+                    text-align: center; 
+                    vertical-align: middle;
+                    white-space: nowrap; /* Mencegah teks terpotong */
+                }
+                thead tr:nth-child(1) th { background-color: #e2e6ea; font-weight: bold; }
+                thead tr:nth-child(2) th { background-color: #f1f3f5; }
+                thead tr:nth-child(3) th { background-color: #f8f9fa; }
+                .col-action { white-space: normal !important; } /* Khusus kolom Action boleh turun ke bawah */
+            </style>
+        </head>
+        <body>
+            <h3 style="text-align:left;">DOKUMEN RANGKUMAN DATA PMC SCHEDULE BULANAN MOTOR</h3>
+            <p style="text-align:left;">UNIT: ${unit} - MOTOR: ${motor}</p>
+            ${cleanHTML}
+        </body>
+        </html>`;
+
+  const blob = new Blob(["\uFEFF" + template], {
+    type: "application/vnd.ms-excel",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `Rekap_Motor_${motor}_${unit}.xls`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}

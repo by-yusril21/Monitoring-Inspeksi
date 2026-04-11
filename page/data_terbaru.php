@@ -53,6 +53,8 @@ if ($hasil_settings) {
     .table-sticky-first thead th {
         color: #000000 !important;
         border-color: #282929 !important;
+        border-width: 1px !important;
+        border-bottom-width: 1px !important;
         vertical-align: middle !important;
         text-align: center;
     }
@@ -115,11 +117,6 @@ if ($hasil_settings) {
         vertical-align: middle !important;
         text-align: center;
     }
-
-    /* 5. Rata kiri khusus untuk Nama Motor & Actions */
-    .text-left-custom {
-        text-align: left !important;
-    }
 </style>
 
 <div class="content-wrapper">
@@ -152,9 +149,9 @@ if ($hasil_settings) {
     }
 
     // =========================================================================
-    // FUNGSI 1: EXPORT KE EXCEL 
+    // FUNGSI 1: EXPORT KE EXCEL (NAMA BARU AGAR TIDAK BENTROK)
     // =========================================================================
-    function exportToExcel(tableId, fileName) {
+    function exportDataTerbaruToExcel(tableId, fileName) {
         const table = document.getElementById(tableId);
         if (!table) return;
 
@@ -207,9 +204,9 @@ if ($hasil_settings) {
     }
 
     // =========================================================================
-    // FUNGSI 2: EXPORT KE PDF
+    // FUNGSI 2: EXPORT KE PDF (NAMA BARU & ANTI OVERFLOW)
     // =========================================================================
-    function exportToPDF(tableId, fileName, unitLengkap) {
+    function exportDataTerbaruToPDF(tableId, fileName, unitLengkap) {
         if (!window.jspdf || !window.jspdf.jsPDF) {
             alert("Library PDF belum selesai dimuat, pastikan koneksi internet Anda aktif.");
             return;
@@ -218,7 +215,15 @@ if ($hasil_settings) {
         const doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'cm', format: 'a4' });
         const table = document.getElementById(tableId);
         if (!table) return;
+
         const cloneTable = table.cloneNode(true);
+
+        // KUNCI 1: Hancurkan semua style HTML yang mencegah teks turun ke bawah
+        const allElements = cloneTable.querySelectorAll('*');
+        allElements.forEach(el => {
+            el.removeAttribute('style');
+            el.classList.remove('text-nowrap');
+        });
 
         let judul1Text = document.getElementById("judul-1-pdf").innerText.trim();
         let judul2Text = document.getElementById("judul-2-pdf").innerText.trim();
@@ -259,32 +264,40 @@ if ($hasil_settings) {
             html: cloneTable,
             startY: 2.7,
             margin: { top: 1, right: 0.5, bottom: 1, left: 0.5 },
+            tableWidth: 28.7,
             styles: {
-                fontSize: 4,
+                fontSize: 3.5,
                 valign: 'middle',
                 halign: 'center',
                 lineWidth: 0.01,
                 lineColor: [0, 0, 0],
                 textColor: [0, 0, 0],
-                cellPadding: 0.1,
-                overflow: 'linebreak'
+                cellPadding: 0.05,
+                overflow: 'linebreak',
+                minCellWidth: 0.3
             },
             headStyles: {
                 fillColor: [86, 165, 180],
                 textColor: [0, 0, 0],
                 fontStyle: 'bold',
-                fontSize: 4
+                fontSize: 3.5
             },
             columnStyles: {
-                0: { cellWidth: 2.4 }, 1: { cellWidth: 1.2 }, 2: { cellWidth: 2 }, 3: { cellWidth: 1.2 },
-                4: { cellWidth: 1.1 }, 5: { cellWidth: 0.5 }, 6: { cellWidth: 0.5 }, 7: { cellWidth: 0.5 },
-                8: { cellWidth: 0.5 }, 9: { cellWidth: 0.5 }, 10: { cellWidth: 0.5 }, 11: { cellWidth: 0.5 },
-                12: { cellWidth: 0.5 }, 13: { cellWidth: 0.5 }, 14: { cellWidth: 0.5 }, 15: { cellWidth: 0.7 },
-                16: { cellWidth: 0.5 }, 17: { cellWidth: 0.5 }, 18: { cellWidth: 0.5 }, 19: { cellWidth: 1 },
-                20: { cellWidth: 1 }, 21: { cellWidth: 1 }, 22: { cellWidth: 1 }, 23: { cellWidth: 1.2 },
-                24: { cellWidth: 1 }, 25: { cellWidth: 1 }, 26: { cellWidth: 1 }, 27: { cellWidth: 5.5 }
+                0: { cellWidth: 2.2 }, // NAMA MOTOR
+                1: { cellWidth: 1.2 }, // Date
+                2: { cellWidth: 1.8 }, // Update By
+                27: { cellWidth: 3.5 } // Action
             },
             theme: 'grid',
+            didParseCell: function (data) {
+                // Memecah teks panjang tanpa spasi (seperti email) agar tidak menjebol tabel
+                if (data.cell.text && data.cell.text.length > 0) {
+                    let text = data.cell.text.join(' ');
+                    if (text.length > 12 && text.indexOf(' ') === -1) {
+                        data.cell.text = [text.match(/.{1,12}/g).join(' ')];
+                    }
+                }
+            },
             didDrawPage: function (data) {
                 if (logoBase64 && logoBase64.indexOf("data:image") === 0) {
                     doc.setGState(new doc.GState({ opacity: 0.1 }));
@@ -294,7 +307,7 @@ if ($hasil_settings) {
             }
         });
 
-        doc.save((fileName ? fileName : `Data_Terbaru_Unit_${unitName}`) + '.pdf');
+        doc.save((fileName ? fileName : `Data_Terbaru_Unit_${unitLengkap}`) + '.pdf');
     }
 
     // =========================================================================
@@ -303,7 +316,6 @@ if ($hasil_settings) {
     async function fetchUnitData(unit) {
         const loadingEl = document.getElementById(`loading_${unit}`);
 
-        // Tampilkan efek loading saat data ditarik
         if (loadingEl) {
             loadingEl.classList.remove('d-none');
             loadingEl.classList.add('d-flex');
@@ -314,7 +326,6 @@ if ($hasil_settings) {
             const response = await fetch(targetUrl);
             const result = await response.json();
 
-            // Sembunyikan loading setelah data diterima
             if (loadingEl) {
                 loadingEl.classList.remove('d-flex');
                 loadingEl.classList.add('d-none');
@@ -483,10 +494,10 @@ if ($hasil_settings) {
                     <div class="card-tools">
                         
                         <span id="export_btns_${unit}" style="display: none;">
-                            <button type="button" class="btn btn-success btn-sm mr-1 shadow-sm" onclick="exportToExcel('table_${unit}', 'Data_Terbaru_Unit_${unit}')">
+                            <button type="button" class="btn btn-success btn-sm mr-1 shadow-sm" onclick="exportDataTerbaruToExcel('table_${unit}', 'Data_Terbaru_Unit_${unit}')">
                                 <i class="fas fa-file-excel mr-1"></i> Excel
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm mr-3 shadow-sm" onclick="exportToPDF('table_${unit}', 'Data_Terbaru_Unit_${unit}', '${formatUnitLengkap}')">
+                            <button type="button" class="btn btn-danger btn-sm mr-3 shadow-sm" onclick="exportDataTerbaruToPDF('table_${unit}', 'Data_Terbaru_Unit_${unit}', '${formatUnitLengkap}')">
                                 <i class="fas fa-file-pdf mr-1"></i> PDF
                             </button>
                         </span>
@@ -503,7 +514,7 @@ if ($hasil_settings) {
                         <table class="table table-hover table-bordered table-striped m-0 text-sm text-nowrap table-sticky-first" id="table_${unit}">
                             <thead>
                                 <tr>
-                                    <th rowspan="3" class="sticky-motor text-left-custom" style="min-width: 220px;">NAMA MOTOR</th>
+                                    <th rowspan="3" class="sticky-motor" style="min-width: 220px;">NAMA MOTOR</th>
                                     <th rowspan="3" style="min-width: 130px;">Date</th>
                                     <th rowspan="3" style="min-width: 150px;">Update By</th>
                                     <th rowspan="3" style="min-width: 80px;">Aksi</th>
@@ -518,12 +529,12 @@ if ($hasil_settings) {
                                     
                                     <th rowspan="3" style="min-width: 80px;">Bunyi<br>Motor</th>
                                     <th rowspan="3" style="min-width: 80px;">Kondisi<br>Panel</th>
-                                    <th rowspan="3" style="min-width: 80px;">Kelengkapan</th>
-                                    <th rowspan="3" style="min-width: 80px;">Kebersihan</th>
-                                    <th rowspan="3" style="min-width: 80px;">Grounding</th>
-                                    <th rowspan="3" style="min-width: 80px;">Regreasing</th>
+                                    <th rowspan="3" style="min-width: 80px;">Kelengkapan<br>Motor</th>
+                                    <th rowspan="3" style="min-width: 80px;">Kebersihan<br>Motor</th>
+                                    <th rowspan="3" style="min-width: 80px;">Grounding<br>Motor</th>
+                                    <th rowspan="3" style="min-width: 80px;">Regreasing<br>Bearing</th>
                                     
-                                    <th rowspan="3" style="min-width: 350px;" class="text-left-custom col-action">Action</th>
+                                    <th rowspan="3" style="min-width: 350px;">Action</th>
                                 </tr>
                                 
                                 <tr>
@@ -583,38 +594,29 @@ if ($hasil_settings) {
         // =========================================================================
         // JQUERY EVENT LISTENER: PENDETEKSI ANIMASI ADMINLTE
         // =========================================================================
-        // Event dipicu TEPAT setelah kotak selesai terbuka 100%
         $(document).on('expanded.lte.cardwidget', '.card', function () {
             let cardId = $(this).attr('id');
             if (cardId && cardId.startsWith('card_')) {
                 let unit = cardId.replace('card_', '');
-
-                // 1. Tampilkan Tombol Export
                 document.getElementById(`export_btns_${unit}`).style.display = 'inline-block';
-
-                // 2. Langsung Tarik Data dari API
                 fetchUnitData(unit);
             }
         });
 
-        // Event dipicu TEPAT setelah kotak selesai tertutup 100%
         $(document).on('collapsed.lte.cardwidget', '.card', function () {
             let cardId = $(this).attr('id');
             if (cardId && cardId.startsWith('card_')) {
                 let unit = cardId.replace('card_', '');
-
-                // Sembunyikan Tombol Export agar UI bersih
                 document.getElementById(`export_btns_${unit}`).style.display = 'none';
             }
         });
 
         // =========================================================================
-        // INTERVAL AUTO-REFRESH (Hanya untuk Card yang sedang Terbuka)
+        // INTERVAL AUTO-REFRESH
         // =========================================================================
         setInterval(() => {
             units.forEach(unit => {
                 const card = document.getElementById(`card_${unit}`);
-                // Hanya memakan bandwidth server API jika kotak sedang dipantau User
                 if (card && !card.classList.contains('collapsed-card')) {
                     fetchUnitData(unit);
                 }
