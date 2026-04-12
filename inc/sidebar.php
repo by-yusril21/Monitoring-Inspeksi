@@ -112,15 +112,6 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'home';
         </li>
 
         <li class="nav-item">
-          <a href="index.php?page=masterJadwal"
-            class="nav-link <?= (isset($_GET['page']) && $_GET['page'] == 'masterJadwal') ? 'active' : '' ?>">
-            <i class="nav-icon fas fa-calendar"></i>
-            <p>Master Jadwal</p>
-          </a>
-        </li>
-
-
-        <li class="nav-item">
           <a href="index.php?page=buat_qrcode"
             class="nav-link <?= (isset($_GET['page']) && $_GET['page'] == 'buat_qrcode') ? 'active' : '' ?>">
             <i class="nav-icon fas fa-qrcode"></i>

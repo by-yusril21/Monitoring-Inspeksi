@@ -63,12 +63,13 @@ if ($result) {
                 <div class="card-header">
                     <h3 class="card-title"><b>PLTU UNIT C - MOTOR 6kV</b></h3>
                    <div class="card-tools">
-                        <button type="button" class="btn btn-success btn-sm mr-1"
-                            onclick="exportToExcel('table-unit-c-6kv', 'Jadwal_Regreasing_Unit_C_6KV')">
+                        <a href="index.php?page=masterJadwal&unit=C6KV" class="btn btn-warning btn-sm mr-1 text-dark font-weight-bold">
+                            <i class="fas fa-database"></i> Edit 
+                        </a>
+                        <button type="button" class="btn btn-success btn-sm mr-1" onclick="exportToExcel('table-unit-c-6kv', 'Jadwal_Regreasing_Unit_C_6KV')">
                             <i class="fas fa-file-excel"></i> Excel
                         </button>
-                        <button type="button" class="btn btn-danger btn-sm mr-2"
-                            onclick="exportToPDF('table-unit-c-6kv', 'Jadwal_Regreasing_Unit_C_6KV', 'PLTU UNIT C MOTOR 6kV')">
+                        <button type="button" class="btn btn-danger btn-sm mr-2" onclick="exportToPDF('table-unit-c-6kv', 'Jadwal_Regreasing_Unit_C_6KV', 'PLTU UNIT C MOTOR 6kV')">
                             <i class="fas fa-file-pdf"></i> PDF
                         </button>
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -81,11 +82,7 @@ if ($result) {
                         <table class="table table-striped table-hover table-bordered m-0 table-jadwal" id="table-unit-c-6kv">
                             <thead>
                                 <tr>
-                                    <th>NAMA MOTOR</th>
-                                    <th>UPDATED BY</th>
-                                    <th>TERAKHIR REGREASING</th>
-                                    <th>JADWAL SELANJUTNYA</th>
-                                    <th>SISA WAKTU</th>
+                                    <th>NAMA MOTOR</th><th>UPDATED BY</th><th>TERAKHIR REGREASING</th><th>JADWAL SELANJUTNYA</th><th>SISA WAKTU</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -95,10 +92,7 @@ if ($result) {
                                     <?php foreach ($pltu_unit_c_motor_6kv as $motor): ?>
                                         <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
                                             <td><b><?php echo htmlspecialchars($motor); ?></b></td>
-                                            <td class="status-updater">--</td>
-                                            <td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td>
-                                            <td class="jadwal-selanjutnya">--</td>
-                                            <td class="sisa-waktu">--</td>
+                                            <td class="status-updater">--</td><td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td><td class="jadwal-selanjutnya">--</td><td class="sisa-waktu">--</td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php } ?>
@@ -112,12 +106,13 @@ if ($result) {
                 <div class="card-header">
                     <h3 class="card-title"><b>PLTU UNIT D - MOTOR 6kV</b></h3>
                     <div class="card-tools">
-                        <button type="button" class="btn btn-success btn-sm mr-1"
-                            onclick="exportToExcel('table-unit-d-6kv', 'Jadwal_Regreasing_Unit_D_6KV')">
+                        <a href="index.php?page=masterJadwal&unit=D6KV" class="btn btn-warning btn-sm mr-1 text-dark font-weight-bold">
+                            <i class="fas fa-database"></i> Edit
+                        </a>
+                        <button type="button" class="btn btn-success btn-sm mr-1" onclick="exportToExcel('table-unit-d-6kv', 'Jadwal_Regreasing_Unit_D_6KV')">
                             <i class="fas fa-file-excel"></i> Excel
                         </button>
-                        <button type="button" class="btn btn-danger btn-sm mr-2"
-                            onclick="exportToPDF('table-unit-d-6kv', 'Jadwal_Regreasing_Unit_D_6KV', 'PLTU UNIT D MOTOR 6kV')">
+                        <button type="button" class="btn btn-danger btn-sm mr-2" onclick="exportToPDF('table-unit-d-6kv', 'Jadwal_Regreasing_Unit_D_6KV', 'PLTU UNIT D MOTOR 6kV')">
                             <i class="fas fa-file-pdf"></i> PDF
                         </button>
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -130,11 +125,7 @@ if ($result) {
                         <table class="table table-striped table-hover table-bordered m-0 table-jadwal" id="table-unit-d-6kv">
                             <thead>
                                 <tr>
-                                    <th>NAMA MOTOR</th>
-                                    <th>UPDATED BY</th>
-                                    <th>TERAKHIR REGREASING</th>
-                                    <th>JADWAL SELANJUTNYA</th>
-                                    <th>SISA WAKTU</th>
+                                    <th>NAMA MOTOR</th><th>UPDATED BY</th><th>TERAKHIR REGREASING</th><th>JADWAL SELANJUTNYA</th><th>SISA WAKTU</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -144,10 +135,7 @@ if ($result) {
                                     <?php foreach ($pltu_unit_d_motor_6kv as $motor): ?>
                                         <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
                                             <td><b><?php echo htmlspecialchars($motor); ?></b></td>
-                                            <td class="status-updater">--</td>
-                                            <td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td>
-                                            <td class="jadwal-selanjutnya">--</td>
-                                            <td class="sisa-waktu">--</td>
+                                            <td class="status-updater">--</td><td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td><td class="jadwal-selanjutnya">--</td><td class="sisa-waktu">--</td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php } ?>
@@ -161,12 +149,13 @@ if ($result) {
                 <div class="card-header">
                     <h3 class="card-title"><b>PLTU UNIT C - MOTOR 380V</b></h3>
                     <div class="card-tools">
-                        <button type="button" class="btn btn-success btn-sm mr-1"
-                            onclick="exportToExcel('table-unit-c-380v', 'Jadwal_Regreasing_Unit_C_380V')">
+                        <a href="index.php?page=masterJadwal&unit=C380" class="btn btn-warning btn-sm mr-1 text-dark font-weight-bold">
+                            <i class="fas fa-database"></i> Edit
+                        </a>
+                        <button type="button" class="btn btn-success btn-sm mr-1" onclick="exportToExcel('table-unit-c-380v', 'Jadwal_Regreasing_Unit_C_380V')">
                             <i class="fas fa-file-excel"></i> Excel
                         </button>
-                        <button type="button" class="btn btn-danger btn-sm mr-2"
-                            onclick="exportToPDF('table-unit-c-380v', 'Jadwal_Regreasing_Unit_C_380V', 'PLTU UNIT C MOTOR 380V')">
+                        <button type="button" class="btn btn-danger btn-sm mr-2" onclick="exportToPDF('table-unit-c-380v', 'Jadwal_Regreasing_Unit_C_380V', 'PLTU UNIT C MOTOR 380V')">
                             <i class="fas fa-file-pdf"></i> PDF
                         </button>
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -179,11 +168,7 @@ if ($result) {
                         <table class="table table-striped table-hover table-bordered m-0 table-jadwal" id="table-unit-c-380v">
                             <thead>
                                 <tr>
-                                    <th>NAMA MOTOR</th>
-                                    <th>UPDATED BY</th>
-                                    <th>TERAKHIR REGREASING</th>
-                                    <th>JADWAL SELANJUTNYA</th>
-                                    <th>SISA WAKTU</th>
+                                    <th>NAMA MOTOR</th><th>UPDATED BY</th><th>TERAKHIR REGREASING</th><th>JADWAL SELANJUTNYA</th><th>SISA WAKTU</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -193,10 +178,7 @@ if ($result) {
                                     <?php foreach ($pltu_unit_c_motor_380v as $motor): ?>
                                         <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
                                             <td><b><?php echo htmlspecialchars($motor); ?></b></td>
-                                            <td class="status-updater">--</td>
-                                            <td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td>
-                                            <td class="jadwal-selanjutnya">--</td>
-                                            <td class="sisa-waktu">--</td>
+                                            <td class="status-updater">--</td><td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td><td class="jadwal-selanjutnya">--</td><td class="sisa-waktu">--</td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php } ?>
@@ -210,12 +192,13 @@ if ($result) {
                 <div class="card-header">
                     <h3 class="card-title"><b>PLTU UNIT D - MOTOR 380V</b></h3>
                     <div class="card-tools">
-                        <button type="button" class="btn btn-success btn-sm mr-1"
-                            onclick="exportToExcel('table-unit-d-380v', 'Jadwal_Regreasing_Unit_D_380V')">
+                        <a href="index.php?page=masterJadwal&unit=D380" class="btn btn-warning btn-sm mr-1 text-dark font-weight-bold">
+                            <i class="fas fa-database"></i> Edit
+                        </a>
+                        <button type="button" class="btn btn-success btn-sm mr-1" onclick="exportToExcel('table-unit-d-380v', 'Jadwal_Regreasing_Unit_D_380V')">
                             <i class="fas fa-file-excel"></i> Excel
                         </button>
-                        <button type="button" class="btn btn-danger btn-sm mr-2"
-                            onclick="exportToPDF('table-unit-d-380v', 'Jadwal_Regreasing_Unit_D_380V', 'PLTU UNIT D MOTOR 380V')">
+                        <button type="button" class="btn btn-danger btn-sm mr-2" onclick="exportToPDF('table-unit-d-380v', 'Jadwal_Regreasing_Unit_D_380V', 'PLTU UNIT D MOTOR 380V')">
                             <i class="fas fa-file-pdf"></i> PDF
                         </button>
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -228,11 +211,7 @@ if ($result) {
                         <table class="table table-striped table-hover table-bordered m-0 table-jadwal" id="table-unit-d-380v">
                             <thead>
                                 <tr>
-                                    <th>NAMA MOTOR</th>
-                                    <th>UPDATED BY</th>
-                                    <th>TERAKHIR REGREASING</th>
-                                    <th>JADWAL SELANJUTNYA</th>
-                                    <th>SISA WAKTU</th>
+                                    <th>NAMA MOTOR</th><th>UPDATED BY</th><th>TERAKHIR REGREASING</th><th>JADWAL SELANJUTNYA</th><th>SISA WAKTU</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -242,10 +221,7 @@ if ($result) {
                                     <?php foreach ($pltu_unit_d_motor_380v as $motor): ?>
                                         <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
                                             <td><b><?php echo htmlspecialchars($motor); ?></b></td>
-                                            <td class="status-updater">--</td>
-                                            <td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td>
-                                            <td class="jadwal-selanjutnya">--</td>
-                                            <td class="sisa-waktu">--</td>
+                                            <td class="status-updater">--</td><td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td><td class="jadwal-selanjutnya">--</td><td class="sisa-waktu">--</td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php } ?>
@@ -259,12 +235,13 @@ if ($result) {
                 <div class="card-header">
                     <h3 class="card-title"><b>PLTU UNIT UTILITY - MOTOR 6kV</b></h3>
                     <div class="card-tools">
-                        <button type="button" class="btn btn-success btn-sm mr-1"
-                            onclick="exportToExcel('table-unit-utility-6kv', 'Jadwal_Regreasing_Unit_Utility_6KV')">
+                        <a href="index.php?page=masterJadwal&unit=UTILITY6KV" class="btn btn-warning btn-sm mr-1 text-dark font-weight-bold">
+                            <i class="fas fa-database"></i> Edit
+                        </a>
+                        <button type="button" class="btn btn-success btn-sm mr-1" onclick="exportToExcel('table-unit-utility-6kv', 'Jadwal_Regreasing_Unit_Utility_6KV')">
                             <i class="fas fa-file-excel"></i> Excel
                         </button>
-                        <button type="button" class="btn btn-danger btn-sm mr-2"
-                            onclick="exportToPDF('table-unit-utility-6kv', 'Jadwal_Regreasing_Unit_Utility_6KV', 'PLTU UNIT UTILITY MOTOR 6kV')">
+                        <button type="button" class="btn btn-danger btn-sm mr-2" onclick="exportToPDF('table-unit-utility-6kv', 'Jadwal_Regreasing_Unit_Utility_6KV', 'PLTU UNIT UTILITY MOTOR 6kV')">
                             <i class="fas fa-file-pdf"></i> PDF
                         </button>
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -277,11 +254,7 @@ if ($result) {
                         <table class="table table-striped table-hover table-bordered m-0 table-jadwal" id="table-unit-utility-6kv">
                             <thead>
                                 <tr>
-                                    <th>NAMA MOTOR</th>
-                                    <th>UPDATED BY</th>
-                                    <th>TERAKHIR REGREASING</th>
-                                    <th>JADWAL SELANJUTNYA</th>
-                                    <th>SISA WAKTU</th>
+                                    <th>NAMA MOTOR</th><th>UPDATED BY</th><th>TERAKHIR REGREASING</th><th>JADWAL SELANJUTNYA</th><th>SISA WAKTU</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -291,10 +264,7 @@ if ($result) {
                                     <?php foreach ($pltu_unit_utility_motor_6kv as $motor): ?>
                                         <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
                                             <td><b><?php echo htmlspecialchars($motor); ?></b></td>
-                                            <td class="status-updater">--</td>
-                                            <td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td>
-                                            <td class="jadwal-selanjutnya">--</td>
-                                            <td class="sisa-waktu">--</td>
+                                            <td class="status-updater">--</td><td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td><td class="jadwal-selanjutnya">--</td><td class="sisa-waktu">--</td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php } ?>
@@ -308,12 +278,13 @@ if ($result) {
                 <div class="card-header">
                     <h3 class="card-title"><b>PLTU UNIT UTILITY - MOTOR 380V</b></h3>
                     <div class="card-tools">
-                        <button type="button" class="btn btn-success btn-sm mr-1"
-                            onclick="exportToExcel('table-unit-utility-380v', 'Jadwal_Regreasing_Unit_Utility_380V')">
+                        <a href="index.php?page=masterJadwal&unit=UTILITY380" class="btn btn-warning btn-sm mr-1 text-dark font-weight-bold">
+                            <i class="fas fa-database"></i> Edit
+                        </a>
+                        <button type="button" class="btn btn-success btn-sm mr-1" onclick="exportToExcel('table-unit-utility-380v', 'Jadwal_Regreasing_Unit_Utility_380V')">
                             <i class="fas fa-file-excel"></i> Excel
                         </button>
-                        <button type="button" class="btn btn-danger btn-sm mr-2"
-                            onclick="exportToPDF('table-unit-utility-380v', 'Jadwal_Regreasing_Unit_Utility_380V', 'PLTU UNIT UTILITY MOTOR 380V')">
+                        <button type="button" class="btn btn-danger btn-sm mr-2" onclick="exportToPDF('table-unit-utility-380v', 'Jadwal_Regreasing_Unit_Utility_380V', 'PLTU UNIT UTILITY MOTOR 380V')">
                             <i class="fas fa-file-pdf"></i> PDF
                         </button>
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -326,11 +297,7 @@ if ($result) {
                         <table class="table table-striped table-hover table-bordered m-0 table-jadwal" id="table-unit-utility-380v">
                             <thead>
                                 <tr>
-                                    <th>NAMA MOTOR</th>
-                                    <th>UPDATED BY</th>
-                                    <th>TERAKHIR REGREASING</th>
-                                    <th>JADWAL SELANJUTNYA</th>
-                                    <th>SISA WAKTU</th>
+                                    <th>NAMA MOTOR</th><th>UPDATED BY</th><th>TERAKHIR REGREASING</th><th>JADWAL SELANJUTNYA</th><th>SISA WAKTU</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -340,10 +307,7 @@ if ($result) {
                                     <?php foreach ($pltu_unit_utility_motor_380v as $motor): ?>
                                         <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
                                             <td><b><?php echo htmlspecialchars($motor); ?></b></td>
-                                            <td class="status-updater">--</td>
-                                            <td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td>
-                                            <td class="jadwal-selanjutnya">--</td>
-                                            <td class="sisa-waktu">--</td>
+                                            <td class="status-updater">--</td><td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td><td class="jadwal-selanjutnya">--</td><td class="sisa-waktu">--</td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php } ?>
