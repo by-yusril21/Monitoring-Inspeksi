@@ -185,8 +185,8 @@ switch ($unitAktif) {
 
             cardsHTML += `
             <div class="col-lg-6">
-                <div class="card card-outline card-primary shadow-sm collapsed-card" id="card_${index}" style="border-radius: 10px; overflow: hidden;">
-                    <div class="card-header border-0 bg-white pt-2 pb-0">
+                <div class="card card-outline card-primary shadow-sm collapsed-card" id="card_${index}" style="border-radius: 6px; overflow: hidden;">
+                    <div class="card-header border-0 bg-white pt-3 pb-3">
                         <h3 class="card-title font-weight-bold text-dark" style="font-size: 1.1rem;">
                             <i class="fas fa-chart-area text-primary mr-2"></i> ${nama}
                         </h3>

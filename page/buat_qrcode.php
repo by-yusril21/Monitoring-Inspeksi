@@ -46,18 +46,6 @@
 </style>
 
 <div class="content-wrapper qr-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0 text-dark font-weight-bold">
-                        <i class="fas fa-qrcode text-primary mr-2"></i> Generator QR Code HD
-                    </h1>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -92,7 +80,7 @@
                                 <label for="input_nama_file">3. Nama File Barcode</label>
                                 <div class="input-group">
                                     <input type="text" id="input_nama_file" class="form-control"
-                                        placeholder="Contoh: Absensi_Siswa">
+                                        placeholder="Contoh: BOILER FEED WATER PUMP A">
                                     <div class="input-group-append">
                                         <span class="input-group-text font-weight-bold">.png</span>
                                     </div>

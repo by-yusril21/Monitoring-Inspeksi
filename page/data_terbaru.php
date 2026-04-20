@@ -86,6 +86,12 @@ if ($hasil_settings) {
         box-shadow: inset -2px 0 0 rgba(0, 0, 0, 0.1);
     }
 
+    /* 5. Khusus Kolom Nama Motor Rata Kiri */
+    .text-left-custom {
+        text-align: left !important;
+        padding-left: 10px !important; /* Agar teks tidak terlalu menempel ke garis tepi */
+    }
+
     thead .sticky-motor {
         background-color: #ebebeb !important;
         color: #000000 !important;

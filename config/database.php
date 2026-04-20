@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "panellistrik_iot";
+$database = "monitoring-inspeksi";
 
 $conn = mysqli_connect($servername, $username, $password, $database);
 

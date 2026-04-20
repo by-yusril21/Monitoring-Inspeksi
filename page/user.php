@@ -48,18 +48,6 @@ $result = mysqli_query($conn, $sql)
   ?>
 
 <div class="content-wrapper">
-  <div class="content-header pb-1">
-    <div class="container-fluid">
-      <div class="row mb-2">
-        <div class="col-sm-6">
-          <h4 class="m-0 text-dark font-weight-bold">
-            <i class="fas fa-users-cog mr-2"></i>Manajemen Pengguna
-          </h4>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="content">
     <div class="container-fluid">
 

@@ -51,13 +51,6 @@ if ($q_pdf) {
         padding-right: 2px !important;
     }
 
-    .table-responsive-vh {
-        flex: 1;
-        overflow-y: auto;
-        border: 1px solid var(--border-color);
-        background-color: var(--card-bg);
-    }
-
     .card-custom {
         border-radius: 0;
         box-shadow: none !important;
@@ -93,54 +86,6 @@ if ($q_pdf) {
     #section-gauge,
     #section-input {
         scroll-margin-top: 25px;
-    }
-
-    /* =========================================================
-       CUSTOM SCROLLBAR (VERTIKAL HILANG, HORIZONTAL TAMPIL)
-       ========================================================= */
-
-    /* 1. Pengaturan untuk browser Firefox & IE/Edge Lama */
-    * {
-        scrollbar-width: none !important;
-        /* Sembunyikan semua di Firefox */
-        -ms-overflow-style: none !important;
-        /* Sembunyikan di IE/Edge */
-    }
-
-    /* Pengecualian di Firefox: Tampilkan scrollbar tipis khusus area yang butuh geser kiri-kanan */
-    .dataTables_scrollBody,
-    .table-responsive-vh,
-    .table-responsive-custom {
-        scrollbar-width: thin !important;
-    }
-
-    /* 2. Pengaturan untuk browser WebKit (Chrome, Safari, Edge Baru, Opera) */
-    *::-webkit-scrollbar {
-        width: 0px !important;
-        /* HILANGKAN scrollbar vertikal (Atas-Bawah) */
-        height: 8px !important;
-        /* TAMPILKAN scrollbar horizontal (Kiri-Kanan) */
-    }
-
-    /* Mempercantik tampilan scrollbar horizontal yang muncul */
-    *::-webkit-scrollbar-track {
-        background: var(--bg-color);
-    }
-
-    *::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 4px;
-    }
-
-    *::-webkit-scrollbar-thumb:hover {
-        background: #a8a8a8;
-    }
-
-    /* CSS KHUSUS UNTUK MERAPIKAN HEADER TABEL BERTINGKAT */
-    .table-header-custom th {
-        vertical-align: middle !important;
-        text-align: center !important;
-        padding: 8px 5px !important;
     }
 
     /* Styling Tambahan untuk Unified Card (Kotak Utama) */
