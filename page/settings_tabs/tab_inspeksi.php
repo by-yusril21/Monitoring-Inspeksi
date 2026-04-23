@@ -49,7 +49,8 @@
                     'd6kv' => ['setting' => 'motor_list_d6kv', 'label' => 'PLTU UNIT D - MOTOR 6kV'],
                     'd380' => ['setting' => 'motor_list_d380', 'label' => 'PLTU UNIT D - MOTOR 380V'],
                     'utility6kv' => ['setting' => 'motor_list_utility6kv', 'label' => 'PLTU UTILITY - MOTOR 6kV'],
-                    'utility380' => ['setting' => 'motor_list_utility380', 'label' => 'PLTU UTILITY - MOTOR 380V']
+                    'utility380' => ['setting' => 'motor_list_utility380', 'label' => 'PLTU UTILITY - MOTOR 380V'],
+                    'utility240' => ['setting' => 'motor_list_utility240', 'label' => 'PLTU UTILITY - MOTOR 240V']
                 ];
                 ?>
                 <div class="accordion" id="accordionGForm">

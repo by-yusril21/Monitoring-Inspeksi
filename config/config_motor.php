@@ -12,7 +12,8 @@ $dataMotor = [
   'D6KV' => [],
   'D380' => [],
   'UTILITY6KV' => [],
-  'UTILITY380' => []
+  'UTILITY380' => [],
+  'UTILITY240' => []
 
 ];
 
@@ -40,6 +41,8 @@ if ($result) {
       $dataMotor['UTILITY6KV'] = array_values($list_array);
     if ($row['setting_key'] == 'motor_list_utility380')
       $dataMotor['UTILITY380'] = array_values($list_array);
+    if ($row['setting_key'] == 'motor_list_utility240')
+      $dataMotor['UTILITY240'] = array_values($list_array);
   }
 }
 

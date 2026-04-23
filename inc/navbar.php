@@ -35,6 +35,7 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
           <option value="D380">PLTU UNIT D - MOTOR 380V</option>
           <option value="UTILITY6KV">PLTU UNIT UTILITY - MOTOR 6KV</option>
           <option value="UTILITY380">PLTU UNIT UTILITY - MOTOR 380V</option>
+          <option value="UTILITY240">PLTU UNIT UTILITY - MOTOR 240V</option>
         </select>
         <select id="pilihMotor" class="form-control form-control-sm mr-1" style="width: 230px;" disabled>
           <option value="">-- Pilih Motor --</option>
@@ -77,6 +78,10 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
           <a href="?page=chart&unit=UTILITY380"
             class="btn <?= ($activeUnit == 'UTILITY380') ? 'btn-secondary text-white' : 'btn-outline-secondary' ?> btn-sm mr-2 font-weight-bold shadow-sm">
             MOTOR 380V UTILITY
+          </a>
+          <a href="?page=chart&unit=UTILITY240"
+            class="btn <?= ($activeUnit == 'UTILITY240') ? 'btn-secondary text-white' : 'btn-outline-secondary' ?> btn-sm mr-2 font-weight-bold shadow-sm">
+            MOTOR 240V UTILITY
           </a>
         </div>
       </div>
@@ -150,7 +155,9 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
           <option value="C380">PLTU UNIT C 380</option>
           <option value="D6KV">PLTU UNIT D 6KV</option>
           <option value="D380">PLTU UNIT D 380</option>
-          <option value="UTILITY">PLTU UNIT UTILITY</option>
+          <option value="UTILITY6KV">PLTU UNIT UTILITY 6KV</option>
+          <option value="UTILITY380">PLTU UNIT UTILITY 380</option>
+          <option value="UTILITY240">PLTU UNIT UTILITY 240</option>
         </select>
         <select id="pilihMotorMobile" class="form-control form-control-sm mb-2 w-100" disabled>
           <option value="">-- Pilih Motor --</option>

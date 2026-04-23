@@ -13,7 +13,8 @@ $SCRIPT_URLS = [
     "D6KV" => "",
     "D380" => "",
     "UTILITY6KV" => "",
-    "UTILITY380" => ""
+    "UTILITY380" => "",
+    "UTILITY240" => ""
 
 ];
 
@@ -41,6 +42,8 @@ if (isset($conn)) {
                 $SCRIPT_URLS['UTILITY6KV'] = $val;
             } else if ($key == 'script_url_utility380') {
                 $SCRIPT_URLS['UTILITY380'] = $val;
+            } else if ($key == 'script_url_utility240') {
+                $SCRIPT_URLS['UTILITY240'] = $val;
             }
         }
     }

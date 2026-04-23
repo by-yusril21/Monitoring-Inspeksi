@@ -127,9 +127,9 @@ table.dataTable td.col-kondisi {
 }
 table.dataTable th.col-action,
 table.dataTable td.col-action {
-  width: 300px !important;
-  min-width: 300px !important;
-  max-width: 300px !important;
+  width: 700px !important;
+  min-width: 700px !important;
+  max-width: 700px !important;
   white-space: normal !important; /* Izinkan teks paragraf turun ke bawah */
   text-align: left !important;
 }

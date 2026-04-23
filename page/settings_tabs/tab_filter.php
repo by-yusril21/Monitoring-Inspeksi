@@ -38,7 +38,8 @@
                     'regreasing_filter_d6kv' => ['master' => 'motor_list_d6kv', 'judul' => 'Motor 6kV PLTU Unit D'],
                     'regreasing_filter_d380' => ['master' => 'motor_list_d380', 'judul' => 'Motor 380V PLTU Unit D'],
                     'regreasing_filter_utility6kv' => ['master' => 'motor_list_utility6kv', 'judul' => 'Motor 6kV PLTU Unit Utility'],
-                    'regreasing_filter_utility380' => ['master' => 'motor_list_utility380', 'judul' => 'Motor 380V PLTU Unit Utility']
+                    'regreasing_filter_utility380' => ['master' => 'motor_list_utility380', 'judul' => 'Motor 380V PLTU Unit Utility'],
+                    'regreasing_filter_utility240' => ['master' => 'motor_list_utility240', 'judul' => 'Motor 240V PLTU Unit Utility']
                 ];
 
                 foreach ($mapping_filter as $filter_key => $data_map) {

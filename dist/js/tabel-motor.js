@@ -34,6 +34,19 @@ window.loadDataFromSheet = function (unit, sheetName) {
   const dt = $("#example1").DataTable();
   const limitData = dt.page.len();
 
+  // =======================================================
+  // FITUR LOADING: Tampilkan overlay sebelum fetch berjalan
+  // =======================================================
+  const card = $("#example1").closest(".card");
+  if (card.find(".loading-overlay").length === 0) {
+    card.append(`
+      <div class="overlay loading-overlay" style="background-color: rgba(255,255,255,0.85); z-index: 9999; flex-direction: column;">
+          <i class="fas fa-sync-alt fa-spin fa-3x text-info"></i>
+          <div class="mt-3 text-info font-weight-bold" style="letter-spacing: 1px;">Mengambil Data...</div>
+      </div>
+    `);
+  }
+
   dt.clear().draw();
 
   const url = `api/api_proxy.php?unit=${unit}&sheet=${encodeURIComponent(sheetName)}`;
@@ -41,7 +54,9 @@ window.loadDataFromSheet = function (unit, sheetName) {
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
+      // Hilangkan loading jika data kosong
       if (!Array.isArray(data) || data.length === 0) {
+        card.find(".loading-overlay").remove();
         toastr.warning("Data tidak ditemukan.");
         return;
       }
@@ -50,6 +65,7 @@ window.loadDataFromSheet = function (unit, sheetName) {
       let rows = data.slice(1);
 
       if (rows.length === 0) {
+        card.find(".loading-overlay").remove();
         toastr.info("Data kosong.");
         return;
       }
@@ -195,39 +211,37 @@ window.loadDataFromSheet = function (unit, sheetName) {
 
       dt.rows.add(formattedData).draw();
 
-      // Penyesuaian presisi tinggi setelah data dirender
       setTimeout(() => {
         dt.columns.adjust();
+        // Hilangkan loading setelah tabel selesai dirender
+        card.find(".loading-overlay").remove();
       }, 150);
     })
     .catch((error) => {
       console.error("Error:", error);
+      // Hilangkan loading jika error
+      card.find(".loading-overlay").remove();
       toastr.error("Gagal koneksi ke server.");
     });
 };
 
 $(document).ready(function () {
   const table = $("#example1").DataTable({
-    // --- PENGATURAN TATA LETAK TOOLBAR (DOM) AMAN ---
-    // --- PENGATURAN TATA LETAK TOOLBAR (SOLUSI AMPUH COL-AUTO) ---
-    // --- PENGATURAN TATA LETAK TOOLBAR (JARAK DIRAPATKAN) ---
     dom:
-      // PERHATIKAN: 'mb-3' diubah menjadi 'mb-1' di bawah ini
       "<'row mb-1 align-items-center'<'col-auto pr-0'f><'col-auto pl-0'l><'col d-flex justify-content-end'B>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row mt-2'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
 
-    scrollX: true, // Mengaktifkan scroll horizontal
-    scrollY: "50vh", // Scroll vertikal dinamis
+    scrollX: true,
+    scrollY: "50vh",
     scrollCollapse: true,
     paging: true,
     lengthChange: true,
     searching: true,
     ordering: false,
     info: true,
-    autoWidth: false, // Wajib false agar columnDefs width bekerja
+    autoWidth: false,
 
-    // --- KUSTOMISASI LEBAR KOLOM (SUNTIK CLASS CSS) ---
     columnDefs: [
       { defaultContent: "-", targets: "_all" },
       { className: "col-no", targets: 0 },
@@ -251,15 +265,11 @@ $(document).ready(function () {
         text: '<i class="fas fa-file-excel"></i> Excel',
         className: "btn btn-success btn-sm ml-2",
         action: function (e, dt, node, config) {
-          // Ambil data unit & motor dari localStorage atau select
           const unit = localStorage.getItem("mon_selectedUnit") || "Unit";
           const motor = localStorage.getItem("mon_selectedMotor") || "Motor";
-
-          // Jalankan fungsi ekspor manual
           exportMotorToExcel(unit, motor);
         },
       },
-
       {
         extend: "pdfHtml5",
         text: '<i class="fas fa-file-pdf"></i> PDF',
@@ -271,7 +281,6 @@ $(document).ready(function () {
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
             19, 20, 21, 22, 23, 24, 25, 26, 27,
           ],
-          // HAPUS fungsi format.header yang lama karena itu meratakan header
           format: {
             body: function (data, row, column, node) {
               return data ? data.toString().replace(/<[^>]*>?/gm, "") : data;
@@ -335,7 +344,7 @@ $(document).ready(function () {
                         {
                           image: logoBase64,
                           width: 450,
-                          opacity: 0.2,
+                          opacity: 0.06,
                           alignment: "center",
                           margin: [0, 80, 0, 0],
                           border: [false, false, false, false],
@@ -415,7 +424,6 @@ $(document).ready(function () {
 
           doc.content.splice(0, 0, customHeader);
 
-          // === UKURAN FONT ASLI ANDA TETAP DIPERTAHANKAN ===
           doc.defaultStyle.fontSize = 4;
           doc.styles.tableHeader.fontSize = 3.5;
           doc.styles.tableHeader.fillColor = "#1a3b5c";
@@ -423,7 +431,13 @@ $(document).ready(function () {
           doc.defaultStyle.alignment = "center";
           doc.pageMargins = [20, 20, 20, 20];
 
-          // === KUNCI PERBAIKAN: MEMBUAT HEADER 3 BARIS UNTUK PDF ===
+          if (doc.styles.tableBodyEven) {
+            delete doc.styles.tableBodyEven.fillColor;
+          }
+          if (doc.styles.tableBodyOdd) {
+            delete doc.styles.tableBodyOdd.fillColor;
+          }
+
           const headerRow1 = [
             {
               text: "No",
@@ -617,17 +631,11 @@ $(document).ready(function () {
             "",
           ];
 
-          // Menghapus header bawaan (1 baris) yang berantakan
           doc.content[1].table.body.splice(0, 1);
-
-          // Menyisipkan susunan 3 baris kita yang rapi
           doc.content[1].table.body.unshift(headerRow3);
           doc.content[1].table.body.unshift(headerRow2);
           doc.content[1].table.body.unshift(headerRow1);
-
-          // Memberitahu PDFMake bahwa 3 baris pertama adalah Header (agar berulang jika ada halaman 2)
           doc.content[1].table.headerRows = 3;
-          // =======================================================
 
           doc.content[1].table.widths = [
             "1%",
@@ -680,6 +688,16 @@ $(document).ready(function () {
               return 3;
             },
           };
+
+          doc.content[1].table.body.forEach(function (row, index) {
+            if (index >= 3) {
+              if (typeof row[27] === "object" && row[27] !== null) {
+                row[27].alignment = "left";
+              } else {
+                row[27] = { text: row[27], alignment: "left" };
+              }
+            }
+          });
         },
       },
     ],
@@ -696,15 +714,12 @@ $(document).ready(function () {
     },
 
     initComplete: function () {
-      // 1. Memindahkan Filter/Search (Kode yang sudah ada)
       const filterContent = $("#my-filter-source").html();
       if (filterContent) {
         $("#my-filter-placeholder").html(filterContent);
         $("#my-filter-source").remove();
       }
 
-      // 2. KUNCI PERBAIKAN: Munculkan tabel dengan mulus (Fade-in)
-      // Memberi sedikit jeda 0.1 detik agar DataTables benar-benar selesai menghitung
       setTimeout(function () {
         $("#area-tabel").css("opacity", "1");
       }, 100);
@@ -725,46 +740,31 @@ $(document).ready(function () {
 });
 
 function exportMotorToExcel(unit, motor) {
-  // 1. Ambil Header dan Body
   const headerHTML = $(".dataTables_scrollHeadInner table thead").html();
-  const bodyHTML = $(".dataTables_scrollBody table tbody").html();
+  let bodyHTML = $(".dataTables_scrollBody table tbody").html();
 
   if (!headerHTML || !bodyHTML) {
     toastr.error("Gagal mengambil struktur tabel.");
     return;
   }
 
-  // 2. DEFISINISIKAN LEBAR KOLOM (Agar kolom Date tidak jadi ############)
-  // Urutan sesuai 28 kolom Anda
+  let tempContainer = document.createElement("div");
+  tempContainer.innerHTML = `<table><tbody>${bodyHTML}</tbody></table>`;
+
+  let trs = tempContainer.querySelectorAll("tr");
+  trs.forEach((tr) => {
+    let tds = tr.querySelectorAll("td");
+    if (tds.length > 27) {
+      tds[27].style.whiteSpace = "normal";
+      tds[27].style.wordWrap = "break-word";
+      tds[27].style.textAlign = "left";
+    }
+  });
+  bodyHTML = tempContainer.querySelector("tbody").innerHTML;
+
   const colWidths = [
-    40, // No
-    180, // Date (Dilebarkan agar muat)
-    250, // Update By
-    150, // Aksi
-    150, // Section No
-    50,
-    50,
-    50,
-    50, // Vib DE
-    50,
-    50,
-    50,
-    50, // Vib NDE
-    60,
-    60,
-    60, // Temp
-    120,
-    120,
-    120, // Current
-    150,
-    150, // Load, Damper
-    120,
-    120,
-    120,
-    120,
-    120,
-    120, // Kondisi Fisik
-    500, // Action
+    40, 180, 250, 150, 150, 50, 50, 50, 50, 50, 50, 50, 50, 60, 60, 60, 120,
+    120, 120, 150, 150, 120, 120, 120, 120, 120, 120, 500,
   ];
 
   let colgroup = "<colgroup>";
@@ -773,7 +773,6 @@ function exportMotorToExcel(unit, motor) {
   });
   colgroup += "</colgroup>";
 
-  // 3. Rakit tabel dengan Colgroup
   const fullTableHTML = `
         <table border="1">
             ${colgroup}
@@ -781,7 +780,6 @@ function exportMotorToExcel(unit, motor) {
             <tbody>${bodyHTML}</tbody>
         </table>`;
 
-  // 4. Bersihkan TH kosong sisa DataTables
   let cleanHTML = fullTableHTML.replace(/<th[^>]*><\/th>/g, "");
 
   const template = `
@@ -789,18 +787,17 @@ function exportMotorToExcel(unit, motor) {
         <head>
             <meta charset="UTF-8">
             <style>
-                table { border-collapse: collapse; table-layout: fixed; } /* KUNCI: table-layout fixed agar lebar kolom dipatuhi */
+                table { border-collapse: collapse; table-layout: fixed; } 
                 th, td { 
                     border: 1px solid black; 
                     padding: 5px; 
                     text-align: center; 
                     vertical-align: middle;
-                    white-space: nowrap; /* Mencegah teks terpotong */
                 }
                 thead tr:nth-child(1) th { background-color: #e2e6ea; font-weight: bold; }
                 thead tr:nth-child(2) th { background-color: #f1f3f5; }
                 thead tr:nth-child(3) th { background-color: #f8f9fa; }
-                .col-action { white-space: normal !important; } /* Khusus kolom Action boleh turun ke bawah */
+                .col-action { text-align: left !important; white-space: normal !important; } 
             </style>
         </head>
         <body>

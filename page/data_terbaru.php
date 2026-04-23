@@ -7,8 +7,8 @@ if (session_status() == PHP_SESSION_NONE) {
 require 'config/database.php';
 $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Admin';
 
-$pdf_judul_1 = 'DOKUMEN RANGKUMAN DATA PMC SCHEDULE BULANAN MOTOR 6kV DAN 380V';
-$pdf_judul_2 = 'PT Semen Tonasa - Electrical of Power Plant Elins Maintenance';
+$pdf_judul_1 = '-';
+$pdf_judul_2 = '-';
 $pdf_logo_base64 = '';
 
 $query_settings = "SELECT setting_key, setting_value FROM settings WHERE setting_key IN ('pdf_judul_1', 'pdf_judul_2', 'pdf_logo_base64')";
@@ -77,10 +77,21 @@ if ($hasil_settings) {
         font-weight: 600 !important;
     }
 
-    /* 3. Sticky Column (Kolom Nama Motor) - UNTUK LAYAR BESAR */
-    .sticky-motor {
+    /* 3. DOUBLE STICKY COLUMN (Kolom No & Nama Motor) */
+    .sticky-no {
         position: sticky !important;
         left: 0;
+        z-index: 2;
+        background-color: #f9f9f9 !important;
+        width: 40px;
+        min-width: 40px;
+        max-width: 40px;
+    }
+
+    .sticky-motor {
+        position: sticky !important;
+        left: 40px;
+        /* Menempel tepat di sebelah kolom No (40px) */
         z-index: 2;
         background-color: #f9f9f9 !important;
         box-shadow: inset -2px 0 0 rgba(0, 0, 0, 0.1);
@@ -89,25 +100,30 @@ if ($hasil_settings) {
     /* 5. Khusus Kolom Nama Motor Rata Kiri */
     .text-left-custom {
         text-align: left !important;
-        padding-left: 10px !important; /* Agar teks tidak terlalu menempel ke garis tepi */
+        padding-left: 10px !important;
     }
 
+    thead .sticky-no,
     thead .sticky-motor {
         background-color: #ebebeb !important;
         color: #000000 !important;
         z-index: 3;
     }
 
+    .table-hover tbody tr:hover .sticky-no,
     .table-hover tbody tr:hover .sticky-motor {
         background-color: #c7c7c7 !important;
     }
 
     @media (max-width: 768px) {
+
+        .sticky-no,
         .sticky-motor {
             position: static !important;
             box-shadow: none !important;
         }
 
+        thead .sticky-no,
         thead .sticky-motor {
             z-index: 1;
         }
@@ -151,6 +167,7 @@ if ($hasil_settings) {
         if (u === 'D380' || u === 'D380V') return 'PLTU UNIT D MOTOR 380V';
         if (u === 'UTILITY6KV') return 'PLTU UNIT UTILITY MOTOR 6kV';
         if (u === 'UTILITY380') return 'PLTU UNIT UTILITY MOTOR 380V';
+        if (u === 'UTILITY240') return 'PLTU UNIT UTILITY MOTOR 240V';
         return 'PLTU UNIT ' + unitKode;
     }
 
@@ -162,17 +179,26 @@ if ($hasil_settings) {
         if (!table) return;
 
         const cloneTable = table.cloneNode(true);
+        // KUNCI PERBAIKAN: Paksa rata kiri langsung ke dalam tag HTML-nya (Inline Style)
+        const kolomKiri = cloneTable.querySelectorAll('.text-left-custom');
+        kolomKiri.forEach(el => {
+            el.style.textAlign = 'left';
+            el.style.paddingLeft = '10px';
+        });
+
         let tableHTML = cloneTable.outerHTML;
 
+        // TAMBAHAN: Lebar 40px untuk kolom No di awal array
         const colWidths = [
-            200, 110, 140, 80, 60, // Motor, Date, Update By, Aksi, Section
-            50, 50, 50, 50,        // Vib DE
-            50, 50, 50, 50,        // Vib NDE
-            60, 60, 60,            // Temp DE, NDE, Ruang
-            50, 50, 50,            // Arus R, S, T
-            70, 70,                // Beban, Damper
-            80, 80, 80, 80, 80, 80,// Bunyi, Panel, Lengkap, Bersih, Ground, Regreasing
-            250                    // Action
+            40,
+            350, 180, 310, 160, 140, // Motor, Date, Update By, Aksi, Section
+            70, 70, 70, 70,        // Vib DE
+            70, 70, 70, 70,        // Vib NDE
+            80, 80, 80,            // Temp DE, NDE, Ruang
+            70, 70, 70,            // Arus R, S, T
+            110, 110,                // Beban, Damper
+            120, 120, 120, 120, 120, 120,// Bunyi, Panel, Lengkap, Bersih, Ground, Regreasing
+            800                    // Action
         ];
 
         let colgroup = '<colgroup>';
@@ -189,6 +215,9 @@ if ($hasil_settings) {
                     table { border-collapse: collapse; table-layout: fixed; }
                     th, td { border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle; word-wrap: break-word; }
                     th { background-color: #56a5b4; color: black; font-weight: bold; }
+                    
+                    /* TAMBAHKAN BARIS INI: Panggil class text-left-custom untuk rata kiri */
+                    .text-left-custom { text-align: left !important; padding-left: 10px !important; }
                 </style>
             </head>
             <body>
@@ -288,11 +317,37 @@ if ($hasil_settings) {
                 fontStyle: 'bold',
                 fontSize: 3.5
             },
+            // TAMBAHAN: Indeks bergeser karena ada kolom NO di indeks 0
             columnStyles: {
-                0: { cellWidth: 2.2 }, // NAMA MOTOR
-                1: { cellWidth: 1.2 }, // Date
-                2: { cellWidth: 1.8 }, // Update By
-                27: { cellWidth: 3.5 } // Action
+                0: { cellWidth: 0.4 }, // NO
+                1: { cellWidth: 2.1 }, // NAMA MOTOR
+                2: { cellWidth: 1.4 }, // Date
+                3: { cellWidth: 1.8 }, // Update By
+                4: { cellWidth: 1.2 }, // Aksi
+                5: { cellWidth: 1 }, // Section No
+                6: { cellWidth: 0.6 },
+                7: { cellWidth: 0.6 },
+                8: { cellWidth: 0.6 },
+                9: { cellWidth: 0.6 },
+                10: { cellWidth: 0.6 },
+                11: { cellWidth: 0.6 },
+                12: { cellWidth: 0.6 },
+                13: { cellWidth: 0.6 },
+                14: { cellWidth: 0.6 },
+                15: { cellWidth: 0.6 },
+                16: { cellWidth: 0.6 },
+                17: { cellWidth: 0.6 },
+                18: { cellWidth: 0.6 },
+                19: { cellWidth: 0.6 },
+                20: { cellWidth: 0.7 },
+                21: { cellWidth: 0.7 },
+                22: { cellWidth: 0.8 },
+                23: { cellWidth: 0.8 },
+                24: { cellWidth: 0.9 },
+                25: { cellWidth: 0.8 },
+                26: { cellWidth: 0.8 },
+                27: { cellWidth: 0.8 },
+                28: { cellWidth: 6, halign: 'left' } // Action
             },
             theme: 'grid',
             didParseCell: function (data) {
@@ -341,11 +396,15 @@ if ($hasil_settings) {
                 const dataArray = result.data;
                 const listMotor = window.dataMotor[unit];
 
-                listMotor.forEach(motorName => {
+                // TAMBAHAN: Menambahkan 'index' untuk iterasi penomoran
+                listMotor.forEach((motorName, index) => {
                     const safeId = motorName.replace(/[^a-zA-Z0-9]/g, '_');
                     const rowElement = document.getElementById(`row_${unit}_${safeId}`);
 
                     const motorData = dataArray.find(item => item['NAMA MOTOR'] === motorName);
+
+                    // TAMBAHAN: Variabel Nomor Urut
+                    let nomorUrut = index + 1;
 
                     if (motorData && rowElement) {
                         const waktu = motorData['TIMESTAMP'] || '-';
@@ -399,6 +458,7 @@ if ($hasil_settings) {
                         else if (statusUpper.includes('DANGER') || statusUpper.includes('ALARM')) badgeStatus = `<span class="text-danger font-weight-bold">${status}</span>`;
 
                         rowElement.innerHTML = `
+                            <td class="text-center font-weight-bold sticky-no">${nomorUrut}</td>
                             <td class="font-weight-bold text-dark sticky-motor text-left-custom">${motorName}</td>
                             <td class="text-muted">${waktu}</td>
                             <td>${email}</td>
@@ -432,10 +492,11 @@ if ($hasil_settings) {
                             <td>${kebersihan}</td>
                             <td>${grounding}</td>
                             <td><span class="border rounded px-2 py-1 bg-light">${regreasing}</span></td>
-                            <td class="text-left-custom col-action" style="white-space: normal; min-width: 250px;">${actions}</td>
+                            <td class="text-left-custom col-action" style="white-space: normal; min-width: 700px;">${actions}</td>
                         `;
                     } else if (!motorData && rowElement) {
                         rowElement.innerHTML = `
+                            <td class="text-center text-muted sticky-no">${nomorUrut}</td>
                             <td class="font-weight-bold text-muted sticky-motor text-left-custom">${motorName}</td>
                             <td colspan="27" class="text-center text-warning text-sm">
                                 <i class="fas fa-info-circle mr-1"></i> Belum ada riwayat pengukuran
@@ -447,12 +508,12 @@ if ($hasil_settings) {
             } else if (result.status === 'empty') {
                 const tbody = document.getElementById(`tbody_${unit}`);
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="28" class="text-center text-muted py-4"><i class="fas fa-folder-open fa-2x mb-2"></i><br>Database Master untuk unit ini masih kosong.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="29" class="text-center text-muted py-4"><i class="fas fa-folder-open fa-2x mb-2"></i><br>Database Master untuk unit ini masih kosong.</td></tr>`;
                 }
             } else {
                 const tbody = document.getElementById(`tbody_${unit}`);
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="28" class="text-center text-danger py-4"><i class="fas fa-exclamation-circle fa-2x mb-2"></i><br>Gagal memuat: ${result.message}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="29" class="text-center text-danger py-4"><i class="fas fa-exclamation-circle fa-2x mb-2"></i><br>Gagal memuat: ${result.message}</td></tr>`;
                 }
             }
 
@@ -464,7 +525,7 @@ if ($hasil_settings) {
             }
             const tbody = document.getElementById(`tbody_${unit}`);
             if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="28" class="text-center text-danger py-4"><i class="fas fa-wifi fa-2x mb-2"></i><br>Gagal terhubung ke server/API.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="29" class="text-center text-danger py-4"><i class="fas fa-wifi fa-2x mb-2"></i><br>Gagal terhubung ke server/API.</td></tr>`;
             }
         }
     }
@@ -520,6 +581,8 @@ if ($hasil_settings) {
                         <table class="table table-hover table-bordered table-striped m-0 text-sm text-nowrap table-sticky-first" id="table_${unit}">
                             <thead>
                                 <tr>
+                                    <th rowspan="3" class="sticky-no">No</th>
+                                    
                                     <th rowspan="3" class="sticky-motor" style="min-width: 220px;">NAMA MOTOR</th>
                                     <th rowspan="3" style="min-width: 130px;">Date</th>
                                     <th rowspan="3" style="min-width: 150px;">Update By</th>
@@ -540,7 +603,7 @@ if ($hasil_settings) {
                                     <th rowspan="3" style="min-width: 80px;">Grounding<br>Motor</th>
                                     <th rowspan="3" style="min-width: 80px;">Regreasing<br>Bearing</th>
                                     
-                                    <th rowspan="3" style="min-width: 350px;">Action</th>
+                                    <th rowspan="3" style="min-width: 700px;">Action</th>
                                 </tr>
                                 
                                 <tr>
@@ -570,10 +633,12 @@ if ($hasil_settings) {
                             </thead>
                             <tbody id="tbody_${unit}">`;
 
-            listMotor.forEach(motor => {
+            // TAMBAHAN: Inject nomor pada row kosong (saat awal loading)
+            listMotor.forEach((motor, index) => {
                 const safeId = motor.replace(/[^a-zA-Z0-9]/g, '_');
                 cardHTML += `
                                 <tr id="row_${unit}_${safeId}">
+                                    <td class="text-center text-muted sticky-no">${index + 1}</td>
                                     <td class="font-weight-bold text-dark sticky-motor text-left-custom">${motor}</td>
                                     <td colspan="27" class="text-muted text-center">
                                         <i class="fas fa-ellipsis-h text-black-50"></i> Menunggu instruksi...

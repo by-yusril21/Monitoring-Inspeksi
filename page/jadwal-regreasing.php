@@ -32,6 +32,7 @@ $pltu_unit_d_motor_6kv = [];
 $pltu_unit_d_motor_380v = [];
 $pltu_unit_utility_motor_6kv = [];
 $pltu_unit_utility_motor_380v = [];
+$pltu_unit_utility_motor_240v = [];
 
 // 3. Ambil data HANYA yang dicentang di Filter Regreasing
 $query = "SELECT setting_key, setting_value FROM settings WHERE setting_key LIKE 'regreasing_filter_%'";
@@ -46,6 +47,7 @@ if ($result) {
         if ($row['setting_key'] == 'regreasing_filter_d380') $pltu_unit_d_motor_380v = array_values($list_array);
         if ($row['setting_key'] == 'regreasing_filter_utility6kv') $pltu_unit_utility_motor_6kv = array_values($list_array);
         if ($row['setting_key'] == 'regreasing_filter_utility380') $pltu_unit_utility_motor_380v = array_values($list_array);
+        if ($row['setting_key'] == 'regreasing_filter_utility240') $pltu_unit_utility_motor_240v = array_values($list_array);
     }
 }
 ?>
@@ -59,6 +61,7 @@ if ($result) {
         
         <div class="container-fluid" style="padding-top: 10px;">
             
+            <!-- PLTU UNIT C - MOTOR 6kV -->
             <div class="card card-outline card-info">
                 <div class="card-header">
                     <h3 class="card-title"><b>PLTU UNIT C - MOTOR 6kV</b></h3>
@@ -102,6 +105,7 @@ if ($result) {
                 </div>
             </div>
 
+            <!-- PLTU UNIT D - MOTOR 6kV -->
             <div class="card card-outline card-info">
                 <div class="card-header">
                     <h3 class="card-title"><b>PLTU UNIT D - MOTOR 6kV</b></h3>
@@ -144,7 +148,8 @@ if ($result) {
                     </div>
                 </div>
             </div>
-
+            
+            <!-- PLTU UNIT C - MOTOR 380V -->
             <div class="card card-outline card-info">
                 <div class="card-header">
                     <h3 class="card-title"><b>PLTU UNIT C - MOTOR 380V</b></h3>
@@ -188,7 +193,8 @@ if ($result) {
                 </div>
             </div>
 
-            <div class="card card-outline card-info">
+             <!-- UNIT D MOTRO 380V -->
+            <div class="card card-outline card-info"> 
                 <div class="card-header">
                     <h3 class="card-title"><b>PLTU UNIT D - MOTOR 380V</b></h3>
                     <div class="card-tools">
@@ -231,6 +237,7 @@ if ($result) {
                 </div>
             </div>
 
+            <!-- PLTU UNIT UTILITY - MOTOR 6kV -->
             <div class="card card-outline card-info">
                 <div class="card-header">
                     <h3 class="card-title"><b>PLTU UNIT UTILITY - MOTOR 6kV</b></h3>
@@ -274,6 +281,7 @@ if ($result) {
                 </div>
             </div>
 
+            <!-- PLTU UNIT UTILITY - MOTOR 380V -->
             <div class="card card-outline card-info">
                 <div class="card-header">
                     <h3 class="card-title"><b>PLTU UNIT UTILITY - MOTOR 380V</b></h3>
@@ -305,6 +313,49 @@ if ($result) {
                                     <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-info-circle mb-2 fa-2x text-lightblue"></i><br>Belum ada motor yang dijadwalkan.<br>Silakan centang motor di menu <b>Settings > Filter Jadwal Regreasing</b>.</td></tr>
                                 <?php } else { ?>
                                     <?php foreach ($pltu_unit_utility_motor_380v as $motor): ?>
+                                        <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
+                                            <td><b><?php echo htmlspecialchars($motor); ?></b></td>
+                                            <td class="status-updater">--</td><td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td><td class="jadwal-selanjutnya">--</td><td class="sisa-waktu">--</td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-outline card-info">
+                <div class="card-header">
+                    <h3 class="card-title"><b>PLTU UNIT UTILITY - MOTOR 240v</b></h3>
+                    <div class="card-tools">
+                        <a href="index.php?page=masterJadwal&unit=UTILITY240" class="btn btn-warning btn-sm mr-1 text-dark font-weight-bold">
+                            <i class="fas fa-database"></i> Edit
+                        </a>
+                        <button type="button" class="btn btn-success btn-sm mr-1" onclick="exportToExcel('table-unit-utility-240v', 'Jadwal_Regreasing_Unit_Utility_240V')">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm mr-2" onclick="exportToPDF('table-unit-utility-240v', 'Jadwal_Regreasing_Unit_Utility_240V', 'PLTU UNIT UTILITY MOTOR 240V')">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover table-bordered m-0 table-jadwal" id="table-unit-utility-240v">
+                            <thead>
+                                <tr>
+                                    <th>NAMA MOTOR</th><th>UPDATED BY</th><th>TERAKHIR REGREASING</th><th>JADWAL SELANJUTNYA</th><th>SISA WAKTU</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (empty($pltu_unit_utility_motor_240v)) { ?>
+                                    <tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-info-circle mb-2 fa-2x text-lightblue"></i><br>Belum ada motor yang dijadwalkan.<br>Silakan centang motor di menu <b>Settings > Filter Jadwal Regreasing</b>.</td></tr>
+                                <?php } else { ?>
+                                    <?php foreach ($pltu_unit_utility_motor_240v as $motor): ?>
                                         <tr class="data-row" data-motor="<?php echo htmlspecialchars($motor); ?>">
                                             <td><b><?php echo htmlspecialchars($motor); ?></b></td>
                                             <td class="status-updater">--</td><td class="terakhir-regreasing"><span class="text-muted"><i class='fas fa-spinner fa-spin'></i> Mengambil data</span></td><td class="jadwal-selanjutnya">--</td><td class="sisa-waktu">--</td>
