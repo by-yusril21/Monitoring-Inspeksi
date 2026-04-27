@@ -14,7 +14,27 @@ $activeUnit = isset($_GET['unit']) ? strtoupper($_GET['unit']) : 'C6KV';
 
 // 4. Tangkap nama user yang sedang login dari Session
 $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
+
+// 5. AMBIL DATA JSON LANGSUNG DARI DATABASE (Anti-Gagal)
+$json_db_string = '{}';
+
+// Panggil variabel koneksi dari database.php
+global $conn;
+
+if ($conn) {
+  $query_gform = mysqli_query($conn, "SELECT setting_value FROM settings WHERE setting_key = 'form_links_json' LIMIT 1");
+  if ($query_gform && mysqli_num_rows($query_gform) > 0) {
+    $row_gform = mysqli_fetch_assoc($query_gform);
+    if (!empty($row_gform['setting_value'])) {
+      $json_db_string = $row_gform['setting_value'];
+    }
+  }
+}
 ?>
+
+<script>
+  window.DataGFormGlobal = <?= $json_db_string ?>;
+</script>
 
 <nav class="main-header navbar navbar-expand navbar-white navbar-light sticky-top px-0 py-0"
   style="box-shadow:0 2px 8px rgba(0,0,0,0.1); flex-wrap:wrap;">
@@ -37,12 +57,24 @@ $username_login = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'
           <option value="UTILITY380">PLTU UNIT UTILITY - MOTOR 380V</option>
           <option value="UTILITY240">PLTU UNIT UTILITY - MOTOR 240V</option>
         </select>
+
         <select id="pilihMotor" class="form-control form-control-sm mr-1" style="width: 230px;" disabled>
           <option value="">-- Pilih Motor --</option>
         </select>
-        <button type="button" id="btnRefresh" class="btn btn-primary btn-sm text-nowrap">
+
+        <button type="button" id="btnRefresh" class="btn btn-primary btn-sm text-nowrap mr-1">
           <i class="fas fa-sync-alt mr-1"></i>Update
         </button>
+
+        <a href="#" id="btnLinkUser" target="_blank" class="btn btn-success btn-sm text-nowrap mr-1 d-none"
+          title="Buka Form User">
+          <i class="fas fa-external-link-alt mr-1"></i>Go Google Form
+        </a>
+        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+          <a href="#" id="btnLinkEdit" target="_blank" class="btn btn-info btn-sm text-nowrap d-none" title="Edit Form">
+            <i class="fas fa-edit"></i>
+          </a>
+        <?php endif; ?>
       </div>
 
     <?php elseif ($isChart): ?>

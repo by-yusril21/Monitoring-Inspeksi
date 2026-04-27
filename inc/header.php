@@ -8,7 +8,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MONITORING_BTG_TONASA</title>
+  <title>Electrical Powerplant</title>
+
+  <link rel="icon" type="image/jpeg" href="assets/img/logo.jpg">
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet"
@@ -35,5 +37,5 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 <!-- <body class="hold-transition sidebar-mini"> -->
 
-<body class="hold-transition sidebar-mini sidebar-collapse"></body>
+<body class="hold-transition sidebar-mini layout-fixed"></body>
 <div class="wrapper">

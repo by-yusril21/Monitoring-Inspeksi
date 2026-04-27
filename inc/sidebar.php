@@ -1,85 +1,22 @@
-<style>
-  /* 1. Sidebar Container Utama */
-  .main-sidebar-custom {
-    background-color: #e0e0e0 !important;
-    transition: all 0.3s ease;
-
-    /* FITUR FIXED: Mengunci sidebar agar tidak bergerak */
-    position: fixed !important;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    height: 100vh !important;
-    overflow-y: auto !important;
-    /* Menu tetap bisa di-scroll jika kepanjangan */
-    z-index: 1038;
-  }
-
-  /* Sembunyikan scrollbar sidebar agar tetap bersih */
-  .main-sidebar-custom::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
-  }
-
-  /* 2. Brand Logo Area */
-  .brand-link-custom {
-    border-bottom: 2px solid rgb(220, 220, 220) !important;
-    color: #000000 !important;
-    display: flex;
-    align-items: center;
-    height: 45px;
-    /* Sesuaikan dengan tinggi navbar tipis kita sebelumnya */
-  }
-
-  /* 3. Styling Menu Navigasi */
-  .nav-sidebar .nav-link {
-    color: #000000 !important;
-    font-size: 14px;
-    margin-bottom: 2px;
-  }
-
-  /* Efek Hover */
-  .nav-sidebar .nav-link:hover {
-    background-color: rgba(0, 0, 0, 0.05) !important;
-    color: #156ada !important;
-  }
-
-  /* Warna Menu Aktif */
-  .nav-sidebar .nav-link.active {
-    background-color: #0046f7a2 !important;
-    color: #ffffff !important;
-    /* Putih agar lebih kontras di atas biru */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  /* 4. Global Body Scrollbar (Sembunyikan scrollbar utama) */
-  html,
-  body {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    scroll-behavior: smooth;
-  }
-
-  body::-webkit-scrollbar {
-    display: none;
-  }
-</style>
-
 <?php
 // Mengambil nama halaman dari URL, jika kosong default ke home
 $current_page = isset($_GET['page']) ? $_GET['page'] : 'home';
 ?>
 
-<aside class="main-sidebar main-sidebar-custom elevation-4">
-  <a class="brand-link brand-link-custom">
-    <span class="brand-text font-weight-bold" style="font-size: 14px; padding-left: 10px;">
-      MONITORING INSPEKSI MOTOR
-    </span>
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+
+  <a href="?page=home" class="brand-link">
+    <img src="assets/img/logo.jpg" alt="Logo" class="brand-image img-circle elevation-3"
+      style="opacity: .8; background-color: white;">
+
+    <span class="brand-text font-weight-bold" style="letter-spacing: 0.5px; font-size: 16px;">Electrical
+      Powerplant</span>
   </a>
 
   <div class="sidebar">
     <nav class="mt-3">
-      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+      <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent nav-flat" data-widget="treeview" role="menu"
+        data-accordion="false">
 
         <li class="nav-item">
           <a href="?page=home" class="nav-link <?php echo ($current_page == 'home') ? 'active' : ''; ?>">
@@ -105,15 +42,14 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'home';
 
         <li class="nav-item">
           <a href="index.php?page=data_terbaru"
-            class="nav-link <?= (isset($_GET['page']) && $_GET['page'] == 'data_terbaru') ? 'active' : '' ?>">
+            class="nav-link <?= ($current_page == 'data_terbaru') ? 'active' : '' ?>">
             <i class="nav-icon fas fa-table"></i>
             <p>Rekap Data Terbaru</p>
           </a>
         </li>
 
         <li class="nav-item">
-          <a href="index.php?page=buat_qrcode"
-            class="nav-link <?= (isset($_GET['page']) && $_GET['page'] == 'buat_qrcode') ? 'active' : '' ?>">
+          <a href="index.php?page=buat_qrcode" class="nav-link <?= ($current_page == 'buat_qrcode') ? 'active' : '' ?>">
             <i class="nav-icon fas fa-qrcode"></i>
             <p>Generator QR Code</p>
           </a>
@@ -122,13 +58,11 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'home';
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
           <li class="nav-item">
             <a href="?page=user" class="nav-link <?php echo ($current_page == 'user') ? 'active' : ''; ?>">
-              <i class="nav-icon fas fa-database"></i>
+              <i class="nav-icon fas fa-users"></i>
               <p>Tambah Pengguna</p>
             </a>
           </li>
-        <?php endif; ?>
 
-        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
           <li class="nav-item">
             <a href="?page=settings" class="nav-link <?php echo ($current_page == 'settings') ? 'active' : ''; ?>">
               <i class="nav-icon fas fa-cogs"></i>
@@ -137,15 +71,24 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'home';
           </li>
         <?php endif; ?>
 
-        <li class="nav-header" style="padding: 10px 1rem 5px; color: #888; font-size: 10px;">AKUN</li>
+        <li class="nav-header" style="font-size: 11px; font-weight: bold; color: #adb5bd; margin-top: 10px;">AKUN
+          PENGGUNA</li>
 
         <li class="nav-item">
-          <a href="logout.php" class="nav-link">
+          <a href="logout.php" class="nav-link text-danger">
             <i class="nav-icon fas fa-sign-out-alt"></i>
             <p>Logout</p>
           </a>
         </li>
+
       </ul>
     </nav>
   </div>
 </aside>
+
+<script>
+  // Menambahkan class 'sidebar-collapse' ke tag <body> saat halaman dimuat
+  document.addEventListener("DOMContentLoaded", function () {
+    document.body.classList.add('sidebar-collapse');
+  });
+</script>

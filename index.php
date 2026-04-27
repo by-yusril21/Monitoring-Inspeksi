@@ -46,6 +46,7 @@ if (isset($_GET['page']) && file_exists(filename: "page/" . $_GET['page'] . ".ph
 <script src="plugins/VibeTube/VibeTube.js"></script>
 <script src="plugins/toastr/toastr.min.js"></script>
 <script src="plugins/sweetalert2/sweetalert2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="plugins/d3-min/d3.min.js"></script>
 
 
@@ -62,8 +63,7 @@ if (isset($_GET['page']) && file_exists(filename: "page/" . $_GET['page'] . ".ph
 <script src="dist/js/navbar.js"></script>
 <script src="dist/js/action-motor.js"></script>
 <script src="dist/js/jadwal-regreasing.js"></script>
-
-
+<script src="dist/js/form-inspeksi.js"></script>
 
 <?php if ($delete)
   echo "<script>toastr.success('Data berhasil dihapus.');</script>"; ?>

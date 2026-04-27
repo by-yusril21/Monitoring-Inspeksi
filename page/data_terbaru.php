@@ -91,7 +91,6 @@ if ($hasil_settings) {
     .sticky-motor {
         position: sticky !important;
         left: 40px;
-        /* Menempel tepat di sebelah kolom No (40px) */
         z-index: 2;
         background-color: #f9f9f9 !important;
         box-shadow: inset -2px 0 0 rgba(0, 0, 0, 0.1);
@@ -172,23 +171,53 @@ if ($hasil_settings) {
     }
 
     // =========================================================================
-    // FUNGSI 1: EXPORT KE EXCEL (NAMA BARU AGAR TIDAK BENTROK)
+    // FUNGSI 1: EXPORT KE EXCEL (SUPPORT DOKUMENTASI & NUMBER FORMAT)
     // =========================================================================
     function exportDataTerbaruToExcel(tableId, fileName) {
         const table = document.getElementById(tableId);
         if (!table) return;
 
         const cloneTable = table.cloneNode(true);
-        // KUNCI PERBAIKAN: Paksa rata kiri langsung ke dalam tag HTML-nya (Inline Style)
         const kolomKiri = cloneTable.querySelectorAll('.text-left-custom');
         kolomKiri.forEach(el => {
             el.style.textAlign = 'left';
             el.style.paddingLeft = '10px';
         });
 
+        // TERAPKAN MSO-NUMBER-FORMAT & EKSTRAK LINK DOKUMENTASI
+        const trs = cloneTable.querySelectorAll('tr');
+        trs.forEach(tr => {
+            const tds = tr.querySelectorAll('td');
+            tds.forEach((td, idx) => {
+                // Memaksa Excel agar tidak auto-format angka seperti 46,2
+                td.style.msoNumberFormat = '\\@';
+
+                // Kolom ke-28 adalah Action, Kolom ke-29 adalah Dokumentasi (karena ada No. Motor)
+                if (tds.length === 30 && idx === 29) {
+                    const anchors = td.querySelectorAll('a');
+                    if (anchors.length > 0) {
+                        let linkList = [];
+                        anchors.forEach(a => linkList.push(a.getAttribute('href')));
+                        td.innerText = linkList.join(', ');
+                    } else {
+                        td.innerText = td.innerText.trim() || '-';
+                    }
+                    td.style.whiteSpace = 'normal';
+                    td.style.wordWrap = 'break-word';
+                    td.style.textAlign = 'left';
+                }
+
+                if (tds.length === 30 && idx === 28) {
+                    td.style.whiteSpace = 'normal';
+                    td.style.wordWrap = 'break-word';
+                    td.style.textAlign = 'left';
+                }
+            });
+        });
+
         let tableHTML = cloneTable.outerHTML;
 
-        // TAMBAHAN: Lebar 40px untuk kolom No di awal array
+        // TAMBAHAN: Lebar kolom termasuk Dokumentasi (30 elemen)
         const colWidths = [
             40,
             350, 180, 310, 160, 140, // Motor, Date, Update By, Aksi, Section
@@ -197,8 +226,9 @@ if ($hasil_settings) {
             80, 80, 80,            // Temp DE, NDE, Ruang
             70, 70, 70,            // Arus R, S, T
             110, 110,                // Beban, Damper
-            120, 120, 120, 120, 120, 120,// Bunyi, Panel, Lengkap, Bersih, Ground, Regreasing
-            800                    // Action
+            120, 120, 120, 120, 120, 120, // Bunyi, Panel, Lengkap, Bersih, Ground, Regreasing
+            800,                   // Action
+            300                    // [BARU] Dokumentasi
         ];
 
         let colgroup = '<colgroup>';
@@ -215,8 +245,6 @@ if ($hasil_settings) {
                     table { border-collapse: collapse; table-layout: fixed; }
                     th, td { border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle; word-wrap: break-word; }
                     th { background-color: #56a5b4; color: black; font-weight: bold; }
-                    
-                    /* TAMBAHKAN BARIS INI: Panggil class text-left-custom untuk rata kiri */
                     .text-left-custom { text-align: left !important; padding-left: 10px !important; }
                 </style>
             </head>
@@ -239,7 +267,7 @@ if ($hasil_settings) {
     }
 
     // =========================================================================
-    // FUNGSI 2: EXPORT KE PDF (NAMA BARU & ANTI OVERFLOW)
+    // FUNGSI 2: EXPORT KE PDF (LAYOUT ETIKET STANDAR AUTOCAD / ENGINEERING)
     // =========================================================================
     function exportDataTerbaruToPDF(tableId, fileName, unitLengkap) {
         if (!window.jspdf || !window.jspdf.jsPDF) {
@@ -247,19 +275,37 @@ if ($hasil_settings) {
             return;
         }
 
+        // Kertas A4 Landscape (X: 29.7 cm, Y: 21.0 cm)
         const doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'cm', format: 'a4' });
         const table = document.getElementById(tableId);
         if (!table) return;
 
         const cloneTable = table.cloneNode(true);
 
-        // KUNCI 1: Hancurkan semua style HTML yang mencegah teks turun ke bawah
         const allElements = cloneTable.querySelectorAll('*');
         allElements.forEach(el => {
             el.removeAttribute('style');
             el.classList.remove('text-nowrap');
         });
 
+        // Hapus kolom dokumentasi
+        const allRows = cloneTable.querySelectorAll('tr');
+        allRows.forEach((tr, index) => {
+            if (index === 0) {
+                tr.removeChild(tr.lastElementChild);
+            } else if (tr.closest('tbody')) {
+                const tds = tr.querySelectorAll('td');
+                if (tds.length === 30) {
+                    tr.removeChild(tr.lastElementChild);
+                } else if (tds.length === 3 && tds[2].hasAttribute('colspan')) {
+                    tds[2].setAttribute('colspan', '27');
+                } else if (tds.length === 1 && tds[0].hasAttribute('colspan')) {
+                    tds[0].setAttribute('colspan', '29');
+                }
+            }
+        });
+
+        // Ambil Data Variabel
         let judul1Text = document.getElementById("judul-1-pdf").innerText.trim();
         let judul2Text = document.getElementById("judul-2-pdf").innerText.trim();
         let logoBase64 = document.getElementById("logo-base64-pdf").innerText.trim();
@@ -268,38 +314,13 @@ if ($hasil_settings) {
         let today = new Date();
         let dateString = ("0" + today.getDate()).slice(-2) + "/" + ("0" + (today.getMonth() + 1)).slice(-2) + "/" + today.getFullYear();
         let timeString = ("0" + today.getHours()).slice(-2) + ":" + ("0" + today.getMinutes()).slice(-2) + ":" + ("0" + today.getSeconds()).slice(-2);
-        let infoString = "Tanggal unduh data : " + dateString + " " + timeString + " | Oleh : " + currentUser;
-        let subHeaderString = "UNIT : " + unitLengkap;
-
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "bold");
-        doc.text(judul1Text, 0.5, 1.0);
-
-        doc.setFontSize(9);
-        doc.text(judul2Text, 0.5, 1.4);
-
-        doc.setFontSize(8);
-        doc.setFont("helvetica", "normal");
-        doc.text(infoString, 0.5, 1.8);
-
-        if (logoBase64 && logoBase64.indexOf("data:image") === 0) {
-            doc.addImage(logoBase64, 'PNG', 27.5, 0.3, 1.6, 1.6);
-        }
-
-        doc.setLineWidth(0.05);
-        doc.setDrawColor(205, 164, 52);
-        doc.line(0.5, 2.1, 29.2, 2.1);
-
-        doc.setFontSize(8);
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(85, 85, 85);
-        doc.text(subHeaderString, 0.5, 2.5);
 
         doc.autoTable({
             html: cloneTable,
-            startY: 2.7,
-            margin: { top: 1, right: 0.5, bottom: 1, left: 0.5 },
-            tableWidth: 28.7,
+            startY: 0.6,
+            // UPDATE: Bottom margin dikurangi jadi 2.0 karena etiket sudah dipendekkan
+            margin: { top: 0.6, right: 0.7, bottom: 2.0, left: 0.7 },
+            tableWidth: 28.3,
             styles: {
                 fontSize: 3.5,
                 valign: 'middle',
@@ -308,8 +329,7 @@ if ($hasil_settings) {
                 lineColor: [0, 0, 0],
                 textColor: [0, 0, 0],
                 cellPadding: 0.05,
-                overflow: 'linebreak',
-                minCellWidth: 0.3
+                overflow: 'linebreak'
             },
             headStyles: {
                 fillColor: [86, 165, 180],
@@ -317,41 +337,24 @@ if ($hasil_settings) {
                 fontStyle: 'bold',
                 fontSize: 3.5
             },
-            // TAMBAHAN: Indeks bergeser karena ada kolom NO di indeks 0
             columnStyles: {
-                0: { cellWidth: 0.4 }, // NO
-                1: { cellWidth: 2.1 }, // NAMA MOTOR
-                2: { cellWidth: 1.4 }, // Date
-                3: { cellWidth: 1.8 }, // Update By
-                4: { cellWidth: 1.2 }, // Aksi
-                5: { cellWidth: 1 }, // Section No
-                6: { cellWidth: 0.6 },
-                7: { cellWidth: 0.6 },
-                8: { cellWidth: 0.6 },
-                9: { cellWidth: 0.6 },
-                10: { cellWidth: 0.6 },
-                11: { cellWidth: 0.6 },
-                12: { cellWidth: 0.6 },
-                13: { cellWidth: 0.6 },
-                14: { cellWidth: 0.6 },
-                15: { cellWidth: 0.6 },
-                16: { cellWidth: 0.6 },
-                17: { cellWidth: 0.6 },
-                18: { cellWidth: 0.6 },
-                19: { cellWidth: 0.6 },
-                20: { cellWidth: 0.7 },
-                21: { cellWidth: 0.7 },
-                22: { cellWidth: 0.8 },
-                23: { cellWidth: 0.8 },
-                24: { cellWidth: 0.9 },
-                25: { cellWidth: 0.8 },
-                26: { cellWidth: 0.8 },
-                27: { cellWidth: 0.8 },
-                28: { cellWidth: 6, halign: 'left' } // Action
+                0: { cellWidth: 0.4 },
+                1: { cellWidth: 2.5, halign: 'left' },
+                2: { cellWidth: 1.4 },
+                3: { cellWidth: 2.1 },
+                4: { cellWidth: 1.2 },
+                5: { cellWidth: 1 },
+                6: { cellWidth: 0.5 }, 7: { cellWidth: 0.5 }, 8: { cellWidth: 0.5 }, 9: { cellWidth: 0.5 },
+                10: { cellWidth: 0.5 }, 11: { cellWidth: 0.5 }, 12: { cellWidth: 0.5 }, 13: { cellWidth: 0.5 },
+                14: { cellWidth: 0.5 }, 15: { cellWidth: 0.5 }, 16: { cellWidth: 0.5 }, 17: { cellWidth: 0.5 },
+                18: { cellWidth: 0.5 }, 19: { cellWidth: 0.5 }, 20: { cellWidth: 0.6 }, 21: { cellWidth: 0.6 },
+                22: { cellWidth: 0.8 }, 23: { cellWidth: 0.8 }, 24: { cellWidth: 0.9 }, 25: { cellWidth: 0.8 },
+                26: { cellWidth: 0.8 }, 27: { cellWidth: 0.8 },
+                28: { halign: 'left' }
             },
             theme: 'grid',
+
             didParseCell: function (data) {
-                // Memecah teks panjang tanpa spasi (seperti email) agar tidak menjebol tabel
                 if (data.cell.text && data.cell.text.length > 0) {
                     let text = data.cell.text.join(' ');
                     if (text.length > 12 && text.indexOf(' ') === -1) {
@@ -359,12 +362,98 @@ if ($hasil_settings) {
                     }
                 }
             },
+
+            // =================================================================================
+            // MENGGAMBAR BORDER & ETIKET GAMBAR (TITLE BLOCK) SETIAP HALAMAN
+            // =================================================================================
             didDrawPage: function (data) {
+                // 1. WATERMARK TEKS 
+                doc.setGState(new doc.GState({ opacity: 0.06 }));
+                doc.setFontSize(38);
+                doc.setTextColor(120, 120, 120);
+                doc.setFont("helvetica", "bold");
+                doc.text("ELECTRICAL OF POWER PLANT", 15.5, 12.2, { align: "center", baseline: "middle", angle: 30 });
+                doc.text("ELINS MAINTENANCE", 16.5, 13.8, { align: "center", baseline: "middle", angle: 30 });
+                doc.setGState(new doc.GState({ opacity: 1.0 }));
+
+                // 2. GARIS PINGGIR (PAGE BORDER)
+                doc.setLineWidth(0.03);
+                doc.setDrawColor(0, 0, 0);
+                doc.rect(0.5, 0.5, 28.7, 20.0);
+
+                // 3. MEMBUAT KOTAK ETIKET BAWAH 
+                // UPDATE: Etiket dipendekkan, sekarang dari Y: 19.1 sampai 20.5 (Tinggi 1.4 cm)
+                doc.setLineWidth(0.02);
+                doc.line(0.5, 19.1, 29.2, 19.1); // Garis horizontal utama etiket (atas)
+
+                // 4. GARIS PEMISAH VERTIKAL
+                doc.line(2.6, 19.1, 2.6, 20.5);  // Kotak Logo
+                doc.line(9.0, 19.1, 9.0, 20.5);  // Pemisah Dept & Title
+                doc.line(22.0, 19.1, 22.0, 20.5); // Pemisah Title & Detail
+                doc.line(25.6, 19.1, 25.6, 20.5); // Kolom tengah Detail
+
+                // 5. GARIS PEMISAH HORIZONTAL (Proporsi diturunkan mengikuti tinggi baru)
+                doc.line(2.6, 19.4, 29.2, 19.4);  // Garis bawah label "Project" & "Drawing"
+                doc.line(22.0, 19.8, 29.2, 19.8); // Garis tengah membelah Detail Info
+                doc.line(22.0, 20.1, 29.2, 20.1); // Garis bawah label Detail Info Bawah
+
+                // ==========================================================
+                // MENGISI TEKS KE DALAM KOLOM ETIKET
+                // ==========================================================
+                doc.setTextColor(0, 0, 0);
+
+                // LOGO DEPARTEMEN
                 if (logoBase64 && logoBase64.indexOf("data:image") === 0) {
-                    doc.setGState(new doc.GState({ opacity: 0.1 }));
-                    doc.addImage(logoBase64, 'PNG', 7.85, 3.5, 14, 14);
-                    doc.setGState(new doc.GState({ opacity: 1.0 }));
+                    // Ukuran logo sedikit diperkecil karena tinggi kotak berkurang
+                    doc.addImage(logoBase64, 'PNG', 0.8, 19.15, 1.3, 1.3);
                 }
+
+                // KOLOM 1: PROJECT TITLE
+                doc.setFontSize(4);
+                doc.setFont("helvetica", "normal");
+                doc.text("DEPARTMENT / DIVISION", 2.8, 19.3);
+
+                doc.setFontSize(7);
+                doc.setFont("helvetica", "bold");
+                doc.text(judul2Text, 5.8, 20.0, { align: "center", maxWidth: 6.0 });
+
+                // KOLOM 2: DRAWING TITLE & UNIT
+                doc.setFontSize(4);
+                doc.setFont("helvetica", "normal");
+                doc.text("REPORT TITLE", 9.2, 19.3);
+
+                doc.setFontSize(7);
+                doc.setFont("helvetica", "bold");
+                doc.text(judul1Text, 15.5, 19.8, { align: "center" });
+
+                doc.setFontSize(6);
+                doc.setTextColor(80, 80, 80);
+                doc.text(unitLengkap, 15.5, 20.2, { align: "center" });
+
+                // KOLOM 3: DETAIL INFORMASI
+                doc.setTextColor(0, 0, 0);
+
+                // Baris Atas
+                doc.setFontSize(4);
+                doc.setFont("helvetica", "normal");
+                doc.text("DOWNLOAD DATE", 22.2, 19.3);
+                doc.text("SCALE", 25.8, 19.3);
+
+                doc.setFontSize(6);
+                doc.setFont("helvetica", "bold");
+                doc.text(dateString + " " + timeString, 23.8, 19.65, { align: "center" });
+                doc.text("NONE", 27.4, 19.65, { align: "center" });
+
+                // Baris Bawah
+                doc.setFontSize(4);
+                doc.setFont("helvetica", "normal");
+                doc.text("DOWNLOADED BY", 22.2, 20.0);
+                doc.text("PAGE SHEET", 25.8, 20.0);
+
+                doc.setFontSize(6);
+                doc.setFont("helvetica", "bold");
+                doc.text(currentUser.toUpperCase(), 23.8, 20.35, { align: "center" });
+                doc.text("Page " + data.pageNumber, 27.4, 20.35, { align: "center" });
             }
         });
 
@@ -396,14 +485,11 @@ if ($hasil_settings) {
                 const dataArray = result.data;
                 const listMotor = window.dataMotor[unit];
 
-                // TAMBAHAN: Menambahkan 'index' untuk iterasi penomoran
                 listMotor.forEach((motorName, index) => {
                     const safeId = motorName.replace(/[^a-zA-Z0-9]/g, '_');
                     const rowElement = document.getElementById(`row_${unit}_${safeId}`);
-
                     const motorData = dataArray.find(item => item['NAMA MOTOR'] === motorName);
 
-                    // TAMBAHAN: Variabel Nomor Urut
                     let nomorUrut = index + 1;
 
                     if (motorData && rowElement) {
@@ -435,6 +521,28 @@ if ($hasil_settings) {
 
                         const regreasing = motorData['REGREASING'] || '-';
                         const actions = motorData['ACTIONS'] || '-';
+
+                        // =====================================================
+                        // RENDER DOKUMENTASI (MULTI-LINK)
+                        // =====================================================
+                        const rawDok = motorData['DOKUMENTASI'] || '-';
+                        let dokVal = "";
+
+                        if (rawDok && rawDok !== "-" && rawDok.trim() !== "") {
+                            const links = rawDok.split(",");
+                            const btnLinks = links.map((link, i) => {
+                                const cleanLink = link.trim();
+                                if (cleanLink.startsWith("http://") || cleanLink.startsWith("https://")) {
+                                    return `<a href="${cleanLink}" target="_blank" rel="noopener noreferrer" class="btn btn-xs btn-outline-info mr-1 mb-1" title="Foto ${i + 1}">
+                                                <i class="fas fa-image"></i> ${links.length > 1 ? i + 1 : "Lihat"}
+                                            </a>`;
+                                }
+                                return cleanLink;
+                            });
+                            dokVal = btnLinks.join("");
+                        } else {
+                            dokVal = '<span class="text-muted">-</span>';
+                        }
 
                         const formatCond = (val) => {
                             if (!val || val === '-') return '-';
@@ -493,12 +601,13 @@ if ($hasil_settings) {
                             <td>${grounding}</td>
                             <td><span class="border rounded px-2 py-1 bg-light">${regreasing}</span></td>
                             <td class="text-left-custom col-action" style="white-space: normal; min-width: 700px;">${actions}</td>
+                            <td class="text-left-custom col-dokumentasi" style="white-space: normal; min-width: 250px;">${dokVal}</td>
                         `;
                     } else if (!motorData && rowElement) {
                         rowElement.innerHTML = `
                             <td class="text-center text-muted sticky-no">${nomorUrut}</td>
                             <td class="font-weight-bold text-muted sticky-motor text-left-custom">${motorName}</td>
-                            <td colspan="27" class="text-center text-warning text-sm">
+                            <td colspan="28" class="text-center text-warning text-sm">
                                 <i class="fas fa-info-circle mr-1"></i> Belum ada riwayat pengukuran
                             </td>
                         `;
@@ -508,12 +617,12 @@ if ($hasil_settings) {
             } else if (result.status === 'empty') {
                 const tbody = document.getElementById(`tbody_${unit}`);
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="29" class="text-center text-muted py-4"><i class="fas fa-folder-open fa-2x mb-2"></i><br>Database Master untuk unit ini masih kosong.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="30" class="text-center text-muted py-4"><i class="fas fa-folder-open fa-2x mb-2"></i><br>Database Master untuk unit ini masih kosong.</td></tr>`;
                 }
             } else {
                 const tbody = document.getElementById(`tbody_${unit}`);
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="29" class="text-center text-danger py-4"><i class="fas fa-exclamation-circle fa-2x mb-2"></i><br>Gagal memuat: ${result.message}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="30" class="text-center text-danger py-4"><i class="fas fa-exclamation-circle fa-2x mb-2"></i><br>Gagal memuat: ${result.message}</td></tr>`;
                 }
             }
 
@@ -525,7 +634,7 @@ if ($hasil_settings) {
             }
             const tbody = document.getElementById(`tbody_${unit}`);
             if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="29" class="text-center text-danger py-4"><i class="fas fa-wifi fa-2x mb-2"></i><br>Gagal terhubung ke server/API.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="30" class="text-center text-danger py-4"><i class="fas fa-wifi fa-2x mb-2"></i><br>Gagal terhubung ke server/API.</td></tr>`;
             }
         }
     }
@@ -604,6 +713,7 @@ if ($hasil_settings) {
                                     <th rowspan="3" style="min-width: 80px;">Regreasing<br>Bearing</th>
                                     
                                     <th rowspan="3" style="min-width: 700px;">Action</th>
+                                    <th rowspan="3" style="min-width: 250px;">Dokumentasi</th>
                                 </tr>
                                 
                                 <tr>
@@ -640,7 +750,7 @@ if ($hasil_settings) {
                                 <tr id="row_${unit}_${safeId}">
                                     <td class="text-center text-muted sticky-no">${index + 1}</td>
                                     <td class="font-weight-bold text-dark sticky-motor text-left-custom">${motor}</td>
-                                    <td colspan="27" class="text-muted text-center">
+                                    <td colspan="28" class="text-muted text-center">
                                         <i class="fas fa-ellipsis-h text-black-50"></i> Menunggu instruksi...
                                     </td>
                                 </tr>`;

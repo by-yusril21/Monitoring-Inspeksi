@@ -1,6 +1,7 @@
 /* =======================================================
    tabel-motor.js
    Inisialisasi DataTable Bawaan (Aman, Bersih, Sejajar, & Tata Letak Rapi)
+   [UPDATE] Tambah kolom DOKUMENTASI (index 28) & Fix Auto-Format Excel (46,2)
    ======================================================= */
 
 function getColIndex(headers, keywords) {
@@ -168,6 +169,14 @@ window.loadDataFromSheet = function (unit, sheetName) {
         "KETERANGAN",
       ]);
 
+      // =====================================================
+      // [BARU] Deteksi kolom DOKUMENTASI dari header sheet
+      // =====================================================
+      const idxDokumentasi = getColIndex(headers, [
+        "DOKUMENTASI",
+        "DOKUMENTASI",
+      ]);
+
       const formattedData = rows.map((row, index) => {
         let valSection = safeGet(row, idxSection1);
         if (!valSection || valSection === "-" || valSection === "") {
@@ -175,37 +184,67 @@ window.loadDataFromSheet = function (unit, sheetName) {
         }
         const actionVal = safeGet(row, idxAction);
 
+        // =====================================================
+        // [UPDATE] Penanganan Multi-Link Dokumentasi
+        // =====================================================
+        const rawDok = safeGet(row, idxDokumentasi);
+        let dokVal = "";
+
+        if (rawDok && rawDok !== "-" && rawDok.trim() !== "") {
+          // Pisahkan berdasarkan koma jika ada lebih dari satu link
+          const links = rawDok.split(",");
+
+          const btnLinks = links.map((link, i) => {
+            const cleanLink = link.trim();
+            if (
+              cleanLink.startsWith("http://") ||
+              cleanLink.startsWith("https://")
+            ) {
+              // Membuat tombol terpisah untuk setiap link foto
+              return `<a href="${cleanLink}" target="_blank" rel="noopener noreferrer" class="btn btn-xs btn-outline-info mr-1 mb-1" title="Foto ${i + 1}">
+                        <i class="fas fa-image"></i> ${links.length > 1 ? i + 1 : "Lihat"}
+                      </a>`;
+            }
+            return cleanLink; // Jika teks biasa
+          });
+
+          dokVal = btnLinks.join(""); // Gabungkan semua tombol
+        } else {
+          dokVal = '<span class="text-muted">-</span>';
+        }
+
         return [
-          index + 1,
-          safeGet(row, idxTime),
-          safeGet(row, idxEmail),
-          safeGet(row, idxUnit),
-          valSection,
-          safeGet(row, idxVibDE_H),
-          safeGet(row, idxVibDE_V),
-          safeGet(row, idxVibDE_Ax),
-          safeGet(row, idxVibDE_gE),
-          safeGet(row, idxVibNDE_H),
-          safeGet(row, idxVibNDE_V),
-          safeGet(row, idxVibNDE_Ax),
-          safeGet(row, idxVibNDE_gE),
-          safeGet(row, idxTempDE),
-          safeGet(row, idxTempNDE),
-          safeGet(row, idxSuhu),
-          safeGet(row, idxCurr_R),
-          safeGet(row, idxCurr_S),
-          safeGet(row, idxCurr_T),
-          safeGet(row, idxBeban),
-          safeGet(row, idxDamper),
-          safeGet(row, idxBunyi),
-          safeGet(row, idxPanel),
-          safeGet(row, idxKelengkapan),
-          safeGet(row, idxKebersihan),
-          safeGet(row, idxGrounding),
-          safeGet(row, idxRegreasing),
-          actionVal && actionVal !== "-"
+          index + 1, // 0  - No
+          safeGet(row, idxTime), // 1  - Timestamp
+          safeGet(row, idxEmail), // 2  - Email
+          safeGet(row, idxUnit), // 3  - Aksi/Jenis
+          valSection, // 4  - Section No
+          safeGet(row, idxVibDE_H), // 5  - Vib DE H
+          safeGet(row, idxVibDE_V), // 6  - Vib DE V
+          safeGet(row, idxVibDE_Ax), // 7  - Vib DE Ax
+          safeGet(row, idxVibDE_gE), // 8  - Vib DE gE
+          safeGet(row, idxVibNDE_H), // 9  - Vib NDE H
+          safeGet(row, idxVibNDE_V), // 10 - Vib NDE V
+          safeGet(row, idxVibNDE_Ax), // 11 - Vib NDE Ax
+          safeGet(row, idxVibNDE_gE), // 12 - Vib NDE gE
+          safeGet(row, idxTempDE), // 13 - Temp DE
+          safeGet(row, idxTempNDE), // 14 - Temp NDE
+          safeGet(row, idxSuhu), // 15 - Suhu Ruang
+          safeGet(row, idxCurr_R), // 16 - Arus R
+          safeGet(row, idxCurr_S), // 17 - Arus S
+          safeGet(row, idxCurr_T), // 18 - Arus T
+          safeGet(row, idxBeban), // 19 - Beban Gen
+          safeGet(row, idxDamper), // 20 - Damper
+          safeGet(row, idxBunyi), // 21 - Bunyi
+          safeGet(row, idxPanel), // 22 - Panel
+          safeGet(row, idxKelengkapan), // 23 - Kelengkapan
+          safeGet(row, idxKebersihan), // 24 - Kebersihan
+          safeGet(row, idxGrounding), // 25 - Grounding
+          safeGet(row, idxRegreasing), // 26 - Regreasing
+          actionVal && actionVal !== "-" // 27 - Actions
             ? actionVal
             : '<span class="badge badge-success">Tercatat</span>',
+          dokVal, // 28 - [BARU] Dokumentasi
         ];
       });
 
@@ -253,6 +292,10 @@ $(document).ready(function () {
       { className: "col-load", targets: [19, 20] },
       { className: "col-kondisi", targets: [21, 22, 23, 24, 25, 26] },
       { className: "col-action", targets: 27 },
+      // =====================================================
+      // [BARU] Class untuk kolom DOKUMENTASI (index 28)
+      // =====================================================
+      { className: "col-dokumentasi", targets: 28 },
     ],
 
     lengthMenu: [
@@ -280,6 +323,7 @@ $(document).ready(function () {
           columns: [
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
             19, 20, 21, 22, 23, 24, 25, 26, 27,
+            // kolom 28 (Dokumentasi) tidak dimasukkan
           ],
           format: {
             body: function (data, row, column, node) {
@@ -431,12 +475,9 @@ $(document).ready(function () {
           doc.defaultStyle.alignment = "center";
           doc.pageMargins = [20, 20, 20, 20];
 
-          if (doc.styles.tableBodyEven) {
+          if (doc.styles.tableBodyEven)
             delete doc.styles.tableBodyEven.fillColor;
-          }
-          if (doc.styles.tableBodyOdd) {
-            delete doc.styles.tableBodyOdd.fillColor;
-          }
+          if (doc.styles.tableBodyOdd) delete doc.styles.tableBodyOdd.fillColor;
 
           const headerRow1 = [
             {
@@ -537,6 +578,7 @@ $(document).ready(function () {
               style: "tableHeader",
               margin: [0, 4, 0, 0],
             },
+            // Dokumentasi tidak ada di sini
           ];
 
           const headerRow2 = [
@@ -638,34 +680,34 @@ $(document).ready(function () {
           doc.content[1].table.headerRows = 3;
 
           doc.content[1].table.widths = [
-            "1%",
-            "5%",
-            "8%",
-            "5%",
-            "4%",
-            "2%",
-            "2%",
-            "2%",
-            "2%",
-            "2%",
-            "2%",
-            "2%",
-            "2%",
-            "2%",
-            "2%",
-            "2%",
-            "2%",
-            "2%",
-            "2%",
-            "3%",
-            "3%",
-            "3%",
-            "3%",
-            "3.5%",
-            "3%",
-            "3%",
-            "3%",
-            "25%",
+            "1%", // No
+            "5%", // Date
+            "8%", // Update By
+            "5%", // Aksi
+            "4%", // Section
+            "1.5%",
+            "1.5%",
+            "1.5%",
+            "1.5%", // Vib DE
+            "1.5%",
+            "1.5%",
+            "1.5%",
+            "1.5%", // Vib NDE
+            "1.5%",
+            "1.5%",
+            "1.7%", // Temp DE NDE Ruang
+            "1.5%",
+            "1.5%",
+            "1.5%", // Curr R S T
+            "3%", // Beban
+            "3%", // Damper
+            "3%", // Bunyi
+            "3%", // Panel
+            "3.5%", // Kelengkapan
+            "3%", // Kebersihan
+            "3%", // Grounding
+            "3%", // Regreasing
+            "32%", // Action (kembali ke lebar asli)
           ];
 
           doc.content[1].layout = {
@@ -689,12 +731,13 @@ $(document).ready(function () {
             },
           };
 
+          // Hanya kolom Action (27) yang rata kiri
           doc.content[1].table.body.forEach(function (row, index) {
             if (index >= 3) {
               if (typeof row[27] === "object" && row[27] !== null) {
                 row[27].alignment = "left";
               } else {
-                row[27] = { text: row[27], alignment: "left" };
+                row[27] = { text: row[27] || "-", alignment: "left" };
               }
             }
           });
@@ -754,17 +797,82 @@ function exportMotorToExcel(unit, motor) {
   let trs = tempContainer.querySelectorAll("tr");
   trs.forEach((tr) => {
     let tds = tr.querySelectorAll("td");
-    if (tds.length > 27) {
-      tds[27].style.whiteSpace = "normal";
-      tds[27].style.wordWrap = "break-word";
-      tds[27].style.textAlign = "left";
-    }
+
+    // =====================================================
+    // [UPDATE FINAL] Terapkan format text agar 46,2 tetap 46,2
+    // =====================================================
+    tds.forEach((td, idx) => {
+      // Set atribut mso-number-format secara inline
+      td.setAttribute(
+        "style",
+        "mso-number-format:'\\@'; text-align: center; vertical-align: middle;",
+      );
+
+      // Penanganan khusus kolom 27 (Action)
+      if (idx === 27) {
+        td.style.whiteSpace = "normal";
+        td.style.wordWrap = "break-word";
+        td.style.textAlign = "left";
+      }
+
+      // Penanganan khusus kolom 28 (Dokumentasi)
+      if (idx === 28) {
+        const anchors = td.querySelectorAll("a");
+        if (anchors.length > 0) {
+          let linkList = [];
+          anchors.forEach((a) => {
+            linkList.push(a.getAttribute("href"));
+          });
+          td.innerText = linkList.join(", "); // Gabungkan link murni dengan koma
+        } else {
+          td.innerText = td.innerText.trim() || "-";
+        }
+        td.style.whiteSpace = "normal";
+        td.style.wordWrap = "break-word";
+        td.style.textAlign = "left";
+      } else {
+        // Pastikan kolom angka (Vibrasi, dll) tidak mengandung tag HTML terselubung
+        if (idx !== 27) {
+          td.innerText = td.innerText.trim();
+        }
+      }
+    });
   });
   bodyHTML = tempContainer.querySelector("tbody").innerHTML;
 
+  // =====================================================
+  // [BARU] Lebar kolom Excel — tambah 1 kolom Dokumentasi
+  // =====================================================
   const colWidths = [
-    40, 180, 250, 150, 150, 50, 50, 50, 50, 50, 50, 50, 50, 60, 60, 60, 120,
-    120, 120, 150, 150, 120, 120, 120, 120, 120, 120, 500,
+    40, // No
+    180, // Timestamp
+    250, // Email
+    150, // Aksi
+    150, // Section
+    50,
+    50,
+    50,
+    50, // Vib DE
+    50,
+    50,
+    50,
+    50, // Vib NDE
+    60,
+    60,
+    60, // Temp DE NDE Ruang
+    120,
+    120,
+    120, // Curr R S T
+    150, // Beban
+    150, // Damper
+    120, // Bunyi
+    120, // Panel
+    120, // Kelengkapan
+    120, // Kebersihan
+    120, // Grounding
+    120, // Regreasing
+    400, // Action (diperkecil sedikit)
+    300, // [BARU] Dokumentasi
   ];
 
   let colgroup = "<colgroup>";
@@ -787,17 +895,20 @@ function exportMotorToExcel(unit, motor) {
         <head>
             <meta charset="UTF-8">
             <style>
-                table { border-collapse: collapse; table-layout: fixed; } 
-                th, td { 
-                    border: 1px solid black; 
-                    padding: 5px; 
-                    text-align: center; 
+                table { border-collapse: collapse; table-layout: fixed; }
+                th, td {
+                    border: 1px solid black;
+                    padding: 5px;
+                    text-align: center;
                     vertical-align: middle;
+                    /* Mencegah auto-format angka di seluruh sel Excel */
+                    mso-number-format: "\\@"; 
                 }
                 thead tr:nth-child(1) th { background-color: #e2e6ea; font-weight: bold; }
                 thead tr:nth-child(2) th { background-color: #f1f3f5; }
                 thead tr:nth-child(3) th { background-color: #f8f9fa; }
-                .col-action { text-align: left !important; white-space: normal !important; } 
+                .col-action        { text-align: left !important; white-space: normal !important; }
+                .col-dokumentasi   { text-align: left !important; white-space: normal !important; }
             </style>
         </head>
         <body>

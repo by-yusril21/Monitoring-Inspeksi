@@ -14,11 +14,9 @@ foreach ($SCRIPT_URLS as $kode_unit => $url) {
         'token' => $API_TOKEN
     ];
 }
-
 ?>
 
 <div class="content-wrapper">
-
     <div class="content">
         <div class="container-fluid">
             <div class="callout callout-info bg-white shadow-sm mb-4" style="border-left-color: #17a2b8;">
@@ -32,11 +30,8 @@ foreach ($SCRIPT_URLS as $kode_unit => $url) {
                     motor.
                 </p>
             </div>
-            <div id="email-container">
-                <div id="loading-global" class="text-center py-5">
-                    <i class="fas fa-sync fa-spin fa-3x text-primary"></i>
-                    <h5 class="mt-3">Mengambil data dari Server Database Unit...</h5>
-                </div>
+
+            <div id="email-container" class="row">
             </div>
         </div>
     </div>
@@ -99,12 +94,8 @@ foreach ($SCRIPT_URLS as $kode_unit => $url) {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     const configAPI = <?php echo json_encode($unit_apis); ?>;
-
-    // UPDATE 1: Ambil otomatis daftar unit dari config.php, tidak perlu hardcode lagi
     const listUnit = Object.keys(configAPI);
-    let dataEmailGlobal = [];
 
-    // UPDATE 2: Fungsi untuk mengubah kode unit menjadi nama lengkap
     function formatUnitName(unitKode) {
         const u = unitKode.toUpperCase();
         if (u === 'C6KV') return 'PLTU UNIT C MOTOR 6kV';
@@ -117,79 +108,24 @@ foreach ($SCRIPT_URLS as $kode_unit => $url) {
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-        loadDataSemuaUnit();
+        initKerangkaCard(); // 1. Buat kerangkanya dulu
+        loadDataSemuaUnit(); // 2. Tembak request barengan (Paralel)
     });
 
-    async function loadDataSemuaUnit() {
-        document.getElementById('loading-global').style.display = 'block';
-        dataEmailGlobal = [];
-
-        const fetchPromises = listUnit.map(async (unit) => {
-            if (configAPI[unit] && configAPI[unit].url !== "") {
-                const url = configAPI[unit].url;
-                const token = configAPI[unit].token;
-                try {
-                    const response = await fetch(`${url}?action=get_emails&token=${token}`);
-                    const result = await response.json();
-                    if (result.status === 'success') {
-                        return { unit: unit, data: result.data, status: 'ok' };
-                    }
-                    return { unit: unit, status: 'error', msg: result.message };
-                } catch (error) {
-                    return { unit: unit, status: 'error', msg: 'Koneksi Gagal' };
-                }
-            }
-            return { unit: unit, status: 'error', msg: 'URL Kosong' };
-        });
-
-        const results = await Promise.all(fetchPromises);
-        results.forEach(res => {
-            if (res.status === 'ok' && res.data) {
-                res.data.forEach(item => { item.unit = res.unit; dataEmailGlobal.push(item); });
-            }
-        });
-
-        document.getElementById('loading-global').style.display = 'none';
-        renderTabelUnit(results);
-    }
-
-    function renderTabelUnit(statusFetch) {
+    // FUNGSI 1: Membuat Kerangka HTML tiap unit dengan Overlay Loading
+    function initKerangkaCard() {
         const container = document.getElementById('email-container');
-        container.querySelectorAll('.row-unit').forEach(e => e.remove());
-
-        let htmlGrid = '<div class="row row-unit">';
+        let htmlGrid = '';
 
         listUnit.forEach(unit => {
-            const dataUnitIni = dataEmailGlobal.filter(item => item.unit === unit);
-            const statusUnit = statusFetch.find(s => s.unit === unit);
-            let htmlTabel = '';
-
-            if (statusUnit.status === 'error') {
-                htmlTabel = `<tr><td colspan="5" class="text-center text-danger py-3">Gagal: ${statusUnit.msg}</td></tr>`;
-            } else if (dataUnitIni.length === 0) {
-                // Tombol tambah khusus jika unit masih kosong
-                htmlTabel = `<tr><td colspan="5" class="text-center text-muted py-3">Data Kosong <button class="btn btn-xs btn-primary ml-2" onclick="bukaModalTambah('${unit}')"><i class="fas fa-plus"></i></button></td></tr>`;
-            } else {
-                dataUnitIni.forEach((item, index) => {
-                    let badgeStatus = item.status === 'AKTIF' ? '<span class="badge badge-success">AKTIF</span>' : '<span class="badge badge-secondary">NONAKTIF</span>';
-                    htmlTabel += `
-                        <tr>
-                            <td class="text-center">${index + 1}</td>
-                            <td>${item.nama}</td>
-                            <td>${item.email}</td>
-                            <td class="text-center">${badgeStatus}</td>
-                            <td class="text-center">
-                                <button class="btn btn-xs btn-primary mx-1" onclick="bukaModalTambah('${item.unit}')" title="Tambah Personil ke Unit ini"><i class="fas fa-plus"></i></button>
-                                <button class="btn btn-xs btn-warning mx-1" onclick="bukaModalEdit('${item.no}', '${item.unit}', '${item.nama}', '${item.email}', '${item.status}')" title="Edit"><i class="fas fa-edit"></i></button>
-                                <button class="btn btn-xs btn-danger mx-1" onclick="hapusEmail('${item.no}', '${item.unit}', '${item.nama}')" title="Hapus"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>`;
-                });
-            }
-
             htmlGrid += `
                 <div class="col-lg-6 col-md-12">
-                    <div class="card card-outline card-primary mb-4 card-unit shadow-sm" style="height: calc(100% - 1.5rem);">
+                    <div class="card card-outline card-primary mb-4 card-unit shadow-sm" id="card-${unit}" style="height: calc(100% - 1.5rem); position: relative;">
+                        <div class="overlay loading-overlay" style="background-color: rgba(255,255,255,0.85); z-index: 10; flex-direction: column;">
+                            <i class="fas fa-sync-alt fa-spin fa-2x text-primary"></i>
+                            <div class="mt-2 text-primary font-weight-bold" style="font-size: 13px;">Mengambil data...</div>
+                        </div>
+
                         <div class="card-header bg-white">
                             <h3 class="card-title font-weight-bold text-dark mt-1">
                                 <i class="fas fa-industry text-primary mr-2"></i> ${formatUnitName(unit)}
@@ -207,18 +143,82 @@ foreach ($SCRIPT_URLS as $kode_unit => $url) {
                                             <th style="width: 120px;">Aksi</th>
                                         </tr>
                                     </thead>
-                                    <tbody>${htmlTabel}</tbody>
+                                    <tbody id="tbody-${unit}">
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>`;
         });
-
-        htmlGrid += '</div>';
-        container.insertAdjacentHTML('beforeend', htmlGrid);
+        container.innerHTML = htmlGrid;
     }
 
+    // FUNGSI 2: Memicu proses ambil data untuk setiap unit (Tidak saling tunggu)
+    function loadDataSemuaUnit() {
+        listUnit.forEach(unit => {
+            fetchDataPerUnit(unit);
+        });
+    }
+
+    // FUNGSI 3: Ambil dan Render data spesifik per-Unit (Independen)
+    async function fetchDataPerUnit(unit) {
+        const tbody = document.getElementById(`tbody-${unit}`);
+        const card = document.getElementById(`card-${unit}`);
+        const loadingOverlay = card.querySelector('.loading-overlay');
+
+        // Pastikan loading muncul (berguna kalau fungsi ini dipanggil untuk refresh 1 tabel saja)
+        loadingOverlay.style.display = 'flex';
+
+        if (!configAPI[unit] || configAPI[unit].url === "") {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-3">Gagal: URL API Kosong</td></tr>`;
+            loadingOverlay.style.display = 'none';
+            return;
+        }
+
+        const url = configAPI[unit].url;
+        const token = configAPI[unit].token;
+
+        try {
+            const response = await fetch(`${url}?action=get_emails&token=${token}`);
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                const dataUnit = result.data || [];
+
+                if (dataUnit.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">Data Kosong <button class="btn btn-xs btn-primary ml-2" onclick="bukaModalTambah('${unit}')"><i class="fas fa-plus"></i></button></td></tr>`;
+                } else {
+                    let htmlTabel = '';
+                    dataUnit.forEach((item, index) => {
+                        let badgeStatus = item.status === 'AKTIF' ? '<span class="badge badge-success">AKTIF</span>' : '<span class="badge badge-secondary">NONAKTIF</span>';
+                        htmlTabel += `
+                            <tr>
+                                <td class="text-center">${index + 1}</td>
+                                <td>${item.nama}</td>
+                                <td>${item.email}</td>
+                                <td class="text-center">${badgeStatus}</td>
+                                <td class="text-center">
+                                    <button class="btn btn-xs btn-primary mx-1" onclick="bukaModalTambah('${unit}')" title="Tambah Personil"><i class="fas fa-plus"></i></button>
+                                    <button class="btn btn-xs btn-warning mx-1" onclick="bukaModalEdit('${item.no}', '${unit}', '${item.nama}', '${item.email}', '${item.status}')" title="Edit"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-xs btn-danger mx-1" onclick="hapusEmail('${item.no}', '${unit}', '${item.nama}')" title="Hapus"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>`;
+                    });
+                    tbody.innerHTML = htmlTabel;
+                }
+            } else {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-3">Gagal: ${result.message}</td></tr>`;
+            }
+        } catch (error) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-3">Gagal Terhubung ke Server Google</td></tr>`;
+        }
+
+        // Matikan loading saat tabel unit ini sudah selesai
+        loadingOverlay.style.display = 'none';
+    }
+
+    // FUNGSI POST (Tambah, Edit, Hapus)
     async function kirimDataAppsScript(payloadData) {
         const targetUnit = payloadData.unit;
         const SCRIPT_URL = configAPI[targetUnit].url;
@@ -236,11 +236,18 @@ foreach ($SCRIPT_URLS as $kode_unit => $url) {
             if (result.status === 'success') {
                 Swal.fire('Berhasil!', result.message, 'success');
                 $('#modalEmail').modal('hide');
-                loadDataSemuaUnit();
-            } else { Swal.fire('Gagal!', result.message, 'error'); }
-        } catch (error) { Swal.fire('Error', 'Gagal terhubung ke Google', 'error'); }
+
+                // KUNCI EFISIENSI: Hanya Refresh/Reload Unit yang datanya baru saja diubah!
+                fetchDataPerUnit(targetUnit);
+            } else {
+                Swal.fire('Gagal!', result.message, 'error');
+            }
+        } catch (error) {
+            Swal.fire('Error', 'Gagal terhubung ke Google', 'error');
+        }
     }
 
+    // --- MANAJEMEN MODAL ---
     function bukaModalTambah(unitDefault = '') {
         document.getElementById('formEmail').reset();
         document.getElementById('inputAction').value = 'add_email';
@@ -273,7 +280,6 @@ foreach ($SCRIPT_URLS as $kode_unit => $url) {
 
     document.getElementById('formEmail').addEventListener('submit', function (e) {
         e.preventDefault();
-        // Buka disabled sebentar agar value ikut terkirim
         document.getElementById('inputUnit').disabled = false;
         kirimDataAppsScript({
             action: document.getElementById('inputAction').value,

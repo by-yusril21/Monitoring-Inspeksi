@@ -181,6 +181,7 @@ if ($q_pdf) {
                                 <th class="align-middle" rowspan="3">Grounding<br>Motor</th>
                                 <th class="align-middle" rowspan="3">Regreasing<br>Bearing</th>
                                 <th class="align-middle" rowspan="3">Action</th>
+                                <th class="align-middle" rowspan="3">Dokumentasi</th>
                             </tr>
                             <tr>
                                 <th class="align-middle text-center" colspan="4">DE</th>

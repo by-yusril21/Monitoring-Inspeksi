@@ -1,12 +1,14 @@
 <?php
-if ($_SESSION['role'] != "admin") {
-  echo "<script> location.href='index.php'; </script>";
+// 1. CEK KEAMANAN HAK AKSES
+if (!isset($_SESSION['role']) || $_SESSION['role'] != "admin") {
+  echo "<script> window.location.replace('index.php'); </script>";
   exit;
 }
 
 $page = $_GET['page'];
-$insert = false;
+$error_duplicate = false; // Penanda jika username kembar
 
+// 2. PROSES EDIT DATA
 if (isset($_POST['edit_data'])) {
   $old_id = $_POST['edit_data'];
 
@@ -15,6 +17,7 @@ if (isset($_POST['edit_data'])) {
   $role = $_POST['role'];
   $active = $_POST['active'];
 
+  // Jika password kosong, jangan ubah passwordnya
   if ($_POST['password'] == "") {
     $sql_edit = "UPDATE user SET username = '$username', fullname = '$fullname', role = '$role', active = '$active' WHERE username = '$old_id'";
   } else {
@@ -24,37 +27,95 @@ if (isset($_POST['edit_data'])) {
 
   mysqli_query($conn, $sql_edit);
 
+  // REDIRECT (Mencegah Resubmission)
+  echo "<script> window.location.replace('index.php?page=$page&status=updated'); </script>";
+  exit;
+
+  // 3. PROSES TAMBAH DATA BARU
 } else if (isset($_POST['username'])) {
   $username = $_POST['username'];
   $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
   $fullname = $_POST['fullname'];
   $role = $_POST['role'];
 
-  $sql_insert = "INSERT INTO user(username, password, fullname, role) VALUES ('$username', '$password', '$fullname', '$role')";
-  mysqli_query($conn, $sql_insert);
-  $insert = true;
+  // Cek apakah username sudah dipakai
+  $cek_db = mysqli_query($conn, "SELECT username FROM user WHERE username = '$username'");
+
+  if (mysqli_num_rows($cek_db) > 0) {
+    $error_duplicate = true; // Nyalakan alert error
+  } else {
+    $sql_insert = "INSERT INTO user(username, password, fullname, role) VALUES ('$username', '$password', '$fullname', '$role')";
+    mysqli_query($conn, $sql_insert);
+
+    // REDIRECT (Mencegah Resubmission)
+    echo "<script> window.location.replace('index.php?page=$page&status=added'); </script>";
+    exit;
+  }
 }
 
+// 4. PROSES HAPUS DATA
+if (isset($_GET['delete'])) {
+  $id_hapus = $_GET['delete'];
+
+  // KEAMANAN: Cegah admin menghapus akunnya sendiri yang sedang dipakai
+  if ($id_hapus === $_SESSION['username']) {
+    echo "<script> window.location.replace('index.php?page=$page&status=delete_self'); </script>";
+    exit;
+  }
+
+  $sql_delete = "DELETE FROM user WHERE username = '$id_hapus'";
+  mysqli_query($conn, $sql_delete);
+
+  // REDIRECT (Mencegah Resubmission)
+  echo "<script> window.location.replace('index.php?page=$page&status=deleted'); </script>";
+  exit;
+}
+
+// 5. MENGAMBIL DATA UNTUK FORM EDIT
 if (isset($_GET['edit'])) {
   $id = $_GET['edit'];
   $sql_select_data = "SELECT * FROM user WHERE username = '$id' LIMIT 1";
 
-  $result = mysqli_query($conn, $sql_select_data);
-  $data = mysqli_fetch_assoc($result);
+  $result_edit = mysqli_query($conn, $sql_select_data);
+  $data = mysqli_fetch_assoc($result_edit);
 }
 
+// 6. MENGAMBIL SELURUH DATA UNTUK TABEL
 $sql = "SELECT * FROM user";
-$result = mysqli_query($conn, $sql)
-  ?>
+$result = mysqli_query($conn, $sql);
+?>
 
 <div class="content-wrapper">
   <div class="content">
-    <div class="container-fluid">
+    <div class="container-fluid pt-3">
 
-      <?php if ($insert == true): ?>
-        <?php alertsSuccess("Data Berhasil Di Tambahkan"); ?>
+      <?php if (isset($_GET['status']) && $_GET['status'] == 'added'): ?>
+        <?php alertsSuccess("Data Pengguna Berhasil Ditambahkan"); ?>
       <?php endif; ?>
 
+      <?php if (isset($_GET['status']) && $_GET['status'] == 'updated'): ?>
+        <?php alertsSuccess("Data Pengguna Berhasil Diperbarui"); ?>
+      <?php endif; ?>
+
+      <?php if (isset($_GET['status']) && $_GET['status'] == 'deleted'): ?>
+        <?php alertsSuccess("Pengguna Berhasil Dihapus dari Sistem"); ?>
+      <?php endif; ?>
+
+      <?php if ($error_duplicate == true): ?>
+        <div class="alert alert-danger alert-dismissible shadow-sm">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+          <h5><i class="icon fas fa-ban"></i> Penambahan Gagal!</h5>
+          Username <b><?= htmlspecialchars($_POST['username']) ?></b> sudah terdaftar. Silakan gunakan username lain.
+        </div>
+      <?php endif; ?>
+
+      <?php if (isset($_GET['status']) && $_GET['status'] == 'delete_self'): ?>
+        <div class="alert alert-warning alert-dismissible shadow-sm">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+          <h5><i class="icon fas fa-exclamation-triangle"></i> Tindakan Ditolak!</h5>
+          Anda tidak dapat menghapus akun Anda sendiri yang sedang Anda gunakan saat ini.
+        </div>
+      <?php endif; ?>
       <div class="row">
 
         <div class="col-lg-7 col-md-12 mb-4">
@@ -105,6 +166,12 @@ $result = mysqli_query($conn, $sql)
                             class="btn btn-sm btn-warning shadow-sm" title="Edit Data">
                             <i class="fas fa-edit"></i> Edit
                           </a>
+
+                          <a href="javascript:void(0)" class="btn btn-sm btn-danger shadow-sm ml-1 btn-hapus"
+                            title="Hapus Data" data-url="?page=<?php echo $page ?>&delete=<?php echo $row['username'] ?>"
+                            data-username="<?php echo $row['username'] ?>">
+                            <i class="fas fa-trash-alt"></i>
+                          </a>
                         </td>
                       </tr>
                     <?php } ?>
@@ -116,6 +183,7 @@ $result = mysqli_query($conn, $sql)
         </div>
 
         <div class="col-lg-5 col-md-12">
+
           <?php if (!isset($_GET['edit'])) { ?>
             <div class="card card-outline card-success shadow-sm">
               <div class="card-header py-2">
@@ -183,6 +251,7 @@ $result = mysqli_query($conn, $sql)
               <form method="post" action="?page=<?php echo $page ?>">
                 <div class="card-body text-sm p-3">
                   <input type="hidden" name="edit_data" value="<?php echo $data['username'] ?>">
+
                   <div class="form-group mb-2">
                     <label class="mb-1">Username</label>
                     <div class="input-group input-group-sm">
@@ -232,8 +301,8 @@ $result = mysqli_query($conn, $sql)
                       <select class="custom-select custom-select-sm" name="active">
                         <option value="Yes" <?php echo ($data['active'] == 'Yes') ? 'selected' : ''; ?>>Aktif (Bisa Login)
                         </option>
-                        <option value="No" <?php echo ($data['active'] == 'No') ? 'selected' : ''; ?>>Tidak Aktif
-                          (Diblokir)</option>
+                        <option value="No" <?php echo ($data['active'] == 'No') ? 'selected' : ''; ?>>Tidak Aktif (Diblokir)
+                        </option>
                       </select>
                     </div>
                   </div>
@@ -255,22 +324,54 @@ $result = mysqli_query($conn, $sql)
 </div>
 
 <script>
-  $(function () {
-    if ($('#tabelUser').length && $.fn.DataTable) {
-      $('#tabelUser').DataTable({
-        "paging": true,
-        "lengthChange": true,
-        "searching": true,
-        "ordering": false,
-        "info": true,
-        "autoWidth": false,
-        "responsive": false, // Dimatikan karena kita sudah pakai div.table-responsive yang lebih bagus untuk HP
-        "scrollX": false,
-        "language": {
-          "search": "",
-          "searchPlaceholder": "Cari data..."
+  function jalankanScriptUser() {
+    // Menunggu jQuery siap
+    if (typeof window.jQuery === 'undefined') {
+      setTimeout(jalankanScriptUser, 50);
+    } else {
+      $(function () {
+        // 1. Inisialisasi DataTables
+        if ($('#tabelUser').length && $.fn.DataTable) {
+          $('#tabelUser').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+            "responsive": false,
+            "language": {
+              "search": "",
+              "searchPlaceholder": "Cari data..."
+            }
+          });
         }
+
+        // 2. SCRIPT HAPUS (Gunakan Swal dari lokal)
+        $(document).on('click', '.btn-hapus', function (e) {
+          e.preventDefault();
+          let deleteUrl = $(this).attr('data-url');
+          let username = $(this).attr('data-username');
+
+          // Memanggil Swal (SweetAlert2 bawaan AdminLTE)
+          Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Menghapus pengguna '" + username + "' secara permanen.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.replace('index.php' + deleteUrl);
+            }
+          });
+        });
       });
     }
-  });
+  }
+  jalankanScriptUser();
 </script>

@@ -1,6 +1,6 @@
 .main-header.navbar {
-  border-bottom: 1px solid #dee2e6; /* Garis batas bawah standar profesional */
-  background-color: #ededed !important;
+  border-bottom: 1px solid #c6c6c6; /* Garis batas bawah standar profesional */
+  background-color: #f9f9f9 !important;
   min-height: 56px; /* Standar tinggi navbar AdminLTE */
 }
 
@@ -22,7 +22,7 @@
 }
 
 .main-header .btn-primary {
-  height: 34px;
+  height: 30px;
   font-size: 0.85rem;
   font-weight: 600;
   border-radius: 4px;
